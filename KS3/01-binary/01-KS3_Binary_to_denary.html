@@ -518,16 +518,32 @@ function computeScore(){
 /* ============================================================
    RENDER
    ============================================================ */
+/* #app is built ONCE, as a fixed three-slot skeleton, rather than having
+   its whole innerHTML replaced on every render(). This matters only for
+   #videoSlot: see the big comment above ensureVideoHost() below for why —
+   in short, an iframe reloads on ANY DOM move in Chromium (confirmed by
+   direct testing), even a "safe"-looking one, so the video slot must be
+   created once and never moved, appended-to-elsewhere, or rebuilt again.
+   #headerSlot and #bodySlot hold no iframes, so they're simply
+   re-rendered via innerHTML every time, same as the old single-slot
+   approach — no persistence concerns there. */
 var app = document.getElementById("app");
+app.innerHTML = '<div id="headerSlot"></div><div id="videoSlot" style="display:none;"></div><div id="bodySlot"></div>';
+var headerSlot = document.getElementById("headerSlot");
+var videoSlot = document.getElementById("videoSlot");
+var bodySlot = document.getElementById("bodySlot");
 
 function render(){
   document.body.setAttribute("data-theme", state.theme);
   document.body.setAttribute("data-fontsize", state.fontSize);
-  var html = "";
-  if (state.screen === "title") html = renderTitleScreen();
-  else if (state.screen === "question") html = renderQuestionScreen();
-  else if (state.screen === "results") html = renderResultsScreen();
-  app.innerHTML = html;
+  headerSlot.innerHTML = (state.screen === "question") ? renderQuestionHeader() : renderHeader(true);
+  var bodyHtml = "";
+  if (state.screen === "title") bodyHtml = renderTitleScreen();
+  else if (state.screen === "question") bodyHtml = renderQuestionScreen();
+  else if (state.screen === "results") bodyHtml = renderResultsScreen();
+  bodySlot.innerHTML = bodyHtml;
+  var existingZoom = app.querySelector(".zoom-overlay");
+  if (existingZoom) existingZoom.remove();
   if (state.zoom) app.insertAdjacentHTML("beforeend", renderZoomOverlay());
   syncVideoHost();
   bindZoomDrag();
@@ -559,24 +575,60 @@ function renderHeader(showControls){
     '</div>'
   );
 }
-
-/* renderVideoBlock() used to return the video markup as a string, baked
-   straight into the big innerHTML rebuild on every render() call. That
-   meant selecting an answer, changing theme, changing text size, or
-   navigating questions destroyed and recreated the <iframe> every time —
-   which resets YouTube playback to 0:00, even though nothing about the
-   video actually changed. Fixed by keeping ONE real iframe DOM node alive
-   for the whole session (created once, never rebuilt from a string) and
-   physically moving it into a placeholder slot after each render, via
-   appendChild — a live DOM move, not a re-parse, so playback survives.
-   renderVideoBlockAnchor() below just reserves that slot's position in
-   the HTML string; syncVideoHost() (called at the end of render()) does
-   the actual move and updates the toggle button/collapse state in place. */
-function renderVideoBlockAnchor(){
-  if (!quiz.videoUrl) return "";
-  return '<div id="videoAnchor"></div>';
+function renderQuestionHeader(){
+  var idx = state.currentIndex;
+  var total = quiz.questions.length;
+  return (
+    '<div class="hdr">' +
+      '<div class="hdr-row1" style="display:flex;justify-content:space-between;align-items:center;flex:1;gap:8px;">' +
+        '<span class="hdr-title mono">' + escapeHtml(quiz.title) + '</span>' +
+        '<div class="hdr-controls">' +
+          '<span class="qbadge mono">Q' + (idx+1) + ' of ' + total + '</span>' +
+          '<button class="icon-btn" data-action="toggle-fontsize" aria-label="Change text size">' + fontIconHtml() + '</button>' +
+          '<button class="icon-btn" data-action="toggle-theme" aria-label="Change colour theme">' + themeIconSvg() + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
 }
 
+/* ---- video: why it kept resetting, and what actually fixes it ----
+   renderVideoBlock() used to return the video markup as a string, baked
+   straight into the big innerHTML rebuild on every render() call. That
+   destroyed and recreated the <iframe> on every interaction, which
+   resets YouTube playback to 0:00 even though nothing about the video
+   changed.
+
+   Attempt 2: keep ONE real iframe DOM node alive in a module-level
+   variable and move it into a placeholder anchor via appendChild after
+   each render. A test confirming the SAME node survived every render
+   passed, but the video still reset in real use.
+
+   Attempt 3: suspected the problem was app.innerHTML briefly
+   disconnecting that node before the later appendChild reconnected it,
+   so tried "parking" the host in a permanent element first (so it's
+   supposedly never disconnected), moving it there and back via
+   appendChild each render.
+
+   Neither attempt actually works, and direct testing shows why: in
+   Chromium, moving an iframe to a different parent via appendChild
+   reloads it — every time, unconditionally — even when both the old and
+   new parents are already connected to the document and stay connected
+   the whole time. There is no "safe" way to reparent a live iframe via
+   ordinary DOM moves; the move itself is what triggers the reload, not
+   disconnection.
+
+   The only fix that actually works: never move the iframe AT ALL, ever,
+   after its first insertion. #videoSlot (created once, in the #app
+   skeleton above) is a permanent fixed slot that always sits in the
+   same place in the page — right after the header, before the body
+   content — on every screen. ensureVideoHost() creates the host div
+   (with its iframe) exactly once and appends it into #videoSlot exactly
+   once, guarded so it can never run a second time. syncVideoHost() then
+   only ever toggles #videoSlot's visibility and updates the toggle
+   button / collapse state in place — plain attribute and style changes,
+   never a DOM move — so the iframe's browsing context, and playback,
+   are left completely alone. */
 var videoHostEl = null;
 function ensureVideoHost(){
   if (videoHostEl || !quiz.videoUrl) return videoHostEl;
@@ -587,19 +639,21 @@ function ensureVideoHost(){
     '<div class="video-wrap video-collapsible" id="videoCollapseWrap">' +
       '<div class="video-frame"><iframe src="' + quiz.videoUrl + '?cc_load_policy=1" title="Quiz companion video" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>' +
     '</div>';
+  videoSlot.appendChild(videoHostEl); // the ONE and ONLY time this node is ever inserted anywhere
   return videoHostEl;
 }
 function syncVideoHost(){
+  if (!quiz.videoUrl || state.screen !== "question"){
+    videoSlot.style.display = "none";
+    return;
+  }
   var host = ensureVideoHost();
-  if (!host) return;
-  var anchor = document.getElementById("videoAnchor");
-  if (!anchor) return; // this screen doesn't show the video (e.g. results screen)
+  videoSlot.style.display = "block";
   var open = state.videoOpen;
   host.querySelector("#videoToggleBtn").innerHTML = chevronSvg(open) + (open ? "Hide video" : "Watch video");
   var wrap = host.querySelector("#videoCollapseWrap");
   wrap.classList.toggle("collapsed", !open);
   wrap.style.maxHeight = window.innerWidth <= 480 ? (open ? "210px" : "0px") : "400px";
-  anchor.appendChild(host); // moves the existing iframe — does not reload it
 }
 
 function renderTitleScreen(){
@@ -610,21 +664,18 @@ function renderTitleScreen(){
   var body;
   if (isResume){
     body =
-      '<span class="eyebrow mono">OCR J277 · Sample quiz</span>' +
       '<h1 class="qtitle">' + escapeHtml(quiz.title) + '</h1>' +
       '<span class="progress-badge mono">In progress · question ' + (answeredCount+1) + ' of ' + quiz.questions.length + '</span>' +
       '<button class="btn-primary" data-action="continue-quiz">Continue quiz</button>' +
       '<button class="btn-secondary" data-action="restart-quiz">Restart from question 1</button>';
   } else {
     body =
-      '<span class="eyebrow mono">OCR J277 · Sample quiz</span>' +
       '<h1 class="qtitle">' + escapeHtml(quiz.title) + '</h1>' +
       '<p class="sub">' + quiz.questions.length + ' questions · multiple choice</p>' +
       '<button class="btn-primary" data-action="start-quiz">Start quiz</button>';
   }
 
   return (
-    renderHeader(true) +
     '<div class="title-wrap">' + body + '</div>' +
     '<div class="consent-row">' +
       '<input type="checkbox" id="consentBox" ' + (state.consent ? "checked" : "") + ' data-action="toggle-consent">' +
@@ -641,8 +692,7 @@ function renderQuestionScreen(){
   var q = quiz.questions[idx];
 
   if (q.broken){
-    return renderHeader(true) + renderVideoBlockAnchor() +
-      '<div class="broken-q-note">This question couldn’t be shown: ' + escapeHtml(q.error) + '<br>Skipping to the next one.</div>' +
+    return '<div class="broken-q-note">This question couldn’t be shown: ' + escapeHtml(q.error) + '<br>Skipping to the next one.</div>' +
       renderNav();
   }
 
@@ -694,12 +744,6 @@ function renderQuestionScreen(){
   }
 
   return (
-    renderHeader(false).replace('</div>', '<div class="hdr-controls">' +
-      '<span class="qbadge mono">Q' + (idx+1) + ' of ' + quiz.questions.length + '</span>' +
-      '<button class="icon-btn" data-action="toggle-fontsize" aria-label="Change text size">' + fontIconHtml() + '</button>' +
-      '<button class="icon-btn" data-action="toggle-theme" aria-label="Change colour theme">' + themeIconSvg() + '</button>' +
-    '</div></div>') +
-    renderVideoBlockAnchor() +
     '<div class="qbody">' +
       qImageHtml +
       '<h2 class="qtext">' + escapeHtml(q.questionText) + '</h2>' +
@@ -795,7 +839,6 @@ function renderResultsScreen(){
   }).join("");
 
   return (
-    renderHeader(true) +
     '<div class="result-card">' +
       '<span class="mono" style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mutedLabel);">Quiz complete</span>' +
       '<div class="result-score">' + score.correct + '/' + score.total + '</div>' +
