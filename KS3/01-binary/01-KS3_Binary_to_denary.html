@@ -207,63 +207,15 @@
 "use strict";
 
 /* ============================================================
-   SAMPLE QUIZ CONTENT — plain text, exactly the file format
-   agreed in the spec. Swap this string (or fetch it from a
-   ?quiz= file) for real content; nothing else needs to change.
+   QUIZ CONTENT — plain text, exactly the file format agreed in
+   the spec. Andy's real content, pasted as given: YouTube watch
+   URL normalised to an embed URL by parseQuiz(), leading
+   question-number labels ("1", "2", ...) stripped since they're
+   not part of the grammar. Once the planned converter tool exists,
+   this will live in its own small content file loaded via a
+   ?quiz= parameter instead of being embedded here — see spec.
    ============================================================ */
-var SAMPLE_QUIZ_TEXT_NETWORKS =
-"TITLE: Network Topologies\n" +
-"VIDEO: https://www.youtube.com/embed/dQw4w9WgXcQ\n" +
-"\n" +
-"Which topology connects every device to a central switch, so a single cable failure only affects one device?\n" +
-"Star\n" +
-"Bus\n" +
-"Ring\n" +
-"Mesh\n" +
-"\n" +
-"True or False: a ring topology requires a central switch or hub\n" +
-"False\n" +
-"True\n" +
-"\n" +
-"IMG: diagrams/star.svg | A labelled star topology diagram, with a central switch connected to four devices\n" +
-"This diagram shows a network topology. What is it called?\n" +
-"Star\n" +
-"Bus\n" +
-"Ring\n" +
-"Mesh\n" +
-"\n" +
-"Which diagram shows a bus topology?\n" +
-"IMG: diagrams/bus.svg | Bus topology diagram with a single central cable and devices branching off it\n" +
-"IMG: diagrams/ring.svg | Ring topology diagram with devices connected in a closed loop\n" +
-"IMG: diagrams/star.svg | Star topology diagram with a central switch\n" +
-"\n" +
-"Which unit is normally used to measure data transfer speed?\n" +
-"Mbps\n" +
-"MB\n" +
-"GHz\n" +
-"ms\n" +
-"Volts\n" +
-"RPM\n" +
-"dB\n" +
-"\n" +
-"IMG: diagrams/mesh.svg | A labelled mesh topology diagram with four devices, each connection numbered 1 to 4\n" +
-"In the diagram, what does connection 1 directly link?\n" +
-"Device A to Device B\n" +
-"Device A to Device C\n" +
-"Device B to Device D\n" +
-"Device C to Device D\n" +
-"\n" +
-"IMG: diagrams/mesh.svg | A labelled mesh topology diagram with four devices, each connection numbered 1 to 4\n" +
-"In the diagram, what does connection 2 directly link?\n" +
-"Device A to Device C\n" +
-"Device A to Device B\n" +
-"Device B to Device D\n" +
-"Device C to Device D\n";
-
-/* Andy's real content — pasted as given, YouTube watch URL normalised
-   to an embed URL by parseQuiz(), leading question-number labels
-   ("1", "2", ...) stripped since they're not part of the grammar. */
-var SAMPLE_QUIZ_TEXT_BINARY =
+var QUIZ_TEXT =
 "TITLE: KS3 Binary to denary\n" +
 "VIDEO: https://www.youtube.com/watch?v=mAf0OqlwfIY\n" +
 "\n" +
@@ -327,56 +279,10 @@ var SAMPLE_QUIZ_TEXT_BINARY =
 "3\n" +
 "1\n";
 
-function makeBigDemoQuizText(n){
-  var lines = ["TITLE: Paging demo (" + n + " questions)", ""];
-  for (var i=1;i<=n;i++){
-    lines.push("Demo question " + i + " — which answer is correct?");
-    lines.push("Correct answer " + i);
-    lines.push("Wrong answer A");
-    lines.push("Wrong answer B");
-    lines.push("");
-  }
-  return lines.join("\n");
-}
-
-/* Small inline placeholder diagrams so this demo renders something
-   real without needing hosted images. In production these paths
-   would point at real files in the content repo (see spec). */
-var PLACEHOLDER_IMAGES = {
-  "diagrams/star.svg": svgDataUri(
-    '<circle cx="60" cy="45" r="8" fill="none" stroke="#8A8477" stroke-width="2"/>' +
-    '<line x1="60" y1="45" x2="20" y2="15" stroke="#8A8477" stroke-width="2"/>' +
-    '<line x1="60" y1="45" x2="100" y2="15" stroke="#8A8477" stroke-width="2"/>' +
-    '<line x1="60" y1="45" x2="20" y2="75" stroke="#8A8477" stroke-width="2"/>' +
-    '<line x1="60" y1="45" x2="100" y2="75" stroke="#8A8477" stroke-width="2"/>' +
-    '<circle cx="20" cy="15" r="5" fill="#8A8477"/><circle cx="100" cy="15" r="5" fill="#8A8477"/>' +
-    '<circle cx="20" cy="75" r="5" fill="#8A8477"/><circle cx="100" cy="75" r="5" fill="#8A8477"/>'),
-  "diagrams/bus.svg": svgDataUri(
-    '<line x1="10" y1="45" x2="110" y2="45" stroke="#8A8477" stroke-width="3"/>' +
-    '<line x1="25" y1="45" x2="25" y2="20" stroke="#8A8477" stroke-width="2"/><circle cx="25" cy="15" r="5" fill="#8A8477"/>' +
-    '<line x1="55" y1="45" x2="55" y2="20" stroke="#8A8477" stroke-width="2"/><circle cx="55" cy="15" r="5" fill="#8A8477"/>' +
-    '<line x1="85" y1="45" x2="85" y2="20" stroke="#8A8477" stroke-width="2"/><circle cx="85" cy="15" r="5" fill="#8A8477"/>'),
-  "diagrams/ring.svg": svgDataUri(
-    '<circle cx="60" cy="45" r="30" fill="none" stroke="#8A8477" stroke-width="2"/>' +
-    '<circle cx="60" cy="15" r="5" fill="#8A8477"/><circle cx="90" cy="45" r="5" fill="#8A8477"/>' +
-    '<circle cx="60" cy="75" r="5" fill="#8A8477"/><circle cx="30" cy="45" r="5" fill="#8A8477"/>'),
-  "diagrams/mesh.svg": svgDataUri(
-    '<circle cx="25" cy="20" r="5" fill="#8A8477"/><circle cx="95" cy="20" r="5" fill="#8A8477"/>' +
-    '<circle cx="25" cy="70" r="5" fill="#8A8477"/><circle cx="95" cy="70" r="5" fill="#8A8477"/>' +
-    '<line x1="25" y1="20" x2="95" y2="20" stroke="#8A8477" stroke-width="1.5"/>' +
-    '<line x1="25" y1="20" x2="25" y2="70" stroke="#8A8477" stroke-width="1.5"/>' +
-    '<line x1="95" y1="20" x2="95" y2="70" stroke="#8A8477" stroke-width="1.5"/>' +
-    '<line x1="25" y1="70" x2="95" y2="70" stroke="#8A8477" stroke-width="1.5"/>' +
-    '<text x="58" y="17" font-size="9" fill="#3B5BDB" font-family="monospace">1</text>' +
-    '<text x="15" y="48" font-size="9" fill="#3B5BDB" font-family="monospace">2</text>' +
-    '<text x="98" y="48" font-size="9" fill="#3B5BDB" font-family="monospace">3</text>' +
-    '<text x="58" y="76" font-size="9" fill="#3B5BDB" font-family="monospace">4</text>')
-};
-function svgDataUri(inner){
-  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 90">' + inner + '</svg>';
-  return "data:image/svg+xml," + encodeURIComponent(svg);
-}
-function resolveImage(path){ return PLACEHOLDER_IMAGES[path] || path; }
+/* This quiz has no images, so resolveImage() is just a passthrough —
+   an image-based quiz would give real hosted file paths here (per the
+   spec's IMG: grammar), needing no change to this function. */
+function resolveImage(path){ return path; }
 
 /* ============================================================
    PARSER — implements the plain-text grammar from the spec.
@@ -507,13 +413,8 @@ function brokenQuestion(idx, message, questionText){
 /* ============================================================
    STATE
    ============================================================ */
-var QUIZ_TEXTS = {
-  "ks3-binary-denary": SAMPLE_QUIZ_TEXT_BINARY,
-  "networks-2-4-1": SAMPLE_QUIZ_TEXT_NETWORKS
-};
-var QUIZ_ID = (new URLSearchParams(location.search)).get("quiz") || "ks3-binary-denary";
-var USE_BIG_DEMO = (new URLSearchParams(location.search)).get("paging") === "1";
-var quiz = parseQuiz(USE_BIG_DEMO ? makeBigDemoQuizText(50) : (QUIZ_TEXTS[QUIZ_ID] || QUIZ_TEXTS["ks3-binary-denary"]));
+var QUIZ_ID = "ks3-binary-denary"; // used for progress storage + logging; matches this quiz's file name
+var quiz = parseQuiz(QUIZ_TEXT);
 
 var state = {
   screen: "title",            // title | question | results
