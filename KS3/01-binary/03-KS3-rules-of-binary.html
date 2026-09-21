@@ -1,1 +1,1264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCQ Quiz Widget</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  /* ============ THEME TOKENS (values verified against WCAG AA, see spec) ============ */
+  body[data-theme="light"]{
+    --pageBg:#F7F5F1; --text:#1F2421; --secondary:#636A78; --mutedLabel:#736E64; --wordmark:#8A8477;
+    --cardBg:#FFFFFF; --cardBorder:#E5E1D8; --badgeBg:#F1EFE9; --badgeText:#636A78;
+    --accent:#3B5BDB; --accentBg:#F5F7FF; --accentBadgeBg:#E8ECFC; --accentText:#3B5BDB;
+    --navDoneBorder:#1F2421; --navDoneText:#1F2421; --navDoneBg:#FFFFFF;
+    --navLockedBg:#EDEAE3; --navLockedText:#B5AF9F;
+    --iconBg:#FFFFFF; --iconBorder:#E5E1D8; --iconColor:#1F2421;
+    --correctBg:#E4F5EC; --correctText:#0F9D6C; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+  body[data-theme="dark"]{
+    --pageBg:#1B1D1B; --text:#F2F0EA; --secondary:#A9A79E; --mutedLabel:#8C897E; --wordmark:#8C897E;
+    --cardBg:#262825; --cardBorder:#3A3C37; --badgeBg:#33352F; --badgeText:#A9A79E;
+    --accent:#7C93F2; --accentBg:#2A2D45; --accentBadgeBg:#33375C; --accentText:#AAB8FA;
+    --navDoneBorder:#F2F0EA; --navDoneText:#F2F0EA; --navDoneBg:#262825;
+    --navLockedBg:#2E302B; --navLockedText:#65635A;
+    --iconBg:#262825; --iconBorder:#3A3C37; --iconColor:#F2F0EA;
+    --correctBg:#1E3A2E; --correctText:#5FD9A4; --incorrectBg:#3B2323; --incorrectText:#F28B8B;
+  }
+  body[data-theme="accessible"]{
+    --pageBg:#FDF6E3; --text:#3B3A36; --secondary:#6B675D; --mutedLabel:#757161; --wordmark:#8A8574;
+    --cardBg:#FFFBEF; --cardBorder:#E8DCC0; --badgeBg:#F3E9D2; --badgeText:#6B675D;
+    --accent:#6B4A94; --accentBg:#F1EAF7; --accentBadgeBg:#E6D9F0; --accentText:#5A3D7D;
+    --navDoneBorder:#3B3A36; --navDoneText:#3B3A36; --navDoneBg:#FFFBEF;
+    --navLockedBg:#EFE6CE; --navLockedText:#B3A98C;
+    --iconBg:#FFFBEF; --iconBorder:#E8DCC0; --iconColor:#3B3A36;
+    --correctBg:#E9E4CC; --correctText:#4A5D3A; --incorrectBg:#F1DCCB; --incorrectText:#8A4A2E;
+  }
+  body[data-theme="ocean"]{
+    --pageBg:#F3F6FB; --text:#182233; --secondary:#5C6B84; --mutedLabel:#656F7F; --wordmark:#8A97AC;
+    --cardBg:#FFFFFF; --cardBorder:#DCE4F0; --badgeBg:#EAF0FA; --badgeText:#5C6B84;
+    --accent:#1D6FE0; --accentBg:#E9F1FE; --accentBadgeBg:#D6E7FD; --accentText:#1B67D2;
+    --navDoneBorder:#182233; --navDoneText:#182233; --navDoneBg:#FFFFFF;
+    --navLockedBg:#E4EAF3; --navLockedText:#A8B4C7;
+    --iconBg:#FFFFFF; --iconBorder:#DCE4F0; --iconColor:#182233;
+    --correctBg:#E1F3EC; --correctText:#0F9D6C; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+  body[data-theme="forest"]{
+    --pageBg:#F2F8F6; --text:#122420; --secondary:#4E6A61; --mutedLabel:#5D766E; --wordmark:#7FA096;
+    --cardBg:#FFFFFF; --cardBorder:#D8EAE3; --badgeBg:#E6F3EE; --badgeText:#4E6A61;
+    --accent:#0E8F72; --accentBg:#E4F5EF; --accentBadgeBg:#CFEEE3; --accentText:#0A7D62;
+    --navDoneBorder:#122420; --navDoneText:#122420; --navDoneBg:#FFFFFF;
+    --navLockedBg:#DEEEE7; --navLockedText:#9BBBB0;
+    --iconBg:#FFFFFF; --iconBorder:#D8EAE3; --iconColor:#122420;
+    --correctBg:#DCEFE6; --correctText:#0E8F72; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+  body[data-theme="plum"]{
+    --pageBg:#F7F2FA; --text:#28183A; --secondary:#6F5C82; --mutedLabel:#796A88; --wordmark:#9987AD;
+    --cardBg:#FFFFFF; --cardBorder:#E7DAF0; --badgeBg:#F1E7F7; --badgeText:#6F5C82;
+    --accent:#8034C2; --accentBg:#F1E6FA; --accentBadgeBg:#E4D0F5; --accentText:#8034C2;
+    --navDoneBorder:#28183A; --navDoneText:#28183A; --navDoneBg:#FFFFFF;
+    --navLockedBg:#EBDFF3; --navLockedText:#B49FC6;
+    --iconBg:#FFFFFF; --iconBorder:#E7DAF0; --iconColor:#28183A;
+    --correctBg:#E7E0F2; --correctText:#5A3D7D; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
 
+  body[data-fontsize="normal"]{ --qSize:21px; --qLine:1.45; --aSize:15.5px; --badgeSize:13px; --btnPad:16px 18px; }
+  body[data-fontsize="larger"]{ --qSize:24px; --qLine:1.45; --aSize:17.5px; --badgeSize:14px; --btnPad:18px 18px; }
+  body[data-fontsize="largest"]{ --qSize:27px; --qLine:1.4; --aSize:19.5px; --badgeSize:15px; --btnPad:20px 18px; }
+
+  * { box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'DM Sans',system-ui,sans-serif;
+    background: var(--pageBg);
+    color: var(--text);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  button{ font-family:inherit; }
+  #app{ width:100%; max-width:640px; margin:0 auto; position:relative; overflow:hidden; }
+  .mono{ font-family:'Space Mono',monospace; }
+
+  /* ---- header ---- */
+  .hdr{ display:flex; justify-content:space-between; align-items:center; padding:20px 24px; gap:8px; flex-wrap:wrap; }
+  .hdr-title{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--wordmark); }
+  .hdr-controls{ display:flex; align-items:center; gap:8px; }
+  .icon-btn{ width:36px; height:36px; border-radius:999px; border:1.5px solid var(--iconBorder); background:var(--iconBg); color:var(--iconColor); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .icon-btn:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .qbadge{ background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:999px; padding:6px 12px; font-family:'Space Mono',monospace; font-size:12px; white-space:nowrap; }
+
+  /* ---- title screen ---- */
+  .title-wrap{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px; padding:24px 40px 8px; }
+  .eyebrow{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); }
+  h1.qtitle{ margin:0; font-size:34px; font-weight:700; line-height:1.15; }
+  .sub{ margin:0; font-size:16px; color:var(--secondary); }
+  .btn-primary{ margin-top:10px; padding:16px 44px; border-radius:999px; border:none; background:var(--accent); color:#fff; font-size:16px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(59,91,219,0.28); }
+  .btn-secondary{ margin-top:4px; padding:10px 26px; border-radius:999px; border:1.5px solid var(--cardBorder); background:var(--cardBg); color:var(--secondary); font-size:13.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+  .footer-hint{ margin:18px 40px 26px; text-align:center; font-size:13px; color:var(--mutedLabel); }
+  .progress-badge{ display:inline-flex; align-items:center; gap:7px; padding:6px 14px; border-radius:999px; background:var(--badgeBg); border:1px solid var(--cardBorder); font-family:'Space Mono',monospace; font-size:12px; color:var(--secondary); }
+
+  /* ---- consent banner ---- */
+  .consent-row{ display:flex; align-items:flex-start; gap:10px; margin:22px 32px 4px; padding:12px 14px; border-radius:12px; background:var(--badgeBg); border:1px solid var(--cardBorder); text-align:left; }
+  .consent-row input[type=checkbox]{ width:20px; height:20px; flex:0 0 auto; margin-top:1px; accent-color: var(--accent); }
+  .consent-row label{ font-size:12.5px; line-height:1.5; color:var(--secondary); cursor:pointer; }
+
+  /* ---- video ---- */
+  .video-wrap{ padding: 0 24px; }
+  .video-toggle{ display:none; align-items:center; gap:6px; background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:999px; padding:5px 12px 5px 10px; font-size:11.5px; font-weight:600; color:var(--accent); cursor:pointer; margin: 0 24px 8px; }
+  .video-frame{ width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; border:1.5px solid var(--cardBorder); margin-bottom:10px; }
+  .video-frame iframe{ width:100%; height:100%; border:0; display:block; }
+  .video-collapsible{ overflow:hidden; transition:max-height .28s ease, margin .28s ease; }
+
+  /* ---- question screen ---- */
+  .qbody{ padding: 4px 32px 0; }
+  h2.qtext{ margin:20px 0 22px; font-size:var(--qSize); font-weight:600; line-height:var(--qLine); }
+  .q-image-wrap{ margin:0 0 20px; border-radius:14px; overflow:hidden; border:1.5px solid var(--cardBorder); cursor:zoom-in; position:relative; }
+  .q-image-wrap img{ width:100%; display:block; }
+  .answers{ display:flex; flex-direction:column; gap:12px; }
+  .ans-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:var(--btnPad); border-radius:14px; border:2px solid var(--cardBorder); background:var(--cardBg); font-size:var(--aSize); color:var(--text); text-align:left; cursor:pointer; }
+  .ans-btn.selected{ border-color:var(--accent); background:var(--accentBg); }
+  .ans-btn:disabled{ cursor:default; opacity:.88; }
+  .ans-badge{ flex:0 0 auto; width:26px; height:26px; border-radius:8px; background:var(--badgeBg); display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-size:var(--badgeSize); color:var(--badgeText); }
+  .ans-btn.selected .ans-badge{ background:var(--accentBadgeBg); color:var(--accentText); }
+
+  .img-answers{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .img-ans{ position:relative; border-radius:14px; overflow:hidden; border:2px solid var(--cardBorder); background:var(--cardBg); cursor:pointer; padding:0; }
+  .img-ans.selected{ border-color:var(--accent); }
+  .img-ans img{ width:100%; display:block; aspect-ratio:4/3; object-fit:contain; background:var(--badgeBg); }
+  .img-ans .ans-badge{ position:absolute; top:8px; left:8px; background:var(--cardBg); border:1px solid var(--cardBorder); }
+  .img-zoom-btn{ position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:999px; border:1px solid var(--cardBorder); background:rgba(255,255,255,0.92); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  @media (hover:hover){ .img-zoom-btn{ opacity:0; transition:opacity .15s; } .img-ans:hover .img-zoom-btn, .img-ans:focus-within .img-zoom-btn{ opacity:1; } }
+
+  .finish-row{ margin-top:22px; display:flex; justify-content:center; }
+
+  /* ---- nav ---- */
+  .nav-section{ margin-top:26px; border-top:1px solid var(--cardBorder); padding-top:18px; }
+  .nav-label{ margin:0 0 12px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--mutedLabel); }
+  .nav-btn{ width:44px; height:44px; border-radius:999px; font-family:'Space Mono',monospace; font-size:13px; display:flex; align-items:center; justify-content:center; padding:0; flex:0 0 44px; }
+  .nav-btn.answered{ background:var(--navDoneBg); border:1.5px solid var(--navDoneBorder); color:var(--navDoneText); font-weight:600; cursor:pointer; }
+  .nav-btn.current{ background:var(--accent); border:1.5px solid var(--accent); color:#fff; font-weight:700; cursor:pointer; }
+  .nav-btn.locked{ background:var(--navLockedBg); border:1.5px solid var(--cardBorder); color:var(--navLockedText); cursor:not-allowed; }
+  .nav-row{ display:flex; flex-wrap:wrap; gap:8px; padding-bottom:24px; }
+  .nav-strip{ display:none; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; padding-bottom:24px; }
+  .nav-strip .nav-btn{ scroll-snap-align:center; }
+  .nav-grid-outer{ display:flex; align-items:center; gap:10px; padding-bottom:24px; }
+  .nav-grid-viewport{ overflow:hidden; flex:1 1 auto; }
+  .nav-grid-track{ display:flex; transition:transform .4s cubic-bezier(.65,0,.35,1); }
+  .nav-grid-page{ flex:0 0 100%; box-sizing:border-box; display:grid; grid-template-columns:repeat(10,1fr); grid-auto-rows:44px; gap:8px; }
+  .nav-grid-page.tight{ column-gap:3px; }
+  .nav-arrow{ flex:0 0 auto; width:32px; height:96px; border-radius:12px; border:1.5px solid var(--accent); background:var(--cardBg); color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; }
+  .nav-arrow:disabled{ visibility:hidden; }
+  .restart-mid{ display:flex; justify-content:center; margin: 6px 0 0; }
+  .restart-mid button{ background:none; border:none; color:var(--secondary); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:6px; }
+
+  /* ---- results ---- */
+  .result-card{ margin:8px 32px 0; background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:22px; padding:36px 32px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  /* Perfect-score badge: a real <img> (drawn from a hidden <canvas>, see
+     syncCompletionBadge) so right-click "Copy image" / "Save image as", and
+     long-press-save on mobile, work exactly like any other picture. */
+  .badge-score-row{ display:flex; align-items:center; justify-content:center; gap:18px; flex-wrap:wrap; width:100%; }
+  .badge-wrap{ display:flex; justify-content:center; margin:0; }
+  .badge-img{ max-width:170px; width:170px; height:auto; display:block; }
+  .score-block{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .result-score{ font-family:'Space Mono',monospace; font-size:52px; font-weight:700; color:var(--accent); line-height:1; margin-top:4px; }
+  .review-header{ display:flex; align-items:center; justify-content:center; gap:8px; margin:32px 0 16px; color:var(--mutedLabel); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.5px; text-transform:uppercase; }
+  .review-list{ padding:0 32px 40px; display:flex; flex-direction:column; gap:14px; }
+  .review-card{ background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:8px; }
+  .review-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .review-qtext{ font-size:14.5px; font-weight:500; line-height:1.4; flex:1; }
+  .chip{ flex:0 0 auto; display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-family:'Space Mono',monospace; font-size:11px; font-weight:700; }
+  .chip.correct{ background:var(--correctBg); color:var(--correctText); }
+  .chip.incorrect{ background:var(--incorrectBg); color:var(--incorrectText); }
+  .review-answer{ font-size:13px; color:var(--secondary); }
+  .review-thumbs{ display:flex; gap:20px; }
+  .review-thumb-col{ display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .review-thumb-col span{ font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; }
+  .review-thumb{ width:72px; height:54px; border-radius:8px; object-fit:contain; background:var(--badgeBg); border:2px solid var(--cardBorder); }
+
+  /* ---- zoom overlay ---- */
+  .zoom-overlay{ position:absolute; inset:0; background:rgba(10,10,10,0.86); display:flex; align-items:center; justify-content:center; z-index:50; touch-action:none; }
+  .zoom-stage{ position:relative; width:92%; height:82%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .zoom-stage img{ max-width:100%; max-height:100%; object-fit:contain; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+  .zoom-stage img.zoomed{ cursor:grab; }
+  .zoom-stage img.dragging{ cursor:grabbing; }
+  .zoom-toolbar{ position:absolute; top:10px; right:10px; display:flex; gap:8px; }
+  .zoom-toolbar button{ width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.14); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .zoom-toolbar button:hover, .zoom-toolbar button:focus-visible{ background:rgba(255,255,255,0.26); }
+  .zoom-alt{ position:absolute; bottom:10px; left:0; right:0; text-align:center; color:#e8e6e0; font-size:12px; font-family:'Space Mono',monospace; padding:0 20px; }
+
+  /* ---- error state ---- */
+  .error-box{ margin:40px 32px; padding:24px; border-radius:14px; background:var(--incorrectBg); border:1.5px solid var(--incorrectText); color:var(--text); text-align:center; }
+  .broken-q-note{ margin:12px 0; padding:14px; border-radius:10px; background:var(--incorrectBg); color:var(--incorrectText); font-size:13px; text-align:center; }
+
+  /* ---- mobile (<=480px): collapsible video, split header, swipeable nav strip only ---- */
+  @media (max-width:480px){
+    .hdr{ flex-direction:column; align-items:stretch; gap:9px; padding:14px 16px 0; }
+    .hdr-row1{ display:flex; justify-content:space-between; align-items:center; }
+    .hdr-row2{ display:flex; justify-content:space-between; align-items:center; }
+    .icon-btn{ width:32px; height:32px; }
+    .video-toggle{ display:inline-flex; }
+    .video-collapsible.collapsed{ max-height:0; margin:0; }
+    .qbody{ padding:4px 18px 0; }
+    .title-wrap{ padding:20px 20px 8px; }
+    h1.qtitle{ font-size:28px; }
+    .nav-grid-outer{ display:none; }
+    .nav-row{ display:none; }
+    .nav-strip{ display:flex !important; }
+    /* Shrink the badge and score number a bit so they still sit side by
+       side (not stacked) inside the narrower card on a phone. */
+    .result-card{ padding:28px 20px; margin-left:16px; margin-right:16px; }
+    .badge-score-row{ gap:10px; }
+    .badge-img{ width:120px; }
+    .result-score{ font-size:40px; }
+  }
+</style>
+</head>
+<body data-theme="light" data-fontsize="normal">
+<div id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   QUIZ CONTENT — plain text, exactly the file format agreed in
+   the spec. Andy's real content, pasted as given: YouTube watch
+   URL normalised to an embed URL by parseQuiz(), leading
+   question-number labels ("1", "2", ...) stripped since they're
+   not part of the grammar. Once the planned converter tool exists,
+   this will live in its own small content file loaded via a
+   ?quiz= parameter instead of being embedded here — see spec.
+   ============================================================ */
+var QUIZ_TEXT =
+"TITLE: Rules of binary\n" +
+"\n" +
+
+// Q1
+"The binary number 1001 is made up of how many bits?\n" +
+"4\n" +
+"3\n" +
+"2\n" +
+"1\n" +
+"\n" +
+
+// Q2
+"The following binary number 0010, only one place value is switched on. Which place value is switched on?\n" +
+"2\n" +
+"1\n" +
+"4\n" +
+"8\n" +
+"\n" +
+
+// Q3
+"What is the value of the highest \"place value\" in 4 bit binary?\n" +
+"8\n" +
+"4\n" +
+"2\n" +
+"1\n" +
+"\n" +
+
+// Q4
+"What is the value of the lowest \"place value\" in 4 bit binary?\n" +
+"1\n" +
+"2\n" +
+"4\n" +
+"8\n" +
+"\n" +
+
+// Q5
+"In the following binary number 1001, the \"1\" on the far right is in a location called the \"least significant bit\" (LSB). Which part of the same binary number is the \"Most significant bit\" (MSB)?\n" +
+"The \"1\" on the far left\n" +
+"The \"1\" on the far right\n" +
+"The \"0\" on the left\n" +
+"The \"0\" on the right\n" +
+"\n" +
+
+// Q6
+"The binary number 1010 is made up of four bits. A bit can be either a 1 or 0. Another name for 4-bits is a \"nibble\". What is the name of the smallest binary unit of data?\n" +
+"A bit\n" +
+"A nibble\n" +
+"A byte\n" +
+"A munch\n" +
+"\n" +
+
+// Q7
+"The following binary is made up of 8-bits 1000 0001. What is another name for a binary number that is made up of 8-bits?\n" +
+"A byte\n" +
+"A bit\n" +
+"A nibble\n" +
+"A munch\n" +
+"\n" +
+
+// Q8
+"The following binary is made up of 8-bits 1000 0001. What is the (place) value of the least significant bit (LSB)?\n" +
+"1\n" +
+"8\n" +
+"6\n" +
+"32\n" +
+"\n" +
+
+// Q9
+"The following nibble 1001 has a value of 9. This is because the value of the Least Significant Bit (LSB) is 1. The LSB is doubled to work out the place value of the next bit, which equal 2. This is repeated until you reach the Most Significant Bit (MSB) which would equal a place value of 8. Use this rule to work out the place value of the MSB for the following byte 1000 0001.\n" +
+"128\n" +
+"64\n" +
+"32\n" +
+"8\n" +
+"\n" +
+
+// Q10 — last question, no trailing "\n" + "\n" needed
+"Place these units of binary in ascending order (low to high)\n" +
+"bit, nibble, byte, kilobyte\n" +
+"bit, kilobyte, byte, nibble\n" +
+"byte, nibble, bit, kilobyte\n" +
+"nibble, kilobyte, byte, bit\n";
+
+/* This quiz has no images, so resolveImage() is just a passthrough —
+   an image-based quiz would give real hosted file paths here (per the
+   spec's IMG: grammar), needing no change to this function. */
+function resolveImage(path){ return path; }
+
+/* ============================================================
+   PARSER — implements the plain-text grammar from the spec.
+   Malformed questions are isolated (flagged, not dropped),
+   so one bad edit doesn't break the whole quiz. This same
+   parser is what the converter tool's preview should share,
+   per Architecture in the spec.
+   ============================================================ */
+function parseQuiz(text){
+  var lines = text.replace(/\r\n/g, "\n").split("\n");
+  var i = 0;
+  var title = null, videoUrl = null;
+  while (i < lines.length && lines[i].trim() !== "") {
+    var line = lines[i].trim();
+    var mTitle = line.match(/^TITLE:\s*(.+)$/i);
+    var mVideo = line.match(/^VIDEO:\s*(.+)$/i);
+    if (mTitle) title = mTitle[1].trim();
+    else if (mVideo) videoUrl = normalizeYouTubeUrl(mVideo[1].trim());
+    i++;
+  }
+  while (i < lines.length && lines[i].trim() === "") i++;
+
+  var blocks = [];
+  var current = [];
+  for (; i < lines.length; i++){
+    if (lines[i].trim() === ""){
+      if (current.length){ blocks.push(current); current = []; }
+    } else {
+      current.push(lines[i]);
+    }
+  }
+  if (current.length) blocks.push(current);
+
+  var questions = blocks.map(function(block, idx){
+    return parseQuestionBlock(block, idx);
+  });
+
+  return {
+    title: title || "Untitled quiz",
+    videoUrl: videoUrl || null,
+    questions: questions
+  };
+}
+
+/* Authors will naturally paste whatever URL YouTube gives them when they
+   hit Share (a normal watch/youtu.be link, sometimes with tracking params
+   tacked on) rather than hand-build an /embed/ URL. A raw watch URL can't
+   be framed (YouTube blocks it), so normalise anything recognisable down
+   to the video ID and rebuild a proper embed URL. Anything unrecognised
+   is passed through as-is rather than dropped, so a non-YouTube embed URL
+   still works. */
+function normalizeYouTubeUrl(url){
+  if (!url) return url;
+  var m = url.match(/[?&]v=([A-Za-z0-9_-]{6,})/) ||
+          url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/) ||
+          url.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/) ||
+          url.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{6,})/);
+  return m ? ("https://www.youtube.com/embed/" + m[1]) : url;
+}
+
+function parseImgLine(line){
+  var m = line.match(/^IMG:\s*(.+?)\s*\|\s*(.+)$/i);
+  if (!m) return null;
+  return { path: m[1].trim(), alt: m[2].trim() };
+}
+
+function parseQuestionBlock(block, idx){
+  var lines = block.slice();
+  var questionImage = null, questionImageAlt = null;
+
+  if (lines.length && /^IMG:/i.test(lines[0].trim())){
+    var img = parseImgLine(lines[0].trim());
+    if (img){ questionImage = img.path; questionImageAlt = img.alt; lines = lines.slice(1); }
+  }
+
+  if (!lines.length){
+    return brokenQuestion(idx, "This question has no question text.");
+  }
+  var questionText = lines[0].trim();
+  var answerLines = lines.slice(1).filter(function(l){ return l.trim() !== ""; });
+
+  if (!answerLines.length){
+    return brokenQuestion(idx, "“" + questionText + "” has no answers listed.", questionText);
+  }
+
+  var answers = answerLines.map(function(line, i){
+    var trimmed = line.trim();
+    var img = /^IMG:/i.test(trimmed) ? parseImgLine(trimmed) : null;
+    if (img){
+      return { id: i, kind: "image", image: img.path, alt: img.alt, correct: i === 0 };
+    }
+    return { id: i, kind: "text", text: trimmed, correct: i === 0 };
+  });
+
+  var imageAnswerCount = answers.filter(function(a){ return a.kind === "image"; }).length;
+  var isImageQuestion = imageAnswerCount > 0;
+
+  if (isImageQuestion && imageAnswerCount !== answers.length){
+    return brokenQuestion(idx, "“" + questionText + "” mixes image and text answers on the same option list — not supported.", questionText);
+  }
+  if (isImageQuestion && (answers.length < 2 || answers.length > 4)){
+    return brokenQuestion(idx, "“" + questionText + "” has " + answers.length + " image answers — image questions need 2–4.", questionText);
+  }
+  if (!isImageQuestion && (answers.length < 2 || answers.length > 7)){
+    return brokenQuestion(idx, "“" + questionText + "” has " + answers.length + " answers — text questions need 2–7.", questionText);
+  }
+  if (isImageQuestion){
+    var missingAlt = answers.some(function(a){ return !a.alt; });
+    if (missingAlt) return brokenQuestion(idx, "“" + questionText + "” is missing alt text on an image answer.", questionText);
+  }
+  if (questionImage && !questionImageAlt){
+    return brokenQuestion(idx, "“" + questionText + "” is missing alt text on its question image.", questionText);
+  }
+
+  return {
+    broken: false,
+    questionText: questionText,
+    questionImage: questionImage,
+    questionImageAlt: questionImageAlt,
+    isImageQuestion: isImageQuestion,
+    answers: answers
+  };
+}
+function brokenQuestion(idx, message, questionText){
+  return { broken: true, error: message, questionText: questionText || ("Question " + (idx+1)) };
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var QUIZ_ID = "ks3-rules-of-binary"; // used for progress storage + logging; matches this quiz's file name
+var quiz = parseQuiz(QUIZ_TEXT);
+
+var state = {
+  screen: "title",            // title | question | results
+  resumeAvailable: false,
+  order: [],                  // per-question shuffled answer arrays
+  answered: {},                // qIndex -> {id, correct}
+  currentIndex: 0,
+  navPage: 0,
+  theme: localStorage.getItem("mcq_theme") || "light",
+  fontSize: localStorage.getItem("mcq_fontsize") || "normal",
+  consent: localStorage.getItem("mcq_consent") === "1",
+  videoOpen: false,
+  zoom: null                  // {src, alt, stage, scale, tx, ty}
+};
+
+var PROGRESS_KEY = "mcq_progress_" + QUIZ_ID;
+
+function shuffledIds(answers){
+  var ids = answers.map(function(a){ return a.id; });
+  for (var i = ids.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = ids[i]; ids[i] = ids[j]; ids[j] = t;
+  }
+  return ids;
+}
+
+function newAttempt(){
+  state.order = quiz.questions.map(function(q){
+    return q.broken ? [] : shuffledIds(q.answers);
+  });
+  state.answered = {};
+  state.currentIndex = 0;
+  state.navPage = 0;
+  saveProgress();
+  logAttempt("started");
+}
+
+function saveProgress(){
+  try {
+    sessionStorage.setItem(PROGRESS_KEY, JSON.stringify({
+      order: state.order, answered: state.answered, currentIndex: state.currentIndex
+    }));
+  } catch(e){}
+}
+function loadProgress(){
+  try {
+    var raw = sessionStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e){ return null; }
+}
+function clearProgress(){
+  try { sessionStorage.removeItem(PROGRESS_KEY); } catch(e){}
+}
+
+/* Usage logging. Gated by consent, per spec. Posts to the Cloudflare
+   Worker (which tags a country code and forwards to Supabase) on both
+   quiz start and finish, sharing one attempt_id between the two rows.
+   Fire-and-forget: a failed or slow request never blocks or breaks the
+   quiz for the pupil. */
+var LOG_ENDPOINT = "https://mcq-logger.andrewspero.workers.dev";
+var attemptId = null;
+
+function getVisitorId(){
+  try {
+    var id = localStorage.getItem("mcq_visitor_id");
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : (String(Date.now()) + Math.random().toString(16).slice(2)));
+      localStorage.setItem("mcq_visitor_id", id);
+    }
+    return id;
+  } catch(e){ return null; }
+}
+
+function logAttempt(status){
+  if (!state.consent) return;
+  if (status === "started") attemptId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  var visitorId = getVisitorId();
+  if (!attemptId || !visitorId) return;
+  var scoreInfo = status === "completed" ? computeScore() : null;
+  var payload = {
+    attempt_id: attemptId, visitor_id: visitorId, quiz_id: QUIZ_ID, quiz_title: quiz.title, status: status,
+    score: scoreInfo ? scoreInfo.correct : null, total_questions: quiz.questions.length
+  };
+  try {
+    fetch(LOG_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function(){ /* silent - logging must never break the quiz for the pupil */ });
+  } catch(e){ /* silent, same reason */ }
+}
+
+function computeScore(){
+  var correct = 0, total = 0;
+  quiz.questions.forEach(function(q, idx){
+    if (q.broken) return;
+    total++;
+    var a = state.answered[idx];
+    if (a && a.correct) correct++;
+  });
+  return { correct: correct, total: total };
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+/* #app is built ONCE, as a fixed three-slot skeleton, rather than having
+   its whole innerHTML replaced on every render(). This matters only for
+   #videoSlot: see the big comment above ensureVideoHost() below for why —
+   in short, an iframe reloads on ANY DOM move in Chromium (confirmed by
+   direct testing), even a "safe"-looking one, so the video slot must be
+   created once and never moved, appended-to-elsewhere, or rebuilt again.
+   #headerSlot and #bodySlot hold no iframes, so they're simply
+   re-rendered via innerHTML every time, same as the old single-slot
+   approach — no persistence concerns there. */
+var app = document.getElementById("app");
+app.innerHTML = '<div id="headerSlot"></div><div id="videoSlot" style="display:none;"></div><div id="bodySlot"></div>';
+var headerSlot = document.getElementById("headerSlot");
+var videoSlot = document.getElementById("videoSlot");
+var bodySlot = document.getElementById("bodySlot");
+
+function render(){
+  document.body.setAttribute("data-theme", state.theme);
+  document.body.setAttribute("data-fontsize", state.fontSize);
+  headerSlot.innerHTML = (state.screen === "question") ? renderQuestionHeader() : renderHeader(true);
+  var bodyHtml = "";
+  if (state.screen === "title") bodyHtml = renderTitleScreen();
+  else if (state.screen === "question") bodyHtml = renderQuestionScreen();
+  else if (state.screen === "results") bodyHtml = renderResultsScreen();
+  bodySlot.innerHTML = bodyHtml;
+  var existingZoom = app.querySelector(".zoom-overlay");
+  if (existingZoom) existingZoom.remove();
+  if (state.zoom) app.insertAdjacentHTML("beforeend", renderZoomOverlay());
+  syncVideoHost();
+  syncCompletionBadge();
+  bindZoomDrag();
+  postHeight();
+}
+
+function themeIconSvg(){
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path></svg>';
+}
+function fontIconHtml(){
+  return '<span style="font-size:10px;">A</span><span style="font-size:15px;margin-left:1px;">A</span>';
+}
+function chevronSvg(open){
+  return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(' + (open?180:0) + 'deg);transition:transform .2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+}
+
+function renderHeader(showControls){
+  var themeName = { light:"Light", dark:"Dark", accessible:"Accessibility", ocean:"Ocean", forest:"Forest", plum:"Plum" }[state.theme];
+  return (
+    '<div class="hdr">' +
+      '<div class="hdr-row1" style="display:flex;justify-content:space-between;align-items:center;flex:1;gap:8px;">' +
+        '<span class="hdr-title mono">' + escapeHtml(quiz.title) + '</span>' +
+        (showControls ? (
+        '<div class="hdr-controls">' +
+          '<button class="icon-btn" data-action="toggle-fontsize" aria-label="Change text size (currently ' + state.fontSize + ')">' + fontIconHtml() + '</button>' +
+          '<button class="icon-btn" data-action="toggle-theme" aria-label="Change colour theme (currently ' + themeName + ')">' + themeIconSvg() + '</button>' +
+        '</div>') : '') +
+      '</div>' +
+    '</div>'
+  );
+}
+function renderQuestionHeader(){
+  var idx = state.currentIndex;
+  var total = quiz.questions.length;
+  return (
+    '<div class="hdr">' +
+      '<div class="hdr-row1" style="display:flex;justify-content:space-between;align-items:center;flex:1;gap:8px;">' +
+        '<span class="hdr-title mono">' + escapeHtml(quiz.title) + '</span>' +
+        '<div class="hdr-controls">' +
+          '<span class="qbadge mono">Q' + (idx+1) + ' of ' + total + '</span>' +
+          '<button class="icon-btn" data-action="toggle-fontsize" aria-label="Change text size">' + fontIconHtml() + '</button>' +
+          '<button class="icon-btn" data-action="toggle-theme" aria-label="Change colour theme">' + themeIconSvg() + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ---- video: why it kept resetting, and what actually fixes it ----
+   renderVideoBlock() used to return the video markup as a string, baked
+   straight into the big innerHTML rebuild on every render() call. That
+   destroyed and recreated the <iframe> on every interaction, which
+   resets YouTube playback to 0:00 even though nothing about the video
+   changed.
+
+   Attempt 2: keep ONE real iframe DOM node alive in a module-level
+   variable and move it into a placeholder anchor via appendChild after
+   each render. A test confirming the SAME node survived every render
+   passed, but the video still reset in real use.
+
+   Attempt 3: suspected the problem was app.innerHTML briefly
+   disconnecting that node before the later appendChild reconnected it,
+   so tried "parking" the host in a permanent element first (so it's
+   supposedly never disconnected), moving it there and back via
+   appendChild each render.
+
+   Neither attempt actually works, and direct testing shows why: in
+   Chromium, moving an iframe to a different parent via appendChild
+   reloads it — every time, unconditionally — even when both the old and
+   new parents are already connected to the document and stay connected
+   the whole time. There is no "safe" way to reparent a live iframe via
+   ordinary DOM moves; the move itself is what triggers the reload, not
+   disconnection.
+
+   The only fix that actually works: never move the iframe AT ALL, ever,
+   after its first insertion. #videoSlot (created once, in the #app
+   skeleton above) is a permanent fixed slot that always sits in the
+   same place in the page — right after the header, before the body
+   content — on every screen. ensureVideoHost() creates the host div
+   (with its iframe) exactly once and appends it into #videoSlot exactly
+   once, guarded so it can never run a second time. syncVideoHost() then
+   only ever toggles #videoSlot's visibility and updates the toggle
+   button / collapse state in place — plain attribute and style changes,
+   never a DOM move — so the iframe's browsing context, and playback,
+   are left completely alone. */
+var videoHostEl = null;
+function ensureVideoHost(){
+  if (videoHostEl || !quiz.videoUrl) return videoHostEl;
+  videoHostEl = document.createElement("div");
+  videoHostEl.className = "video-host";
+  videoHostEl.innerHTML =
+    '<button class="video-toggle mono" data-action="toggle-video" id="videoToggleBtn"></button>' +
+    '<div class="video-wrap video-collapsible" id="videoCollapseWrap">' +
+      '<div class="video-frame"><iframe src="' + quiz.videoUrl + '?cc_load_policy=1" title="Quiz companion video" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>' +
+    '</div>';
+  videoSlot.appendChild(videoHostEl); // the ONE and ONLY time this node is ever inserted anywhere
+  return videoHostEl;
+}
+function syncVideoHost(){
+  if (!quiz.videoUrl || state.screen !== "question"){
+    videoSlot.style.display = "none";
+    return;
+  }
+  var host = ensureVideoHost();
+  videoSlot.style.display = "block";
+  var open = state.videoOpen;
+  host.querySelector("#videoToggleBtn").innerHTML = chevronSvg(open) + (open ? "Hide video" : "Watch video");
+  var wrap = host.querySelector("#videoCollapseWrap");
+  wrap.classList.toggle("collapsed", !open);
+  wrap.style.maxHeight = window.innerWidth <= 480 ? (open ? "210px" : "0px") : "400px";
+}
+
+/* ---- perfect-score badge ----
+   Drawn onto a hidden <canvas> and copied into a real <img> via
+   toDataURL(), rather than built as SVG/HTML — a plain <img> is what gets
+   the browser's native "Copy image" / "Save image as" context-menu entries
+   (and long-press-save on phones) for free, which is the actual point:
+   Andy wants pupils to be able to easily lift this out of the quiz and
+   paste it elsewhere. Regenerated on every render() call (cheap — it's
+   only ever present at all on the results screen with a 100% score), so
+   no persistence trickery is needed here the way the video iframe needed. */
+function syncCompletionBadge(){
+  var canvas = document.getElementById("badgeCanvas");
+  var img = document.getElementById("badgeImg");
+  if (!canvas || !img) return; // not on the results screen, or not 100%
+  drawCompletionBadge(canvas, quiz.title);
+  img.src = canvas.toDataURL("image/png");
+}
+
+function drawCompletionBadge(canvas, title){
+  var W = 640, H = 420, DPR = 2; // draw at 2x for a crisp saved/pasted image
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+  var ctx = canvas.getContext("2d");
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, W, H); // transparent background — pastes cleanly onto anything
+
+  var cx = W / 2, cy = 148, r = 96;
+
+  function ribbonTail(sign){
+    // Tails peek out just below the title banner (by1=350) rather than
+    // running all the way down to where the "PERFECT SCORE" caption sits
+    // (by1+24=374) — otherwise the gold tail tips visually collide with
+    // that letter-spaced caption text and make it hard to read.
+    var tailBottom = cy + r + 112; // ~356, a few px clear of by1 (350)
+    ctx.beginPath();
+    ctx.moveTo(cx + sign * 14, cy + r - 22);
+    ctx.lineTo(cx + sign * 62, tailBottom);
+    ctx.lineTo(cx + sign * 34, tailBottom);
+    ctx.lineTo(cx + sign * 2, cy + r - 4);
+    ctx.closePath();
+    var g = ctx.createLinearGradient(cx, cy, cx + sign * 62, tailBottom);
+    g.addColorStop(0, "#E4AE33");
+    g.addColorStop(1, "#A9750E");
+    ctx.fillStyle = g;
+    ctx.fill();
+  }
+  ribbonTail(-1);
+  ribbonTail(1);
+
+  // medal disc
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  var mg = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.1, cx, cy, r);
+  mg.addColorStop(0, "#FFF7DE");
+  mg.addColorStop(0.45, "#FFD966");
+  mg.addColorStop(0.8, "#E3AC1C");
+  mg.addColorStop(1, "#B9860E");
+  ctx.fillStyle = mg;
+  ctx.fill();
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#8A6407";
+  ctx.stroke();
+
+  // inner bevel ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, r - 12, 0, Math.PI * 2);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(255,255,255,0.55)";
+  ctx.stroke();
+
+  drawStar(ctx, cx, cy - 24, 10, 27, 5, "#FFFDF2", "#9C6F08");
+
+  ctx.font = "700 32px 'Space Mono', monospace";
+  ctx.fillStyle = "#6B4A05";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("100%", cx, cy + 40);
+
+  // ribbon banner (hexagon: rectangle with pointed notched ends)
+  var bx0 = 56, bx1 = W - 56, by0 = 284, by1 = 350, notch = 22, bmid = (by0 + by1) / 2;
+  ctx.beginPath();
+  ctx.moveTo(bx0 + notch, by0);
+  ctx.lineTo(bx1 - notch, by0);
+  ctx.lineTo(bx1, bmid);
+  ctx.lineTo(bx1 - notch, by1);
+  ctx.lineTo(bx0 + notch, by1);
+  ctx.lineTo(bx0, bmid);
+  ctx.closePath();
+  var bg = ctx.createLinearGradient(0, by0, 0, by1);
+  bg.addColorStop(0, "#F3C346");
+  bg.addColorStop(1, "#C9971C");
+  ctx.fillStyle = bg;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#8A6407";
+  ctx.stroke();
+
+  // quiz title, shrunk to fit the banner on one line
+  var maxTextWidth = (bx1 - notch) - (bx0 + notch) - 28;
+  var size = 25;
+  var font;
+  do {
+    font = "700 " + size + "px 'Space Mono', monospace";
+    ctx.font = font;
+    size -= 1;
+  } while (ctx.measureText(title).width > maxTextWidth && size > 12);
+  ctx.fillStyle = "#3E2A00";
+  ctx.fillText(title, cx, bmid + 1);
+
+  ctx.font = "600 12px 'Space Mono', monospace";
+  ctx.fillStyle = "#8A6407";
+  ctx.fillText("P E R F E C T   S C O R E", cx, by1 + 24);
+}
+
+function drawStar(ctx, cx, cy, innerR, outerR, points, fill, stroke){
+  ctx.save();
+  ctx.beginPath();
+  for (var i = 0; i < points * 2; i++){
+    var rr = i % 2 === 0 ? outerR : innerR;
+    var a = (Math.PI / points) * i - Math.PI / 2;
+    var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = stroke;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function renderTitleScreen(){
+  var resume = loadProgress();
+  var answeredCount = resume ? Object.keys(resume.answered || {}).length : 0;
+  var isResume = !!resume && answeredCount > 0 && answeredCount < quiz.questions.length;
+
+  var body;
+  if (isResume){
+    body =
+      '<h1 class="qtitle">' + escapeHtml(quiz.title) + '</h1>' +
+      '<span class="progress-badge mono">In progress · question ' + (answeredCount+1) + ' of ' + quiz.questions.length + '</span>' +
+      '<button class="btn-primary" data-action="continue-quiz">Continue quiz</button>' +
+      '<button class="btn-secondary" data-action="restart-quiz">Restart from question 1</button>';
+  } else {
+    body =
+      '<h1 class="qtitle">' + escapeHtml(quiz.title) + '</h1>' +
+      '<p class="sub">' + quiz.questions.length + ' questions · multiple choice</p>' +
+      '<button class="btn-primary" data-action="start-quiz">Start quiz</button>';
+  }
+
+  return (
+    '<div class="title-wrap">' + body + '</div>' +
+    '<div class="consent-row">' +
+      '<input type="checkbox" id="consentBox" ' + (state.consent ? "checked" : "") + ' data-action="toggle-consent">' +
+      '<label for="consentBox">Help improve gcsecs.com — share anonymous usage stats (no personal data, no cookies used for ads)</label>' +
+    '</div>' +
+    '<p class="footer-hint">' + (isResume ? 'Restarting will reshuffle the answers and clear your progress' : 'Retry as many times as you like — aim for 100%') + '</p>'
+  );
+}
+
+function totalAnsweredCount(){ return Object.keys(state.answered).length; }
+
+function renderQuestionScreen(){
+  var idx = state.currentIndex;
+  var q = quiz.questions[idx];
+
+  if (q.broken){
+    return '<div class="broken-q-note">This question couldn’t be shown: ' + escapeHtml(q.error) + '<br>Skipping to the next one.</div>' +
+      renderNav();
+  }
+
+  var order = state.order[idx];
+  var answeredEntry = state.answered[idx];
+  var isAnswered = !!answeredEntry;
+
+  var qImageHtml = "";
+  if (q.questionImage){
+    qImageHtml = '<div class="q-image-wrap" data-action="zoom-open" data-src="' + resolveImage(q.questionImage) + '" data-alt="' + escapeHtml(q.questionImageAlt) + '" tabindex="0" role="button" aria-label="Enlarge diagram">' +
+      '<img src="' + resolveImage(q.questionImage) + '" alt="' + escapeHtml(q.questionImageAlt) + '"></div>';
+  }
+
+  var answersHtml;
+  if (q.isImageQuestion){
+    answersHtml = '<div class="img-answers">' + order.map(function(id, i){
+      var a = q.answers[id];
+      var letter = String.fromCharCode(65+i);
+      var selected = isAnswered && answeredEntry.id === id;
+      return (
+        // Deliberately never disabled once answered: the numbered nav lets a
+        // pupil jump back to any answered question specifically to change a
+        // wrongly-picked answer, so the buttons must stay clickable there —
+        // only the .selected highlight shows which one is currently chosen.
+        '<div class="img-ans ' + (selected ? "selected" : "") + '">' +
+          '<button style="all:unset;display:block;cursor:pointer;width:100%;" data-action="select-answer" data-id="' + id + '" aria-label="Answer ' + letter + '">' +
+            '<span class="ans-badge">' + letter + '</span>' +
+            '<img src="' + resolveImage(a.image) + '" alt="' + escapeHtml(a.alt) + '">' +
+          '</button>' +
+          '<button class="img-zoom-btn" data-action="zoom-open" data-src="' + resolveImage(a.image) + '" data-alt="' + escapeHtml(a.alt) + '" aria-label="Enlarge this answer image">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>' +
+          '</button>' +
+        '</div>'
+      );
+    }).join("") + '</div>';
+  } else {
+    answersHtml = '<div class="answers">' + order.map(function(id, i){
+      var a = q.answers[id];
+      var letter = String.fromCharCode(65+i);
+      var selected = isAnswered && answeredEntry.id === id;
+      return (
+        // Same as the image-answer buttons above: never disabled, so a
+        // pupil can change an answer after navigating back to it.
+        '<button class="ans-btn ' + (selected ? "selected" : "") + '" data-action="select-answer" data-id="' + id + '">' +
+          '<span class="ans-badge">' + letter + '</span>' + escapeHtml(a.text) +
+        '</button>'
+      );
+    }).join("") + '</div>';
+  }
+
+  var isLast = idx === quiz.questions.length - 1;
+  var finishHtml = "";
+  if (isAnswered && isLast){
+    finishHtml = '<div class="finish-row"><button class="btn-primary" style="margin-top:0;" data-action="finish-quiz">Click to finish</button></div>';
+  }
+
+  return (
+    '<div class="qbody">' +
+      qImageHtml +
+      '<h2 class="qtext">' + escapeHtml(q.questionText) + '</h2>' +
+      answersHtml +
+      finishHtml +
+      renderNav() +
+    '</div>' +
+    '<div class="restart-mid"><button data-action="restart-quiz">Restart quiz</button></div>' +
+    '<div style="height:20px;"></div>'
+  );
+}
+
+function renderNav(){
+  var total = quiz.questions.length;
+  var current = state.currentIndex;
+
+  function btnClass(i){
+    if (i === current) return "current";
+    if (state.answered.hasOwnProperty(i)) return "answered";
+    return "locked";
+  }
+  function btnHtml(i){
+    var cls = btnClass(i);
+    var clickable = cls !== "locked";
+    return '<button class="nav-btn ' + cls + '" ' + (clickable ? 'data-action="goto-question" data-idx="' + i + '"' : 'disabled') + '>' + (i+1) + '</button>';
+  }
+
+  var label = '<p class="nav-label mono">Jump back to a previous question</p>';
+
+  // Mobile: always a single swipeable strip regardless of count (CSS forces this at <=480px)
+  var stripHtml = '<div class="nav-strip">' + Array.from({length: total}, function(_,i){ return btnHtml(i); }).join("") + '</div>';
+
+  if (total <= 20){
+    return '<div class="nav-section">' + label + '<div class="nav-row">' + Array.from({length: total}, function(_,i){ return btnHtml(i); }).join("") + '</div>' + stripHtml + '</div>';
+  }
+
+  // Desktop/tablet paged grid (v3: 44px fixed, gaps tighten on middle pages)
+  var perPage = 20;
+  var pageCount = Math.ceil(total / perPage);
+  var page = Math.min(state.navPage, pageCount - 1);
+  var pagesHtml = "";
+  for (var p = 0; p < pageCount; p++){
+    var start = p * perPage;
+    var end = Math.min(start + perPage, total);
+    var isMiddle = p > 0 && p < pageCount - 1;
+    var btns = "";
+    for (var i = start; i < end; i++) btns += btnHtml(i);
+    pagesHtml += '<div class="nav-grid-page ' + (isMiddle ? "tight" : "") + '">' + btns + '</div>';
+  }
+  var showPrev = page > 0, showNext = page < pageCount - 1;
+  return (
+    '<div class="nav-section">' + label +
+    '<div class="nav-grid-outer">' +
+      '<button class="nav-arrow" data-action="nav-page-prev" ' + (showPrev?"":"disabled") + ' aria-label="Show earlier questions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg></button>' +
+      '<div class="nav-grid-viewport"><div class="nav-grid-track" style="transform:translateX(-' + (page*100) + '%);width:' + (pageCount*100) + '%;">' + pagesHtml + '</div></div>' +
+      '<button class="nav-arrow" data-action="nav-page-next" ' + (showNext?"":"disabled") + ' aria-label="Show later questions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></button>' +
+    '</div>' +
+    stripHtml +
+    '</div>'
+  );
+}
+
+function renderResultsScreen(){
+  var score = computeScore();
+  var pct = score.total ? Math.round((score.correct / score.total) * 100) : 0;
+  var reviewCards = quiz.questions.map(function(q, idx){
+    if (q.broken) return "";
+    var a = state.answered[idx];
+    var correct = a && a.correct;
+    var chosen = a ? findAnswerById(q, a.id) : null;
+    var correctAns = q.answers.filter(function(x){ return x.correct; })[0];
+
+    if (q.isImageQuestion){
+      return (
+        '<div class="review-card">' +
+          '<div class="review-top"><span class="review-qtext">' + (idx+1) + '. ' + escapeHtml(q.questionText) + '</span>' +
+            '<span class="chip ' + (correct?"correct":"incorrect") + '">' + (correct ? checkSvg() + "Correct" : xSvg() + "Incorrect") + '</span></div>' +
+          (correct ? '<div class="review-thumbs"><div class="review-thumb-col"><span>Your answer</span><img class="review-thumb" src="' + resolveImage(chosen.image) + '" alt="' + escapeHtml(chosen.alt) + '"></div></div>' :
+          '<div class="review-thumbs">' +
+            '<div class="review-thumb-col"><span style="color:var(--incorrectText)">Your answer</span><img class="review-thumb" style="border-color:var(--incorrectText)" src="' + resolveImage(chosen.image) + '" alt="' + escapeHtml(chosen.alt) + '"></div>' +
+            '<div class="review-thumb-col"><span style="color:var(--correctText)">Correct answer</span><img class="review-thumb" style="border-color:var(--correctText)" src="' + resolveImage(correctAns.image) + '" alt="' + escapeHtml(correctAns.alt) + '"></div>' +
+          '</div>') +
+        '</div>'
+      );
+    }
+    return (
+      '<div class="review-card">' +
+        '<div class="review-top"><span class="review-qtext">' + (idx+1) + '. ' + escapeHtml(q.questionText) + '</span>' +
+          '<span class="chip ' + (correct?"correct":"incorrect") + '">' + (correct ? checkSvg() + "Correct" : xSvg() + "Incorrect") + '</span></div>' +
+        '<span class="review-answer">Your answer: ' + escapeHtml(chosen ? chosen.text : "—") + (correct ? "" : " · Correct answer: " + escapeHtml(correctAns.text)) + '</span>' +
+      '</div>'
+    );
+  }).join("");
+
+  // A canvas-drawn, downloadable/copyable "perfect score" badge — only
+  // when every (non-broken) question was answered correctly. The canvas
+  // itself is drawn (and turned into the <img>'s actual src) by
+  // syncCompletionBadge(), called from render() after this HTML is in the
+  // page — it can't be drawn inline here since canvas drawing needs a real
+  // DOM element to exist first. See drawCompletionBadge() for why it's a
+  // real <img>, not an SVG or styled DOM: browsers only offer "Copy image" /
+  // "Save image as" on an actual <img>.
+  var isPerfect = score.total > 0 && score.correct === score.total;
+  var badgeHtml = isPerfect
+    ? '<div class="badge-wrap"><canvas id="badgeCanvas" style="display:none;" aria-hidden="true"></canvas><img id="badgeImg" class="badge-img" alt="Perfect score badge — 100% on ' + escapeHtml(quiz.title) + '"></div>'
+    : "";
+
+  // On a perfect score, the badge sits next to the score number rather than
+  // stacked above it (Andy's request, after seeing the first stacked
+  // version) — same row, wraps to stacked automatically on a screen too
+  // narrow to fit both side by side (see .badge-score-row).
+  var scoreBlock =
+    '<div class="score-block">' +
+      '<div class="result-score">' + score.correct + '/' + score.total + '</div>' +
+      '<span style="font-size:18px;font-weight:600;">' + pct + '%</span>' +
+    '</div>';
+  var topRow = badgeHtml
+    ? '<div class="badge-score-row">' + badgeHtml + scoreBlock + '</div>'
+    : scoreBlock;
+
+  // On a perfect score, the card's own "Try again" is redundant right next
+  // to the badge/marks (Andy's request) — the one below the review section
+  // stays either way, so restarting is still always reachable.
+  var cardTryAgainBtn = isPerfect
+    ? ""
+    : '<button class="btn-primary" data-action="restart-quiz">Try again</button>';
+
+  return (
+    '<div class="result-card">' +
+      '<span class="mono" style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mutedLabel);">Quiz complete</span>' +
+      topRow +
+      '<span style="font-size:14px;color:var(--secondary);">' + escapeHtml(quiz.title) + '</span>' +
+      cardTryAgainBtn +
+    '</div>' +
+    '<div class="review-header">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>Review your answers' +
+    '</div>' +
+    '<div class="review-list">' + reviewCards +
+      '<div style="display:flex;justify-content:center;"><button class="btn-primary" data-action="restart-quiz">Try again</button></div>' +
+    '</div>'
+  );
+}
+function findAnswerById(q, id){ return q.answers.filter(function(a){ return a.id === id; })[0]; }
+function checkSvg(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'; }
+function xSvg(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'; }
+
+function renderZoomOverlay(){
+  var z = state.zoom;
+  var stage2 = z.stage === 2;
+  return (
+    '<div class="zoom-overlay" data-action="zoom-close-backdrop">' +
+      '<div class="zoom-stage" data-action="zoom-stage">' +
+        '<img id="zoomImg" src="' + z.src + '" alt="' + escapeHtml(z.alt) + '" class="' + (stage2 ? "zoomed" : "") + '" style="transform: translate(' + z.tx + 'px,' + z.ty + 'px) scale(' + (stage2 ? z.scale : 1) + ');">' +
+        '<div class="zoom-toolbar">' +
+          '<button data-action="zoom-toggle" aria-label="' + (stage2 ? "Zoom out" : "Zoom in further") + '"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>' + (stage2 ? "" : '<line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line>') + '</svg></button>' +
+          '<button data-action="zoom-close" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
+        '</div>' +
+        '<div class="zoom-alt">' + escapeHtml(z.alt) + '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function escapeHtml(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+app.addEventListener("click", function(e){
+  var el = e.target.closest("[data-action]");
+  if (!el) return;
+  var action = el.getAttribute("data-action");
+
+  if (action === "start-quiz"){ newAttempt(); state.screen = "question"; render(); }
+  else if (action === "continue-quiz"){
+    var p = loadProgress();
+    if (p){ state.order = p.order; state.answered = p.answered; state.currentIndex = p.currentIndex; }
+    state.screen = "question"; render();
+  }
+  else if (action === "restart-quiz"){ clearProgress(); newAttempt(); state.screen = "question"; render(); }
+  else if (action === "finish-quiz"){ clearProgress(); logAttempt("completed"); state.screen = "results"; render(); }
+  else if (action === "toggle-theme"){
+    var order = ["light","dark","accessible","ocean","forest","plum"];
+    state.theme = order[(order.indexOf(state.theme)+1) % order.length];
+    localStorage.setItem("mcq_theme", state.theme); render();
+  }
+  else if (action === "toggle-fontsize"){
+    var forder = ["normal","larger","largest"];
+    state.fontSize = forder[(forder.indexOf(state.fontSize)+1) % forder.length];
+    localStorage.setItem("mcq_fontsize", state.fontSize); render();
+  }
+  else if (action === "toggle-consent"){
+    state.consent = el.checked;
+    localStorage.setItem("mcq_consent", state.consent ? "1" : "0"); render();
+  }
+  else if (action === "toggle-video"){ state.videoOpen = !state.videoOpen; render(); }
+  else if (action === "select-answer"){
+    var idx = state.currentIndex;
+    var q = quiz.questions[idx];
+    var id = parseInt(el.getAttribute("data-id"), 10);
+    var ans = findAnswerById(q, id);
+    state.answered[idx] = { id: id, correct: !!ans.correct };
+    saveProgress();
+    render();
+    // Selecting an answer always auto-advances to the next question —
+    // whether it's the first time this question's been answered, or the
+    // pupil jumped back via the nav to fix an earlier one. An earlier
+    // version of this only auto-advanced on a question's first answer, on
+    // the theory that a revisit-to-fix should leave the pupil in place —
+    // but that theory was wrong in practice: e.g. answering Q3 and
+    // immediately clicking nav button "2" (before Q3's own 420ms
+    // auto-advance had fired) left Q3 marked "answered" without the pupil
+    // ever having actually left it, so navigating back to Q3 afterwards
+    // was indistinguishable from a deliberate revisit-to-fix and wrongly
+    // got stuck too. Simpler and matches what's actually expected:
+    // picking an answer always moves forward one question; the nav is
+    // there for jumping anywhere else afterward.
+    if (idx < quiz.questions.length - 1){
+      setTimeout(function(){
+        if (state.currentIndex === idx){ state.currentIndex = idx + 1; saveProgress(); render(); }
+      }, 420);
+    }
+  }
+  else if (action === "goto-question"){
+    state.currentIndex = parseInt(el.getAttribute("data-idx"), 10); render();
+  }
+  else if (action === "nav-page-prev"){ state.navPage = Math.max(0, state.navPage - 1); render(); }
+  else if (action === "nav-page-next"){ state.navPage = state.navPage + 1; render(); }
+  else if (action === "zoom-open"){
+    state.zoom = { src: el.getAttribute("data-src"), alt: el.getAttribute("data-alt"), stage: 1, scale: 2.1, tx: 0, ty: 0 };
+    render();
+  }
+  else if (action === "zoom-toggle"){
+    state.zoom.stage = state.zoom.stage === 1 ? 2 : 1;
+    state.zoom.tx = 0; state.zoom.ty = 0;
+    render();
+  }
+  else if (action === "zoom-close" || action === "zoom-close-backdrop"){
+    if (action === "zoom-close-backdrop" && e.target.closest(".zoom-stage") && !e.target.closest(".zoom-toolbar")) {
+      // click inside the image area (not toolbar) while zoomed out just does nothing extra;
+      // dragging is handled separately. Only true backdrop clicks close it.
+      if (e.target.id !== undefined && el === e.target){ state.zoom = null; render(); }
+      return;
+    }
+    state.zoom = null; render();
+  }
+}, false);
+
+app.addEventListener("keydown", function(e){
+  var el = e.target.closest('[data-action="zoom-open"]');
+  if (el && (e.key === "Enter" || e.key === " ")){
+    e.preventDefault();
+    state.zoom = { src: el.getAttribute("data-src"), alt: el.getAttribute("data-alt"), stage: 1, scale: 2.1, tx: 0, ty: 0 };
+    render();
+  }
+  if (e.key === "Escape" && state.zoom){ state.zoom = null; render(); }
+});
+
+/* Drag-to-pan (stage 2), pointer events unify mouse + touch */
+function bindZoomDrag(){
+  var img = document.getElementById("zoomImg");
+  if (!img || !state.zoom || state.zoom.stage !== 2) return;
+  var dragging = false, startX, startY, startTx, startTy;
+  var frame = img.parentElement;
+
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+  function bounds(){
+    var scale = state.zoom.scale;
+    var fw = frame.clientWidth, fh = frame.clientHeight;
+    var iw = img.naturalWidth || fw, ih = img.naturalHeight || fh;
+    var fitScale = Math.min(fw / iw, fh / ih);
+    var dispW = iw * fitScale * scale, dispH = ih * fitScale * scale;
+    var maxX = Math.max(0, (dispW - fw) / 2), maxY = Math.max(0, (dispH - fh) / 2);
+    return { maxX: maxX, maxY: maxY };
+  }
+
+  img.addEventListener("pointerdown", function(e){
+    dragging = true; img.classList.add("dragging");
+    startX = e.clientX; startY = e.clientY; startTx = state.zoom.tx; startTy = state.zoom.ty;
+    img.setPointerCapture(e.pointerId);
+  });
+  img.addEventListener("pointermove", function(e){
+    if (!dragging) return;
+    var b = bounds();
+    state.zoom.tx = clamp(startTx + (e.clientX - startX), -b.maxX, b.maxX);
+    state.zoom.ty = clamp(startTy + (e.clientY - startY), -b.maxY, b.maxY);
+    img.style.transform = "translate(" + state.zoom.tx + "px," + state.zoom.ty + "px) scale(" + state.zoom.scale + ")";
+  });
+  function endDrag(){ dragging = false; img.classList.remove("dragging"); }
+  img.addEventListener("pointerup", endDrag);
+  img.addEventListener("pointercancel", endDrag);
+}
+
+/* Cross-widget sync: theme/text-size/consent set in another
+   same-origin iframe update this one immediately (spec: Multiple
+   widgets on one page). */
+window.addEventListener("storage", function(e){
+  if (e.key === "mcq_theme" && e.newValue){ state.theme = e.newValue; render(); }
+  if (e.key === "mcq_fontsize" && e.newValue){ state.fontSize = e.newValue; render(); }
+  if (e.key === "mcq_consent"){ state.consent = e.newValue === "1"; render(); }
+});
+
+/* iframe auto-resize: tell the parent page our height whenever it changes */
+var lastHeight = 0;
+function postHeight(){
+  requestAnimationFrame(function(){
+    var h = document.body.scrollHeight;
+    if (h !== lastHeight){
+      lastHeight = h;
+      try { window.parent.postMessage({ mcqWidgetHeight: h }, "*"); } catch(e){}
+    }
+  });
+}
+window.addEventListener("resize", function(){ render(); });
+
+/* Catches height changes render() doesn't know about — most importantly
+   the Google Fonts (Space Mono / DM Sans) swapping in shortly after first
+   paint, which can make the page taller than what postHeight() measured
+   at the initial render (a `display=swap` web font renders with a
+   fallback font first, then reflows once the real one loads). Without
+   this, the iframe can be left "chopped" — correct content, wrong box
+   height — until something else happens to trigger a resize. That's
+   exactly the failure seen live on gcsecs.com: a widget looked cut off
+   until the browser's zoom level was changed, which forces the same
+   resize/render/postHeight cycle this ResizeObserver now runs
+   automatically instead, catching font loads, image loads, or any other
+   future async content change, not just this one specific cause. */
+if (window.ResizeObserver){
+  new ResizeObserver(function(){ postHeight(); }).observe(document.body);
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+render();
+
+})();
+</script>
+</body>
+</html>
