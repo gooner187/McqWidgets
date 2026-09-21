@@ -1237,6 +1237,22 @@ function postHeight(){
 }
 window.addEventListener("resize", function(){ render(); });
 
+/* Catches height changes render() doesn't know about — most importantly
+   the Google Fonts (Space Mono / DM Sans) swapping in shortly after first
+   paint, which can make the page taller than what postHeight() measured
+   at the initial render (a `display=swap` web font renders with a
+   fallback font first, then reflows once the real one loads). Without
+   this, the iframe can be left "chopped" — correct content, wrong box
+   height — until something else happens to trigger a resize. That's
+   exactly the failure seen live on gcsecs.com: a widget looked cut off
+   until the browser's zoom level was changed, which forces the same
+   resize/render/postHeight cycle this ResizeObserver now runs
+   automatically instead, catching font loads, image loads, or any other
+   future async content change, not just this one specific cause. */
+if (window.ResizeObserver){
+  new ResizeObserver(function(){ postHeight(); }).observe(document.body);
+}
+
 /* ============================================================
    BOOT
    ============================================================ */
