@@ -229,87 +229,87 @@
    ?quiz= parameter instead of being embedded here — see spec.
    ============================================================ */
 var QUIZ_TEXT =
-"TITLE: Binary units of storage\n" +
+"TITLE: KS3 Binary to denary\n" +
 "\n" +
 
-// Q1
-"The smallest unit of measurement in binary is called?\n" +
-"A bit\n" +
-"A byte\n" +
-"A nibble\n" +
-"A kilobyte\n" +
+// Q1 — first answer listed ("0") is always the correct one
+"Convert binary 0000 to denary\n" +
+"0\n" +
+"1\n" +
+"2\n" +
+"3\n" +
 "\n" +
 
 // Q2
-"What is another name for 4-bit binary?\n" +
-"A nibble\n" +
-"A bit\n" +
-"A byte\n" +
-"A kilobyte\n" +
+"Convert binary 1000 to denary\n" +
+"8\n" +
+"4\n" +
+"2\n" +
+"1\n" +
 "\n" +
 
 // Q3
-"What is another name for 8-bit binary?\n" +
-"A byte\n" +
-"A nibble\n" +
-"A bit\n" +
-"A kilobyte\n" +
+"Convert binary 0100 to denary\n" +
+"4\n" +
+"8\n" +
+"2\n" +
+"1\n" +
 "\n" +
 
 // Q4
-"The next unit up from a byte is called a kilobyte. How many bytes are in a kilobyte?\n" +
-"1000 (or 1024)\n" +
-"900 (or 924)\n" +
-"204 (or 4)\n" +
-"24 (or 2)\n" +
+"Convert binary 0100 to denary\n" +
+"4\n" +
+"8\n" +
+"6\n" +
+"1\n" +
 "\n" +
 
 // Q5
-"Which of the following binary units of storage is the biggest?\n" +
-"A megabyte\n" +
-"A kilobyte\n" +
-"A bit\n" +
-"A byte\n" +
+"Convert binary 0111 to denary\n" +
+"7\n" +
+"8\n" +
+"5\n" +
+"6\n" +
 "\n" +
 
 // Q6
-"Which of the following binary units of storage is the smallest?\n" +
-"A bit\n" +
-"A megabyte\n" +
-"A kilobyte\n" +
-"A byte\n" +
+"Convert binary 1111 to denary\n" +
+"15\n" +
+"16\n" +
+"14\n" +
+"13\n" +
 "\n" +
 
 // Q7
-"If you were going to buy a new Smartphone, which of the following units would you expect the storage to be expressed in?\n" +
-"Gigabytes\n" +
-"Megabytes\n" +
-"Kilobytes\n" +
-"bits\n" +
+"Convert binary 1001 to denary\n" +
+"9\n" +
+"8\n" +
+"7\n" +
+"6\n" +
 "\n" +
 
 // Q8
-"Place these units of binary in ascending order (low to high)\n" +
-"bit, nibble, byte, kilobyte, megabyte\n" +
-"bit, kilobyte, byte, nibble, megabyte\n" +
-"byte, megabyte, bit, kilobyte, nibble\n" +
-"megabyte, nibble, kilobyte, byte, bit\n" +
+"Convert binary 1001 to denary\n" +
+"9\n" +
+"10\n" +
+"8\n" +
+"7\n" +
 "\n" +
 
 // Q9
-"Place these units of binary in descending order (high to low)\n" +
-"megabyte, kilobyte, byte, nibble, bit\n" +
-"bit, kilobyte, byte, nibble, megabyte\n" +
-"byte, megabyte, bit, kilobyte, nibble\n" +
-"megabyte, nibble, kilobyte, byte, bit\n" +
+"Convert binary 1010 to denary\n" +
+"10\n" +
+"11\n" +
+"9\n" +
+"8\n" +
 "\n" +
 
 // Q10 — last question, no trailing "\n" + "\n" needed
-"You are buying a new Smartphone and because you take so many selfies, you want a phone with the biggest storage capacity. Which of the following phones would you buy?\n" +
-"Samsung Galaxy S15 - 128Gb storage, 16Gb RAM, 8K screen\n" +
-"Iphone XIV - 128Mb storage, 16Mb RAM, 6K screen\n" +
-"Sony Xperia-Uber - 512Kb storage, 16Mb RAM, 6K screen\n" +
-"Nokia 1 - 1024 bit storage, 16Mb RAM, 8K screen\n";
+"Convert binary 0010 to denary\n" +
+"2\n" +
+"0\n" +
+"3\n" +
+"1\n";
 
 /* This quiz has no images, so resolveImage() is just a passthrough —
    an image-based quiz would give real hosted file paths here (per the
@@ -445,7 +445,7 @@ function brokenQuestion(idx, message, questionText){
 /* ============================================================
    STATE
    ============================================================ */
-var QUIZ_ID = "ks3-binary-units-of-storage"; // used for progress storage + logging; matches this quiz's file name
+var QUIZ_ID = "ks3-binary-denary"; // used for progress storage + logging; matches this quiz's file name
 var quiz = parseQuiz(QUIZ_TEXT);
 
 var state = {
