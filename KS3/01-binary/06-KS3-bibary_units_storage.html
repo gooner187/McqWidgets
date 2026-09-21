@@ -445,7 +445,7 @@ function brokenQuestion(idx, message, questionText){
 /* ============================================================
    STATE
    ============================================================ */
-var QUIZ_ID = "ks3-binary-denary"; // used for progress storage + logging; matches this quiz's file name
+var QUIZ_ID = "ks3-binary-units-of-storage"; // used for progress storage + logging; matches this quiz's file name
 var quiz = parseQuiz(QUIZ_TEXT);
 
 var state = {
@@ -502,18 +502,42 @@ function clearProgress(){
   try { sessionStorage.removeItem(PROGRESS_KEY); } catch(e){}
 }
 
-/* Usage logging stub. Gated by consent, per spec. Real build
-   swaps this for the Cloudflare Worker -> Supabase call once
-   that infrastructure exists (see spec, Usage logging). */
+/* Usage logging. Gated by consent, per spec. Posts to the Cloudflare
+   Worker (which tags a country code and forwards to Supabase) on both
+   quiz start and finish, sharing one attempt_id between the two rows.
+   Fire-and-forget: a failed or slow request never blocks or breaks the
+   quiz for the pupil. */
+var LOG_ENDPOINT = "https://mcq-logger.andrewspero.workers.dev";
 var attemptId = null;
+
+function getVisitorId(){
+  try {
+    var id = localStorage.getItem("mcq_visitor_id");
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : (String(Date.now()) + Math.random().toString(16).slice(2)));
+      localStorage.setItem("mcq_visitor_id", id);
+    }
+    return id;
+  } catch(e){ return null; }
+}
+
 function logAttempt(status){
   if (!state.consent) return;
   if (status === "started") attemptId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  var visitorId = getVisitorId();
+  if (!attemptId || !visitorId) return;
   var scoreInfo = status === "completed" ? computeScore() : null;
-  console.log("[mcq-widget] would log:", {
-    attempt_id: attemptId, quiz_id: QUIZ_ID, quiz_title: quiz.title, status: status,
+  var payload = {
+    attempt_id: attemptId, visitor_id: visitorId, quiz_id: QUIZ_ID, quiz_title: quiz.title, status: status,
     score: scoreInfo ? scoreInfo.correct : null, total_questions: quiz.questions.length
-  });
+  };
+  try {
+    fetch(LOG_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function(){ /* silent - logging must never break the quiz for the pupil */ });
+  } catch(e){ /* silent, same reason */ }
 }
 
 function computeScore(){
