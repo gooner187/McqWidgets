@@ -111,7 +111,7 @@
   /* ---- question screen ---- */
   .qbody{ padding: 4px 32px 0; }
   h2.qtext{ margin:20px 0 22px; font-size:var(--qSize); font-weight:600; line-height:var(--qLine); }
-  .q-image-wrap{ margin:0 0 20px; border-radius:14px; overflow:hidden; border:1.5px solid var(--cardBorder); cursor:zoom-in; position:relative; }
+  .q-image-wrap{ margin:0 auto 20px; max-width:58%; border-radius:14px; overflow:hidden; border:1.5px solid var(--cardBorder); cursor:zoom-in; position:relative; }
   .q-image-wrap img{ width:100%; display:block; }
   .answers{ display:flex; flex-direction:column; gap:12px; }
   .ans-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:var(--btnPad); border-radius:14px; border:2px solid var(--cardBorder); background:var(--cardBg); font-size:var(--aSize); color:var(--text); text-align:left; cursor:pointer; }
@@ -203,6 +203,7 @@
     .video-toggle{ display:inline-flex; }
     .video-collapsible.collapsed{ max-height:0; margin:0; }
     .qbody{ padding:4px 18px 0; }
+    .q-image-wrap{ max-width:82%; }
     .title-wrap{ padding:20px 20px 8px; }
     h1.qtitle{ font-size:28px; }
     .nav-grid-outer{ display:none; }
@@ -1400,4 +1401,3 @@ render();
 </script>
 </body>
 </html>
-
