@@ -760,12 +760,15 @@ function drawCompletionBadge(canvas, title){
   ctx.strokeStyle = "rgba(255,255,255,0.55)";
   ctx.stroke();
 
-  drawStar(ctx, cx, cy - 24, 10, 27, 5, "#FFFDF2", "#9C6F08");
+  drawStar(ctx, cx, cy - 44, 8, 20, 5, "#FFFDF2", "#9C6F08");
 
-  ctx.font = "700 32px 'Space Mono', monospace";
-  ctx.fillStyle = "#6B4A05";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  ctx.font = "700 21px 'Space Mono', monospace";
+  ctx.fillStyle = "#5C3F04";
+  ctx.fillText("GCSECS.COM", cx, cy + 4);
+  ctx.font = "700 26px 'Space Mono', monospace";
+  ctx.fillStyle = "#6B4A05";
   ctx.fillText("100%", cx, cy + 40);
 
   // ribbon banner (hexagon: rectangle with pointed notched ends)
