@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Units of Data</title>
+<style>body{margin:0;background:#fff;padding:24px 16px}</style>
+</head>
+<body>
+<!-- ===== gcsecs.com · Units of data (J277 1.2.1) · paste from here down into a Weebly Embed Code block ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+#gcu-units{--h:34px;--ink:#14213d;--muted:#5b6478;--line:#d9deea;
+  font-family:"DM Sans",system-ui,sans-serif;color:var(--ink);max-width:760px;margin:0 auto;box-sizing:border-box}
+#gcu-units *,#gcu-units *::before,#gcu-units *::after{box-sizing:border-box}
+#gcu-units .gcu-head{text-align:center;margin-bottom:14px}
+#gcu-units .gcu-head h3{font-size:1.5rem;margin:0 0 4px;font-weight:700;color:var(--ink)}
+#gcu-units .gcu-head p{margin:0;color:var(--muted);font-size:.95rem}
+#gcu-units .gcu-controls{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;align-items:center;margin-bottom:18px}
+#gcu-units .gcu-seg{display:inline-flex;align-items:center;gap:6px;font-family:"Space Mono",monospace;font-size:.85rem}
+#gcu-units .gcu-seg-btns{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;padding:3px;background:#f4f6fb}
+#gcu-units button{font:inherit;cursor:pointer}
+#gcu-units .gcu-seg-btns button{border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:999px;min-height:40px;font-weight:700}
+#gcu-units .gcu-seg-btns button[aria-pressed="true"]{background:var(--ink);color:#fff}
+#gcu-units .gcu-actions{display:inline-flex;gap:8px}
+#gcu-units .gcu-actions button{border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:10px;min-height:44px;font-weight:600;font-family:"DM Sans",system-ui,sans-serif;font-size:.9rem}
+#gcu-units .gcu-actions button:hover{border-color:var(--ink)}
+#gcu-units button:focus-visible{outline:3px solid #f5a524;outline-offset:2px}
+
+#gcu-units .gcu-pyramid{-webkit-user-select:none;user-select:none;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:calc(var(--h) * .06)}
+#gcu-units .gcu-band{position:relative;height:var(--h);perspective:900px;margin:0;padding:0}
+#gcu-units .gcu-hit{position:absolute;inset:0;z-index:2;border:0;padding:0;margin:0;background:transparent;clip-path:var(--clip-f);-webkit-tap-highlight-color:transparent}
+#gcu-units .gcu-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.34,1.35,.5,1);pointer-events:none}
+#gcu-units .gcu-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;line-height:1.1;padding:0 4px}
+#gcu-units .gcu-back{flex-direction:row;align-items:baseline;justify-content:center;gap:.45em}
+#gcu-units .gcu-back > span{align-self:center}
+#gcu-units .gcu-front{background:var(--c);color:#fff;clip-path:var(--clip-f)}
+#gcu-units .gcu-back{background:var(--t);color:var(--k);clip-path:var(--clip-b);transform:rotateX(180deg)}
+#gcu-units .gcu-name{font-weight:700;font-size:1.08rem;letter-spacing:.01em}
+#gcu-units .gcu-abbr{font-family:"Space Mono",monospace;font-size:.95rem;font-weight:400;opacity:.85;white-space:nowrap}
+#gcu-units .gcu-val{font-family:"Space Mono",monospace;font-weight:700;font-size:1rem;white-space:nowrap}
+#gcu-units .gcu-band.is-top .gcu-back{align-items:stretch;padding:0}
+#gcu-units .gcu-marquee{flex:1;min-width:0;display:flex;align-items:center;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent 3%,#000 12%,#000 88%,transparent 97%);mask-image:linear-gradient(90deg,transparent 3%,#000 12%,#000 88%,transparent 97%)}
+/* ticker position is driven by script: auto-scrolls, and can be dragged either way */
+#gcu-units .gcu-track{display:flex;flex:none;will-change:transform}
+#gcu-units .gcu-band.is-top.is-live .gcu-hit{cursor:grab;touch-action:pan-y}
+#gcu-units .gcu-band.is-top.is-dragging .gcu-hit{cursor:grabbing}
+#gcu-units .gcu-band.is-dragging .gcu-inner{transform:rotateX(180deg)}
+#gcu-units .gcu-group{display:flex;flex:none}
+#gcu-units .gcu-item{font-family:"Space Mono",monospace;font-size:.88rem;white-space:nowrap;padding:0 1.1em;position:relative}
+#gcu-units .gcu-item::after{content:"•";position:absolute;right:-.3em;opacity:.4}
+#gcu-units .gcu-band.is-flipped .gcu-inner,
+#gcu-units .gcu-hit:focus-visible + .gcu-inner{transform:rotateX(180deg)}
+@media (hover:hover){#gcu-units .gcu-hit:hover + .gcu-inner{transform:rotateX(180deg)}}
+#gcu-units .gcu-band:has(.gcu-hit:focus-visible){filter:drop-shadow(0 0 1.5px #f5a524) drop-shadow(0 0 1.5px #f5a524) drop-shadow(0 0 1px #f5a524)}
+
+#gcu-units .gcu-tips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:20px 0 6px;padding:0;list-style:none}
+#gcu-units .gcu-tips li{font-family:"Space Mono",monospace;font-size:.8rem;background:#f4f6fb;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+#gcu-units .gcu-tips b{color:#1d7c71}
+#gcu-units .gcu-note{text-align:center;color:var(--muted);font-size:.85rem;margin:8px 0 0}
+#gcu-units .gcu-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:520px){#gcu-units{--h:32px}#gcu-units .gcu-name{font-size:.98rem}#gcu-units .gcu-val{font-size:.9rem}#gcu-units .gcu-abbr{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){#gcu-units .gcu-inner{transition:none}
+  /* no ticker: show every name + abbreviation at once, wrapped */
+  #gcu-units .gcu-track{transform:none !important;flex:1 1 auto;min-width:0;justify-content:center}
+  #gcu-units .gcu-group{flex:1 1 auto;min-width:0;flex-wrap:wrap;justify-content:center;line-height:1.15}
+  #gcu-units .gcu-group[aria-hidden]{display:none}
+  #gcu-units .gcu-eq{display:none}
+  #gcu-units .gcu-item{font-size:.62rem;padding:0 .7em}
+  #gcu-units .gcu-marquee{-webkit-mask-image:none;mask-image:none}}
+</style>
+
+<div id="gcu-units">
+  <div class="gcu-head">
+    <h3>Units of data</h3>
+    <p>Hover over a layer (or tap it) to flip it and reveal its size.</p>
+  </div>
+  <div class="gcu-controls">
+    <div class="gcu-seg" role="group" aria-label="How many bytes in a kilobyte">
+      <span>1&nbsp;KB&nbsp;=</span>
+      <span class="gcu-seg-btns">
+        <button type="button" data-base="1000" aria-pressed="true">1,000 bytes</button>
+        <button type="button" data-base="1024" aria-pressed="false">1,024 bytes</button>
+      </span>
+    </div>
+    <div class="gcu-actions">
+      <button type="button" data-act="reveal">Reveal all</button>
+      <button type="button" data-act="hide">Hide all</button>
+    </div>
+  </div>
+  <ol class="gcu-pyramid" aria-label="Units of data, largest at the top"></ol>
+  <ul class="gcu-tips" aria-live="polite"></ul>
+  <p class="gcu-note">OCR accepts either 1,000 or 1,024 in J277 exams. 1,000 makes the maths easier.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById('gcu-units');
+  if (!root) return;
+
+  // Largest at the top, as in the original diagram
+  var UNITS = [
+    { name: 'Exabyte and beyond', top: true,
+      // [full name, abbreviation, unit one layer down] - shown as a scrolling ticker
+      big: [['Exabyte', 'EB', 'PB'], ['Zettabyte', 'ZB', 'EB'], ['Yottabyte', 'YB', 'ZB'],
+            ['Ronnabyte', 'RB', 'YB'], ['Quettabyte', 'QB', 'RB']] },
+    { name: 'Petabyte', abbr: 'PB', val: function (b) { return b + ' TB'; } },
+    { name: 'Terabyte', abbr: 'TB', val: function (b) { return b + ' GB'; } },
+    { name: 'Gigabyte', abbr: 'GB', val: function (b) { return b + ' MB'; } },
+    { name: 'Megabyte', abbr: 'MB', val: function (b) { return b + ' KB'; } },
+    { name: 'Kilobyte', abbr: 'KB', val: function (b) { return b + ' bytes'; } },
+    { name: 'Byte', abbr: 'B', val: function () { return '8 bits'; } },
+    { name: 'Nibble', abbr: '', val: function () { return '4 bits'; } },
+    { name: 'Bit', abbr: '', val: function () { return '1 or 0'; } }
+  ];
+  // Colours: blue (top) to green (bottom); every front passes WCAG AA with white text
+  var FRONT = ['#2b46b6', '#2b60b6', '#2a77b2', '#237895', '#1f7d84', '#1d7c71', '#1e8063', '#1e8051', '#1e803f'];
+  var TINT  = ['#e5e9fa', '#e5edfa', '#e5f1fa', '#e5f5fa', '#e5f9fa', '#e5faf8', '#e5faf4', '#e5faf0', '#e5faec'];
+  var DARK  = ['#14225d', '#14305d', '#143d5d', '#144a5d', '#14585d', '#145d54', '#145d47', '#145d39', '#145d2c'];
+
+  var N = UNITS.length, GAP = 0.06, MAX_INSET = 40; // bottom layer keeps 20% of the full width
+  var TOTAL = N + (N - 1) * GAP;
+  function inset(y) { return +(MAX_INSET * y / TOTAL).toFixed(3); }
+
+  var list = root.querySelector('.gcu-pyramid');
+  var base = 1000;
+  var bands = [];
+
+  function fmt(n) { return n.toLocaleString('en-GB'); }
+
+  UNITS.forEach(function (u, i) {
+    var yTop = i * (1 + GAP), a = inset(yTop), b = inset(yTop + 1);
+    var li = document.createElement('li');
+    li.className = 'gcu-band' + (u.top ? ' is-top' : '');
+    li.style.setProperty('--c', FRONT[i]);
+    li.style.setProperty('--t', TINT[i]);
+    li.style.setProperty('--k', DARK[i]);
+    li.style.setProperty('--clip-f', 'polygon(' + a + '% 0,' + (100 - a) + '% 0,' + (100 - b) + '% 100%,' + b + '% 100%)');
+    // the back face is pre-rotated 180° about X, so its outline is mirrored vertically
+    li.style.setProperty('--clip-b', 'polygon(' + b + '% 0,' + (100 - b) + '% 0,' + (100 - a) + '% 100%,' + a + '% 100%)');
+
+    var backId = 'gcu-back-' + i;
+    li.innerHTML =
+      '<button type="button" class="gcu-hit" aria-pressed="false" aria-describedby="' + backId + '">' +
+        '<span class="gcu-sr">' + u.name + '</span></button>' +
+      '<div class="gcu-inner">' +
+        '<div class="gcu-face gcu-front" aria-hidden="true"><span class="gcu-name">' + u.name + '</span></div>' +
+        '<div class="gcu-face gcu-back" id="' + backId + '">' +
+          (u.top ? '<div class="gcu-marquee"><div class="gcu-track"></div></div>' :
+            (u.abbr ? '<span class="gcu-abbr">' + u.abbr + ' =</span>' : '') +
+            '<span class="gcu-val"></span>') + '</div>' +
+      '</div>';
+    list.appendChild(li);
+
+    var hit = li.querySelector('.gcu-hit');
+    hit.addEventListener('click', function () {
+      if (li.getAttribute('data-dragged')) { li.removeAttribute('data-dragged'); return; } // end of a drag, not a tap
+      setFlipped(li, !li.classList.contains('is-flipped'), 0);
+    });
+    bands.push(li);
+  });
+
+  function setFlipped(li, on, delay) {
+    li.querySelector('.gcu-inner').style.transitionDelay = delay ? delay + 'ms' : '';
+    li.classList.toggle('is-flipped', on);
+    li.querySelector('.gcu-hit').setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (ticker) ticker.update(delay || 0);
+  }
+
+  function render() {
+    var b = fmt(base);
+    bands.forEach(function (li, i) {
+      var u = UNITS[i];
+      if (u.top) {
+        var items = u.big.map(function (x) {
+          return '<span class="gcu-item"><b>' + x[0] + '</b> (' + x[1] + ')<span class="gcu-eq"> = ' + b + ' ' + x[2] + '</span></span>';
+        }).join('');
+        // two identical copies so the ticker loops seamlessly; the copy is hidden from screen readers
+        li.querySelector('.gcu-track').innerHTML =
+          '<span class="gcu-group">' + items + '</span><span class="gcu-group" aria-hidden="true">' + items + '</span>';
+      } else {
+        li.querySelector('.gcu-val').textContent = u.val(b);
+      }
+    });
+    root.querySelector('.gcu-tips').innerHTML =
+      '<li>Up a layer: <b>÷ ' + b + '</b></li>' +
+      '<li>Down a layer: <b>× ' + b + '</b></li>' +
+      '<li>Bits → bytes: <b>÷ 8</b></li>';
+  }
+
+  root.querySelectorAll('[data-base]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      base = +btn.getAttribute('data-base');
+      root.querySelectorAll('[data-base]').forEach(function (x) { x.setAttribute('aria-pressed', x === btn ? 'true' : 'false'); });
+      render();
+      if (ticker) ticker.measure();
+    });
+  });
+
+  // Cascade from the bit upwards, like building the units up
+  root.querySelector('[data-act="reveal"]').addEventListener('click', function () {
+    for (var i = N - 1, k = 0; i >= 0; i--, k++) setFlipped(bands[i], true, k * 70);
+  });
+  root.querySelector('[data-act="hide"]').addEventListener('click', function () {
+    for (var i = 0; i < N; i++) setFlipped(bands[i], false, i * 50);
+  });
+
+  // ---- Scrolling ticker on the top layer -------------------------------------------
+  // Starts with Exabyte in the middle, scrolls left at a steady reading speed, loops
+  // seamlessly, and can be dragged backwards or forwards. Letting go resumes the scroll.
+  var ticker = (function () {
+    var li = bands[0], hit = li.querySelector('.gcu-hit'), track = li.querySelector('.gcu-track');
+    var SPEED = 45, HOLD = 600, DRAG_START = 6; // px/s, ms before moving, px before a press counts as a drag
+    var HOVER = window.matchMedia && matchMedia('(hover: hover)').matches;
+    var REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var x = 0, lead = 0, group = 1, looped = false, shown = false, hovering = false;
+    var raf = 0, last = 0, holdUntil = 0, drag = null;
+
+    function paint() { track.style.transform = 'translateX(' + x.toFixed(1) + 'px)'; }
+    function wrap() {
+      if (x <= -group) { x += group; looped = true; }      // seamless: copy 2 lines up with copy 1
+      if (looped && x > 0) x -= group;                      // dragging back past the start, after a loop
+      if (!looped && x > lead) x = lead;                    // can't drag before the very start
+    }
+    function measure() {
+      lead = Math.round(track.parentNode.clientWidth / 2);
+      group = track.firstChild ? track.firstChild.scrollWidth : 1;
+      if (!shown) { x = lead; paint(); }
+    }
+    function isShown() {
+      return li.classList.contains('is-flipped') || li.classList.contains('is-dragging') ||
+             hovering || hit.matches(':focus-visible');
+    }
+    function frame(t) {
+      var dt = last ? Math.min(t - last, 100) / 1000 : 0;
+      last = t;
+      if (!drag && t >= holdUntil) { x -= SPEED * dt; wrap(); paint(); }
+      raf = requestAnimationFrame(frame);
+    }
+    function update(delay) {
+      var now = isShown();
+      if (REDUCED || now === shown) return;
+      shown = now;
+      li.classList.toggle('is-live', now);
+      if (now) {                                           // every reveal starts again from the middle
+        x = lead; looped = false; paint();
+        holdUntil = performance.now() + HOLD + (delay || 0);
+        last = 0; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+      } else {
+        cancelAnimationFrame(raf); raf = 0;
+      }
+    }
+
+    if (!REDUCED) {
+      if (HOVER) {
+        hit.addEventListener('mouseenter', function () { hovering = true; update(); });
+        hit.addEventListener('mouseleave', function () { hovering = false; update(); });
+      }
+      hit.addEventListener('focus', function () { update(); });
+      hit.addEventListener('blur', function () { update(); });
+
+      hit.addEventListener('pointerdown', function (e) {
+        if (!shown || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        drag = { id: e.pointerId, startX: e.clientX, startPos: x, moved: false };
+      });
+      hit.addEventListener('pointermove', function (e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.startX;
+        if (!drag.moved) {
+          if (Math.abs(dx) < DRAG_START) return;
+          drag.moved = true;
+          li.classList.add('is-dragging');
+          try { hit.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        x = drag.startPos + dx; wrap(); paint();
+        if (x !== drag.startPos + dx) { drag.startPos = x - dx; }   // keep the grab point steady after a wrap
+        e.preventDefault();
+      });
+      function endDrag(e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        if (drag.moved) {
+          li.setAttribute('data-dragged', '1');           // swallow the click this release produces
+          setTimeout(function () { li.removeAttribute('data-dragged'); }, 400);
+          li.classList.remove('is-dragging');
+          holdUntil = 0; last = 0;                         // carry on scrolling straight away
+        }
+        drag = null;
+        update();
+      }
+      hit.addEventListener('pointerup', endDrag);
+      hit.addEventListener('pointercancel', endDrag);
+
+      // keyboard: left/right arrows nudge the ticker while the layer is focused
+      hit.addEventListener('keydown', function (e) {
+        if (!shown || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+        x += e.key === 'ArrowLeft' ? 80 : -80; wrap(); paint(); holdUntil = performance.now() + 1500;
+        e.preventDefault();
+      });
+    }
+    return { update: update, measure: measure };
+  })();
+
+  render();
+  ticker.measure();
+  window.addEventListener('resize', ticker.measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ticker.measure);
+})();
+</script>
+<!-- ===== end gcsecs.com units of data ===== -->
+</body>
+</html>
