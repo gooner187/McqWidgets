@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OR gate — interactive tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  /* Standalone OR gate tutorial, taken from logic-gates.html (J277 2.4.1).
+     House tokens inlined so it doesn't need j277-shared.css. */
+  :root { --bg:#0d0f14; --surface:#151820; --surface2:#1c2030; --border:#2a2f42;
+          --accent:#4f8ef7; --accent2:#7c5cfc; --success:#3ecf8e; --danger:#f0997b;
+          --text:#e8eaf0; --text-muted:#7a8099; --text-faint:#4b5268; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:var(--surface); color:var(--text); font-family:'DM Sans',sans-serif; }
+  #toolContent { padding:1.25rem; font-family:'DM Sans',sans-serif; }
+
+  /* Tutorial */
+  .lg-tut-wrap { display:flex; flex-direction:column; gap:1rem; }
+  .lg-topbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .lg-back-btn { font-size:11px; font-family:'DM Sans',sans-serif; padding:4px 10px; border-radius:6px; cursor:pointer; border:0.5px solid var(--border); background:transparent; color:var(--text-muted); transition:color 0.15s; }
+  .lg-back-btn:hover { color:var(--text); }
+  .lg-title { font-size:0.9rem; font-weight:600; color:var(--text); }
+  .lg-badge { font-size:0.65rem; font-family:'Space Mono',monospace; background:rgba(79,142,247,0.15); color:var(--accent); border:0.5px solid var(--accent); border-radius:4px; padding:2px 7px; }
+
+  /* Interactive gate area */
+  .lg-gate-area { display:flex; align-items:center; justify-content:center; gap:12px; background:var(--bg); border:0.5px solid var(--border); border-radius:8px; padding:1.5rem; flex-wrap:wrap; }
+  .lg-input-col { display:flex; flex-direction:column; gap:24px; align-items:flex-end; }
+  .lg-input-btn { width:52px; height:52px; border-radius:10px; border:2px solid var(--border); background:var(--surface2); color:var(--text); font-size:1.4rem; font-weight:700; font-family:'Space Mono',monospace; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+  .lg-input-btn.on { border-color:#3ecf8e; background:rgba(62,207,142,0.15); color:#3ecf8e; }
+  .lg-input-btn:hover { border-color:var(--accent); }
+  .lg-input-label { font-size:0.75rem; font-weight:600; color:var(--text-muted); font-family:'Space Mono',monospace; margin-bottom:2px; text-align:center; }
+  .lg-input-wrap { display:flex; flex-direction:column; align-items:center; }
+
+  /* SVG gate canvas */
+  .lg-gate-svg { flex:0 0 auto; }
+
+  /* Bulb */
+  .lg-bulb-wrap { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .lg-bulb { width:52px; height:52px; border-radius:50%; border:2px solid var(--border); background:var(--surface2); transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+  .lg-bulb.on { border-color:#f0c030; background:rgba(240,192,48,0.2); }
+  .lg-bulb-icon { width:28px; height:28px; transition:fill 0.2s; }
+  .lg-bulb-label { font-size:0.72rem; color:var(--text-muted); font-family:'Space Mono',monospace; font-weight:600; }
+
+  /* Rule box */
+  .lg-rule { background:var(--surface2); border:0.5px solid var(--border); border-radius:8px; padding:0.75rem 1rem; font-size:0.82rem; color:var(--text); line-height:1.5; }
+  .lg-rule strong { color:var(--accent); }
+
+  /* Truth table toggle */
+  .lg-tt-toggle { font-size:11px; font-family:'DM Sans',sans-serif; padding:5px 12px; border-radius:6px; cursor:pointer; border:0.5px solid var(--border); background:transparent; color:var(--text-muted); margin-bottom:0.5rem; }
+  .lg-tt-toggle:hover { color:var(--text); border-color:var(--text-muted); }
+  .lg-tt-wrap { overflow-x:auto; }
+  .lg-tt { border-collapse:collapse; font-size:12px; font-family:'Space Mono',monospace; }
+  .lg-tt th { font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); padding:5px 14px; border-bottom:0.5px solid var(--border); text-align:center; font-family:'DM Sans',sans-serif; font-weight:600; }
+  .lg-tt td { padding:6px 14px; border-bottom:0.5px solid var(--border); text-align:center; color:var(--text); transition:background 0.15s,color 0.15s; }
+  .lg-tt tr:last-child td { border-bottom:none; }
+  .lg-tt tr.active td { background:rgba(79,142,247,0.12); color:var(--accent); font-weight:700; }
+</style>
+</head>
+<body>
+<div id="toolContent"></div>
+<script>
+// ════════════════════════════════════════════════════════════
+// OR GATE — standalone interactive tutorial (OCR J277 2.4.1)
+// Extracted unchanged from logic-gates.html, minus the menu
+// button and the "Jump to" bar.
+// ════════════════════════════════════════════════════════════
+
+// ── Verified truth tables ────────────────────────────────────
+var TRUTH_TABLES = {
+  AND: [ [0,0,0],[0,1,0],[1,0,0],[1,1,1] ],
+  OR:  [ [0,0,0],[0,1,1],[1,0,1],[1,1,1] ],
+  NOT: [ [0,1],[1,0] ]
+};
+
+// ── Gate SVG drawing functions ───────────────────────────────
+// Each returns an SVG string. cx/cy = centre of gate body.
+// All gates sized to fit naturally in a 300×160 viewBox area.
+function drawAND(cx, cy, opts) {
+  opts = opts || {};
+  var w = opts.w || 70, h = opts.h || 80;
+  var r = h / 2;
+  var x = cx - w/2, t = cy - r, b = cy + r;
+  var stroke = opts.stroke || "var(--text)";
+  var sw = opts.strokeWidth || 3;
+  return '<path d="M' + x + ' ' + t + ' L' + (x+w) + ' ' + t +
+         ' A' + r + ' ' + r + ' 0 0 1 ' + (x+w) + ' ' + b +
+         ' L' + x + ' ' + b + ' Z"' +
+         ' fill="none" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="miter"/>';
+}
+
+function drawOR(cx, cy, opts) {
+  opts = opts || {};
+  var w = opts.w || 80, h = opts.h || 80;
+  var x = cx - w/2, t = cy - h/2, b = cy + h/2;
+  var tipX = cx + w/2;
+  var stroke = opts.stroke || "var(--text)";
+  var sw = opts.strokeWidth || 3;
+  // Concave left, curved top/bottom to pointed tip
+  return '<path d="M' + x + ' ' + t +
+         ' Q' + (x + w*0.7) + ' ' + t + ' ' + tipX + ' ' + cy +
+         ' Q' + (x + w*0.7) + ' ' + b + ' ' + x + ' ' + b +
+         ' Q' + (x + w*0.3) + ' ' + cy + ' ' + x + ' ' + t + ' Z"' +
+         ' fill="none" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="round"/>';
+}
+
+function drawNOT(cx, cy, opts) {
+  opts = opts || {};
+  var h = opts.h || 80;
+  var x = cx - h*0.4, t = cy - h/2, b = cy + h/2;
+  var tipX = cx + h*0.4;
+  var br = 8; // bubble radius
+  var stroke = opts.stroke || "var(--text)";
+  var sw = opts.strokeWidth || 3;
+  return '<polygon points="' + x + ',' + t + ' ' + x + ',' + b + ' ' + tipX + ',' + cy + '"' +
+         ' fill="none" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' +
+         '<circle cx="' + (tipX + br) + '" cy="' + cy + '" r="' + br + '"' +
+         ' fill="none" stroke="' + stroke + '" stroke-width="' + sw + '"/>';
+}
+
+// ── Wire endpoint helpers ─────────────────────────────────────
+// Returns {inputA, inputB, output} connection points for each gate.
+// Pass the same w/h opts used in drawAND/drawOR/drawNOT so wire
+// endpoints always line up exactly with the gate body edges.
+function gatePoints(type, cx, cy, opts) {
+  opts = opts || {};
+  if (type === 'AND') {
+    var w = opts.w || 70, h = opts.h || 80;
+    var r = h / 2;
+    var leftX = cx - w/2;
+    var rightX = cx + w/2 + r;  // rightmost point of semicircle
+    return { inputA:{x:leftX, y:cy - h*0.25}, inputB:{x:leftX, y:cy + h*0.25}, output:{x:rightX, y:cy} };
+  }
+  if (type === 'OR') {
+    var ow = opts.w || 80, oh = opts.h || 80;
+    var leftX = cx - ow/2;
+    var tipX = cx + ow/2;
+    return { inputA:{x:leftX, y:cy - oh*0.25}, inputB:{x:leftX, y:cy + oh*0.25}, output:{x:tipX, y:cy} };
+  }
+  if (type === 'NOT') {
+    var nh = opts.h || 80;
+    var br = opts.br || 8;
+    var leftX = cx - nh*0.4;
+    var rightX = cx + nh*0.4 + br*2;
+    return { inputA:{x:leftX, y:cy}, output:{x:rightX, y:cy} };
+  }
+}
+
+// ── Title bar (standalone: no back-to-menu button) ───────────
+function makeTitleBar(title, badge) {
+  var bar = document.createElement("div");
+  bar.className = "lg-topbar";
+  var t = document.createElement("span");
+  t.className = "lg-title";
+  t.textContent = title;
+  bar.appendChild(t);
+  if (badge) {
+    var b = document.createElement("span");
+    b.className = "lg-badge";
+    b.textContent = badge;
+    bar.appendChild(b);
+  }
+  return bar;
+}
+
+// ── Bulb SVG (on = yellow, off = grey) ───────────────────────
+function bulbSVG(on) {
+  var col = on ? "#f0c030" : "var(--text-muted)";
+  var bg  = on ? "rgba(240,192,48,0.2)" : "transparent";
+  return '<svg class="lg-bulb-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+    '<circle cx="14" cy="14" r="12" fill="' + bg + '" stroke="' + col + '" stroke-width="2"/>' +
+    '<text x="14" y="19" text-anchor="middle" font-family="Space Mono,monospace" font-size="13" font-weight="700" fill="' + col + '">' + (on ? '1' : '0') + '</text>' +
+    '</svg>';
+}
+
+// ── TUTORIAL ──────────────────────────────────────────────────
+function showTutorial(type) {
+  if (type === "COMBINED") { showCombinedTutorial(); return; }
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+
+  var isTwoInput = (type !== "NOT");
+  var inputs = { A: 0, B: 0 };
+
+  function evaluate() {
+    if (type === "AND") return inputs.A & inputs.B;
+    if (type === "OR")  return inputs.A | inputs.B;
+    if (type === "NOT") return inputs.A ? 0 : 1;
+  }
+
+  function getActiveRow() {
+    var tt = TRUTH_TABLES[type];
+    for (var i = 0; i < tt.length; i++) {
+      if (tt[i][0] === inputs.A && (type === "NOT" || tt[i][1] === inputs.B)) return i;
+    }
+    return -1;
+  }
+
+  // Top bar
+  el.appendChild(makeTitleBar(type + " gate", "Tutorial"));
+
+  // Rule
+  var rule = document.createElement("div");
+  rule.className = "lg-rule";
+  var rules = {
+    AND: "Output is <strong>1</strong> only when <strong>both</strong> inputs are 1.",
+    OR:  "Output is <strong>1</strong> when <strong>at least one</strong> input is 1.",
+    NOT: "Output is the <strong>opposite</strong> of the input."
+  };
+  rule.innerHTML = rules[type];
+  el.appendChild(rule);
+
+  // Gate area
+  var gateArea = document.createElement("div");
+  gateArea.className = "lg-gate-area";
+
+  // Input column
+  var inputCol = document.createElement("div");
+  inputCol.className = "lg-input-col";
+
+  // Store button refs so truth table row clicks can update them
+  var inputBtns = {};
+
+  function makeInputWrap(label, key) {
+    var wrap = document.createElement("div");
+    wrap.className = "lg-input-wrap";
+    var lbl = document.createElement("div");
+    lbl.className = "lg-input-label";
+    lbl.textContent = label;
+    var btn = document.createElement("button");
+    btn.className = "lg-input-btn";
+    btn.textContent = inputs[key];
+    btn.addEventListener("click", function() {
+      inputs[key] = inputs[key] ? 0 : 1;
+      btn.textContent = inputs[key];
+      btn.classList.toggle("on", inputs[key] === 1);
+      render();
+    });
+    inputBtns[key] = btn;
+    wrap.appendChild(lbl);
+    wrap.appendChild(btn);
+    return wrap;
+  }
+
+  function syncInputButtons() {
+    Object.keys(inputBtns).forEach(function(key) {
+      inputBtns[key].textContent = inputs[key];
+      inputBtns[key].classList.toggle("on", inputs[key] === 1);
+    });
+  }
+
+  inputCol.appendChild(makeInputWrap("A", "A"));
+  if (isTwoInput) inputCol.appendChild(makeInputWrap("B", "B"));
+  gateArea.appendChild(inputCol);
+
+  // Gate SVG
+  var svgWrap = document.createElement("div");
+  var viewW = 240, viewH = 160, cx = 110, cy = 80;
+  var pts = gatePoints(type, cx, cy, {});
+  var wireColOn  = "#3ecf8e";
+  var wireColOff = "var(--text-muted)";
+
+  function gateWireCol(val) { return val ? wireColOn : wireColOff; }
+
+  function buildSVG() {
+    var q = evaluate();
+    var colA = gateWireCol(inputs.A);
+    var colB = gateWireCol(inputs.B);
+    var colQ = gateWireCol(q);
+    var gateStroke = q ? wireColOn : "var(--text)";
+    var sw = 3;
+
+    var svg = '<svg class="lg-gate-svg" viewBox="0 0 ' + viewW + ' ' + viewH + '" width="' + viewW + '" style="max-width:100%;height:auto">';
+
+    // Input wire A
+    svg += '<line x1="20" y1="' + pts.inputA.y + '" x2="' + pts.inputA.x + '" y2="' + pts.inputA.y +
+           '" stroke="' + colA + '" stroke-width="' + sw + '"/>';
+    svg += '<text x="14" y="' + (pts.inputA.y + 5) + '" text-anchor="end" font-family="Space Mono,monospace" font-size="13" font-weight="700" fill="' + colA + '">A</text>';
+
+    // Input wire B
+    if (isTwoInput) {
+      svg += '<line x1="20" y1="' + pts.inputB.y + '" x2="' + pts.inputB.x + '" y2="' + pts.inputB.y +
+             '" stroke="' + colB + '" stroke-width="' + sw + '"/>';
+      svg += '<text x="14" y="' + (pts.inputB.y + 5) + '" text-anchor="end" font-family="Space Mono,monospace" font-size="13" font-weight="700" fill="' + colB + '">B</text>';
+    }
+
+    // Gate body
+    if (type === "AND") svg += drawAND(cx, cy, {stroke: gateStroke, strokeWidth: sw});
+    if (type === "OR")  svg += drawOR(cx, cy,  {stroke: gateStroke, strokeWidth: sw});
+    if (type === "NOT") svg += drawNOT(cx, cy, {stroke: gateStroke, strokeWidth: sw});
+
+    // Output wire
+    svg += '<line x1="' + pts.output.x + '" y1="' + pts.output.y + '" x2="' + (viewW-30) + '" y2="' + pts.output.y +
+           '" stroke="' + colQ + '" stroke-width="' + sw + '"/>';
+    svg += '<text x="' + (viewW-22) + '" y="' + (pts.output.y + 5) + '" font-family="Space Mono,monospace" font-size="13" font-weight="700" fill="' + colQ + '">Q =</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  svgWrap.innerHTML = buildSVG();
+  gateArea.appendChild(svgWrap);
+
+  // Bulb
+  var bulbWrap = document.createElement("div");
+  bulbWrap.className = "lg-bulb-wrap";
+  var bulbEl = document.createElement("div");
+  bulbEl.className = "lg-bulb" + (evaluate() ? " on" : "");  // fix: NOT starts at Q=1, so the bulb starts lit
+  bulbEl.innerHTML = bulbSVG(evaluate());
+  bulbWrap.appendChild(bulbEl);
+  gateArea.appendChild(bulbWrap);
+
+  // Truth table — always visible, sits to the right of the gate
+  var ttPanel = document.createElement("div");
+  ttPanel.style.cssText = "border-left:0.5px solid var(--border);padding-left:1.25rem;margin-left:0.5rem;display:flex;flex-direction:column;justify-content:center;";
+  var ttLbl = document.createElement("div");
+  ttLbl.style.cssText = "font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:'Space Mono',monospace;";
+  ttLbl.textContent = "Truth table";
+  var ttContainer = document.createElement("div");
+  ttContainer.className = "lg-tt-wrap";
+  ttPanel.appendChild(ttLbl);
+  ttPanel.appendChild(ttContainer);
+  gateArea.appendChild(ttPanel);
+
+  el.appendChild(gateArea);
+
+  function buildTT() {
+    ttContainer.innerHTML = "";
+    var activeRow = getActiveRow();
+    var cols = isTwoInput ? ["A","B","Q"] : ["A","Q"];
+    var rows = TRUTH_TABLES[type];
+    var tbl = document.createElement("table");
+    tbl.className = "lg-tt";
+    var thead = document.createElement("thead");
+    var hr = document.createElement("tr");
+    cols.forEach(function(c) {
+      var th = document.createElement("th"); th.textContent = c; hr.appendChild(th);
+    });
+    thead.appendChild(hr); tbl.appendChild(thead);
+    var tbody = document.createElement("tbody");
+    rows.forEach(function(row, i) {
+      var tr = document.createElement("tr");
+      if (i === activeRow) tr.className = "active";
+      tr.style.cursor = "pointer";
+      tr.title = "Click to set inputs to this row";
+      tr.addEventListener("mouseover", function() { if (i !== getActiveRow()) tr.style.background = "rgba(79,142,247,0.06)"; });
+      tr.addEventListener("mouseout",  function() { if (i !== getActiveRow()) tr.style.background = ""; });
+      tr.addEventListener("click", function() {
+        inputs.A = row[0];
+        if (isTwoInput) inputs.B = row[1];
+        syncInputButtons();
+        render();
+      });
+      row.forEach(function(v) {
+        var td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    ttContainer.appendChild(tbl);
+
+    // Click hint — shown below the table, subtle
+    var hint = document.createElement("div");
+    hint.style.cssText = "font-size:9px;color:var(--text-muted);margin-top:5px;text-align:center;font-family:'DM Sans',sans-serif;";
+    hint.textContent = "\uD83D\uDC46 Click a row to explore";
+    ttContainer.appendChild(hint);
+  }
+
+  buildTT();
+
+  function render() {
+    var q = evaluate();
+    bulbEl.className = "lg-bulb" + (q ? " on" : "");
+    bulbEl.innerHTML = bulbSVG(q);
+    svgWrap.innerHTML = buildSVG();
+    buildTT();
+  }
+
+}
+
+showTutorial("OR");
+</script>
+</body>
+</html>
