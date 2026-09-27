@@ -309,6 +309,30 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ticker.measure);
 })();
 </script>
+
+<script>
+/* iframe auto-resize: tell the parent page our height whenever it changes,
+   so the embed can size itself exactly instead of using a guessed fixed
+   height (which either clips content or leaves whitespace below it). */
+(function(){
+  var lastHeight = 0;
+  function postHeight(){
+    requestAnimationFrame(function(){
+      var h = document.body.scrollHeight;
+      if (h !== lastHeight){
+        lastHeight = h;
+        try { window.parent.postMessage({ mcqWidgetHeight: h }, "*"); } catch(e){}
+      }
+    });
+  }
+  window.addEventListener("load", postHeight);
+  window.addEventListener("resize", postHeight);
+  postHeight();
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ postHeight(); }).observe(document.body);
+  }
+})();
+</script>
 <!-- ===== end gcsecs.com units of data ===== -->
 </body>
 </html>
