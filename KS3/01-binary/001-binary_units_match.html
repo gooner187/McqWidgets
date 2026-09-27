@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Units Match</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Teko:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f; --panel:#111118; --card:#18181f; --border:#2a2a35;
+  --text:#e8e8f0; --dim:#55556a; --green:#00e676; --orange:#ff6d3b;
+  --blue:#3d9bff; --red:#ff3d5a; --yellow:#ffd600; --purple:#b04dff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:100;}
+
+.shell{width:100%;max-width:480px;display:flex;flex-direction:column;border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 0 60px rgba(0,230,118,.07),0 0 0 1px rgba(255,255,255,.04) inset;position:relative;}
+
+/* Header */
+.header{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Teko',sans-serif;font-size:20px;font-weight:700;letter-spacing:.1em;color:var(--green);text-shadow:0 0 18px rgba(0,230,118,.45);text-transform:uppercase;}
+.logo span{color:var(--orange);}
+
+/* Score strip */
+.score-strip{background:var(--panel);border-bottom:1px solid var(--border);display:flex;}
+.score-cell{flex:1;padding:7px 10px;text-align:center;border-right:1px solid var(--border);}
+.score-cell:last-child{border-right:none;}
+.sc-label{font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:2px;}
+.sc-val{font-family:'Teko',sans-serif;font-size:20px;font-weight:600;line-height:1;}
+
+/* Timer */
+.timer-wrap{background:var(--panel);border-bottom:1px solid var(--border);padding:7px 14px;display:flex;align-items:center;gap:10px;}
+.timer-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
+.timer-fill{height:100%;border-radius:3px;background:var(--green);transition:width .1s linear,background .4s;}
+.timer-secs{font-family:'Teko',sans-serif;font-size:16px;color:var(--text);width:32px;text-align:right;}
+
+/* Match field */
+.match-field{background:var(--card);padding:10px 10px 14px;min-height:380px;position:relative;}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.col-label{font-size:13px;color:var(--text);text-transform:uppercase;letter-spacing:.08em;text-align:center;padding-bottom:8px;font-weight:700;}
+
+/* Term cards */
+.term-card{padding:10px 12px;border-radius:4px;border:1px solid var(--border);background:var(--panel);font-size:13px;font-weight:700;color:var(--text);text-align:center;cursor:grab;user-select:none;-webkit-user-select:none;transition:border-color .12s,background .12s,transform .12s,opacity .25s;margin-bottom:6px;min-height:44px;display:flex;align-items:center;justify-content:center;touch-action:none;}
+.term-card:active{cursor:grabbing;}
+.term-card.selected{border-color:var(--blue);background:rgba(61,155,255,.12);transform:translateY(-2px);box-shadow:0 4px 12px rgba(61,155,255,.25);}
+.term-card.dragging{opacity:.3;}
+.term-card.matched-out{animation:matchOut .4s ease forwards;}
+.term-card.spawn-in{animation:spawnIn .35s cubic-bezier(.22,1,.36,1) forwards;}
+
+/* Definition slots */
+.def-slot{padding:10px 12px;border-radius:4px;border:1.5px dashed var(--border);background:rgba(255,255,255,.02);font-size:15px;color:var(--text);text-align:center;margin-bottom:6px;min-height:44px;display:flex;align-items:center;justify-content:center;transition:border-color .12s,background .12s;cursor:pointer;}
+.def-slot.hover{border-color:var(--blue);background:rgba(61,155,255,.08);color:var(--blue);}
+.def-slot.correct{border-color:var(--green);background:rgba(0,230,118,.12);color:var(--green);animation:slotCorrect .4s ease forwards;}
+.def-slot.wrong{border-color:var(--red);background:rgba(255,61,90,.1);color:var(--red);animation:slotWrong .35s ease;}
+.def-slot.matched-out{animation:matchOut .4s ease forwards;}
+.def-slot.spawn-in{animation:spawnIn .35s cubic-bezier(.22,1,.36,1) forwards;}
+
+@keyframes matchOut{0%{opacity:1;transform:scale(1);}50%{opacity:1;transform:scale(1.04);}100%{opacity:0;transform:scale(.85);height:0;padding:0;margin:0;min-height:0;border:none;}}
+@keyframes spawnIn{0%{opacity:0;transform:translateX(-20px);}100%{opacity:1;transform:translateX(0);}}
+@keyframes slotCorrect{0%{transform:scale(1);}40%{transform:scale(1.03);}100%{transform:scale(1);}}
+@keyframes slotWrong{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+
+/* Dragging ghost */
+.drag-ghost{position:fixed;pointer-events:none;z-index:200;padding:10px 12px;border-radius:4px;border:1px solid var(--blue);background:rgba(61,155,255,.18);font-size:13px;font-weight:700;color:var(--text);text-align:center;transform:rotate(3deg);opacity:.9;white-space:nowrap;}
+
+/* Score pop */
+.score-pop{position:absolute;font-family:'Teko',sans-serif;font-size:18px;font-weight:700;color:var(--green);pointer-events:none;animation:sPop .9s ease forwards;z-index:10;}
+@keyframes sPop{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-36px);}}
+
+/* Screens */
+.screen{position:fixed;inset:0;background:rgba(10,10,15,.96);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;backdrop-filter:blur(4px);}
+.screen-title{font-family:'Teko',sans-serif;font-size:38px;font-weight:700;letter-spacing:.1em;color:var(--green);text-shadow:0 0 28px rgba(0,230,118,.45);text-align:center;text-transform:uppercase;}
+.screen-sub{font-size:14px;color:var(--dim);text-align:center;line-height:1.9;max-width:300px;}
+.screen-sub b{color:var(--text);}
+.big-score{font-family:'Teko',sans-serif;font-size:72px;font-weight:700;color:var(--orange);line-height:1;}
+.start-btn{padding:14px 40px;background:var(--green);border:none;border-radius:3px;color:#0a0a0f;font-family:'Teko',sans-serif;font-size:24px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 24px rgba(0,230,118,.4);transition:all .12s;}
+.start-btn:hover{transform:translateY(-1px);}
+.play-again{padding:10px 24px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;}
+
+/* Countdown + GO */
+.countdown-overlay,.go-overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);pointer-events:none;}
+.countdown-overlay{background:rgba(10,10,15,.92);}
+.go-overlay{background:rgba(10,10,15,.88);}
+.countdown-num{font-family:'Teko',sans-serif;font-weight:700;letter-spacing:.04em;text-align:center;}
+.cdAnim{animation:cdPop .85s ease forwards;}
+.go-text{font-family:'Teko',sans-serif;font-size:88px;font-weight:700;color:var(--red);text-align:center;line-height:.9;letter-spacing:.06em;text-shadow:0 0 40px rgba(255,61,90,.9);animation:goAnim .55s cubic-bezier(.17,.67,.35,1.4) forwards;}
+@keyframes cdPop{0%{opacity:0;transform:scale(.4);}20%{opacity:1;transform:scale(1.15);}55%{opacity:1;transform:scale(1);}85%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(1.3);}}
+@keyframes goAnim{0%{opacity:0;transform:scale(.25) rotate(-6deg);}55%{opacity:1;transform:scale(1.12) rotate(2deg);}100%{opacity:1;transform:scale(1) rotate(0deg);}}
+
+@media(max-width:480px){.term-card,.def-slot{font-size:13px;min-height:38px;}}
+</style>
+</head>
+<body>
+
+<!-- Start screen -->
+<div class="screen" id="scrStart">
+  <div class="screen-title">Binary<span style="color:var(--orange)">Match</span></div>
+  <div class="screen-sub" style="color:var(--blue);font-size:15px;letter-spacing:.08em;">Binary Units &nbsp;&middot;&nbsp; 60 seconds</div>
+  <div class="screen-sub">Drag each <b>term</b> onto its matching <b>definition</b>.<br>Match 2 pairs &mdash; 2 new ones appear.<br>How many can you match in 60 seconds?</div>
+  <button class="start-btn" onclick="startGame()">START</button>
+</div>
+
+<!-- Game over screen -->
+<div class="screen" id="scrOver" style="display:none">
+  <div class="screen-title" style="font-size:32px;color:var(--red)">Game Over</div>
+  <div class="big-score" id="finalScore">0</div>
+  <button class="play-again" onclick="backToStart()">&#8617; PLAY AGAIN</button>
+</div>
+
+<!-- Shell -->
+<div class="shell">
+  <div class="header">
+    <div class="logo">Binary<span>Match</span></div>
+    <div style="font-size:10px;color:var(--dim);letter-spacing:.08em;" id="poolInfo"></div>
+  </div>
+  <div class="score-strip">
+    <div class="score-cell"><div class="sc-label">Score</div><div class="sc-val" id="scoreVal" style="color:var(--green);">0</div></div>
+    <div class="score-cell"><div class="sc-label">Matched</div><div class="sc-val" id="matchVal" style="color:var(--blue);">0</div></div>
+    <div class="score-cell"><div class="sc-label">Best</div><div class="sc-val" id="highVal" style="color:var(--yellow);">0</div></div>
+    <div class="score-cell"><div class="sc-label">Time</div><div class="sc-val" id="timeVal" style="color:var(--orange);">60</div></div>
+  </div>
+  <div class="timer-wrap">
+    <div class="timer-track"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+    <div class="timer-secs" id="timerSecs">60s</div>
+  </div>
+  <div class="match-field" id="matchField">
+    <div class="columns">
+      <div>
+        <div class="col-label">Terms</div>
+        <div id="termsCol"></div>
+      </div>
+      <div>
+        <div class="col-label">Definitions</div>
+        <div id="defsCol"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Countdown -->
+<div class="countdown-overlay" id="cdOverlay" style="display:none">
+  <div class="countdown-num" id="cdNum" style="font-size:160px;color:var(--blue);">3</div>
+</div>
+<!-- GO -->
+<div class="go-overlay" id="goOverlay" style="display:none">
+  <div class="go-text">GAME<br>OVER</div>
+</div>
+
+<script>
+// ================================================
+// DATA
+// ================================================
+var JSON_URL='https://raw.githubusercontent.com/gooner187/j277-study-content/main/Games/Match-games/binary-units.json';
+var ALL_PAIRS=[];  // loaded from GitHub
+var ACTIVE=5;      // pairs visible at once
+
+var G={score:0,matches:0,elapsed:0,running:false,busy:false,interval:null};
+var pool={active:[],unused:[],waiting:[],sinceRespawn:0};
+var selectedTerm=null;  // id of selected term card
+
+// ================================================
+// LOAD JSON
+// ================================================
+async function loadPairs(){
+  try{
+    var res=await fetch(JSON_URL);
+    var data=await res.json();
+    ALL_PAIRS=data.pairs||[];
+  }catch(e){
+    // Fallback hardcoded
+    ALL_PAIRS=[
+      {term:'Bit',      match:'A single 0 or 1'},
+      {term:'Nibble',   match:'4 bits'},
+      {term:'Byte',     match:'8 bits'},
+      {term:'Kilobyte', match:'1,000 bytes'},
+      {term:'Megabyte', match:'1,000 KB'},
+      {term:'Gigabyte', match:'1,000 MB'},
+      {term:'Terabyte', match:'1,000 GB'},
+      {term:'Petabyte', match:'1,000 TB'}
+    ];
+  }
+}
+
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+// ================================================
+// POOL MANAGEMENT
+// ================================================
+function initPool(){
+  pool.unused=shuffle(ALL_PAIRS.slice());
+  pool.active=[];
+  pool.waiting=[];
+  pool.sinceRespawn=0;
+  // Take first ACTIVE pairs
+  for(var i=0;i<ACTIVE&&pool.unused.length>0;i++){
+    pool.active.push(pool.unused.shift());
+  }
+}
+
+function onPairMatched(pair){
+  pool.waiting.push(pair);
+  pool.sinceRespawn++;
+  if(pool.sinceRespawn>=2){
+    pool.sinceRespawn=0;
+    // Respawn 2 new pairs
+    var toSpawn=Math.min(2,pool.waiting.length);
+    for(var i=0;i<toSpawn;i++){
+      var next=pool.unused.shift();
+      if(!next){
+        // Pool exhausted — reshuffle all pairs and refill unused
+        pool.unused=shuffle(ALL_PAIRS.slice());
+        // Remove currently active terms from unused to avoid duplicates
+        pool.active.forEach(function(p){
+          var idx=pool.unused.findIndex(function(u){return u.term===p.term;});
+          if(idx>-1) pool.unused.splice(idx,1);
+        });
+        next=pool.unused.shift();
+      }
+      if(next){
+        pool.active.push(next);
+        setTimeout(function(p){return function(){ addPairToField(p); };}(next), i*150);
+      }
+    }
+    pool.waiting=[];
+  }
+  updatePoolInfo();
+}
+
+function updatePoolInfo(){
+  document.getElementById('poolInfo').textContent=pool.active.length+' active · '+G.matches+' matched';
+}
+
+// ================================================
+// RENDER FIELD
+// ================================================
+function renderField(){
+  var tc=document.getElementById('termsCol');
+  var dc=document.getElementById('defsCol');
+  tc.innerHTML=''; dc.innerHTML='';
+  // Shuffle definitions independently
+  var defs=shuffle(pool.active.slice());
+  pool.active.forEach(function(p){
+    tc.appendChild(makeTermCard(p));
+  });
+  defs.forEach(function(p){
+    dc.appendChild(makeDefSlot(p));
+  });
+}
+
+function makeTermCard(pair){
+  var el=document.createElement('div');
+  el.className='term-card';
+  el.id='term_'+pair.term.replace(/\s/g,'_');
+  el.textContent=pair.term;
+  el.dataset.term=pair.term;
+  // Pointer-based drag
+  el.addEventListener('pointerdown',function(e){startDrag(e,pair.term,el);});
+  // Click-to-select fallback
+  el.addEventListener('click',function(){selectTerm(pair.term,el);});
+  return el;
+}
+
+function makeDefSlot(pair){
+  var el=document.createElement('div');
+  el.className='def-slot';
+  el.id='def_'+pair.term.replace(/\s/g,'_');
+  el.textContent=pair.match;
+  el.dataset.term=pair.term;
+  el.addEventListener('click',function(){attemptByClick(pair.term,el);});
+  return el;
+}
+
+function addPairToField(pair){
+  var tc=document.getElementById('termsCol');
+  var dc=document.getElementById('defsCol');
+  var termEl=makeTermCard(pair);
+  termEl.classList.add('spawn-in');
+  tc.appendChild(termEl);
+  // Insert def at random position among existing slots
+  var slots=dc.querySelectorAll('.def-slot');
+  var defEl=makeDefSlot(pair);
+  defEl.classList.add('spawn-in');
+  var insertBefore=slots[Math.floor(Math.random()*(slots.length+1))];
+  if(insertBefore) dc.insertBefore(defEl,insertBefore);
+  else dc.appendChild(defEl);
+}
+
+// ================================================
+// DRAG & DROP
+// ================================================
+var drag={active:false,term:null,termEl:null,ghost:null,startX:0,startY:0,origRect:null};
+
+function startDrag(e,term,el){
+  if(!G.running||G.busy) return;
+  e.preventDefault();
+  // If same as selected, just start drag
+  selectTerm(term,el);
+  drag.active=true;
+  drag.term=term;
+  drag.termEl=el;
+  var rect=el.getBoundingClientRect();
+  drag.origRect=rect;
+  var cx=e.clientX!==undefined?e.clientX:e.touches[0].clientX;
+  var cy=e.clientY!==undefined?e.clientY:e.touches[0].clientY;
+  drag.startX=cx; drag.startY=cy;
+  // Ghost
+  var ghost=document.createElement('div');
+  ghost.className='drag-ghost';
+  ghost.textContent=el.textContent;
+  ghost.style.width=rect.width+'px';
+  ghost.style.top=rect.top+'px';
+  ghost.style.left=rect.left+'px';
+  document.body.appendChild(ghost);
+  drag.ghost=ghost;
+  el.classList.add('dragging');
+  document.addEventListener('pointermove',onDragMove,{passive:false});
+  document.addEventListener('pointerup',onDragEnd);
+  document.addEventListener('pointercancel',onDragCancel);
+}
+
+function onDragCancel(){
+  if(!drag.active) return;
+  document.removeEventListener('pointermove',onDragMove);
+  document.removeEventListener('pointerup',onDragEnd);
+  document.removeEventListener('pointercancel',onDragCancel);
+  clearDefHighlights();
+  if(drag.ghost){drag.ghost.remove();drag.ghost=null;}
+  if(drag.termEl) drag.termEl.classList.remove('dragging');
+  drag.active=false; drag.term=null; drag.termEl=null;
+}
+
+function onDragMove(e){
+  if(!drag.active) return;
+  e.preventDefault();
+  var cx=e.clientX,cy=e.clientY;
+  var dx=cx-drag.startX,dy=cy-drag.startY;
+  drag.ghost.style.left=(drag.origRect.left+dx)+'px';
+  drag.ghost.style.top=(drag.origRect.top+dy)+'px';
+  // Highlight slot under cursor
+  clearDefHighlights();
+  var slot=slotAtPoint(cx,cy);
+  if(slot) slot.classList.add('hover');
+}
+
+function onDragEnd(e){
+  if(!drag.active) return;
+  document.removeEventListener('pointermove',onDragMove);
+  document.removeEventListener('pointerup',onDragEnd);
+  document.removeEventListener('pointercancel',onDragCancel);
+  clearDefHighlights();
+  var slot=slotAtPoint(e.clientX,e.clientY);
+  if(drag.ghost){drag.ghost.remove();drag.ghost=null;}
+  drag.termEl.classList.remove('dragging');
+  if(slot) attemptMatch(drag.term,slot.dataset.term,drag.termEl,slot);
+  drag.active=false; drag.term=null; drag.termEl=null;
+}
+
+function slotAtPoint(x,y){
+  var slots=document.querySelectorAll('.def-slot');
+  for(var i=0;i<slots.length;i++){
+    var r=slots[i].getBoundingClientRect();
+    if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom) return slots[i];
+  }
+  return null;
+}
+
+function clearDefHighlights(){document.querySelectorAll('.def-slot').forEach(function(s){s.classList.remove('hover');});}
+
+// ================================================
+// CLICK-TO-SELECT + MATCH
+// ================================================
+function selectTerm(term,el){
+  if(!G.running||G.busy) return;
+  // Deselect previous
+  document.querySelectorAll('.term-card.selected').forEach(function(c){c.classList.remove('selected');});
+  selectedTerm=term;
+  el.classList.add('selected');
+}
+
+function attemptByClick(defTerm,defEl){
+  if(!G.running||G.busy||!selectedTerm) return;
+  var termEl=document.getElementById('term_'+selectedTerm.replace(/\s/g,'_'));
+  attemptMatch(selectedTerm,defTerm,termEl,defEl);
+  selectedTerm=null;
+}
+
+// ================================================
+// MATCH LOGIC
+// ================================================
+function attemptMatch(draggedTerm,slotTerm,termEl,defEl){
+  if(!G.running||G.busy) return;
+  if(draggedTerm===slotTerm){
+    onCorrectMatch(draggedTerm,termEl,defEl);
+  } else {
+    onWrongMatch(termEl,defEl);
+  }
+}
+
+function onCorrectMatch(term,termEl,defEl){
+  G.busy=true;
+  // Score: base 10 + speed bonus (based on time elapsed)
+  var speedBonus=Math.max(0,Math.round(10-G.elapsed*0.5));
+  var earned=10+speedBonus;
+  G.score+=earned; G.matches++;
+  // Score pop
+  var pop=document.createElement('div');
+  pop.className='score-pop';
+  pop.textContent='+'+earned;
+  var r=defEl.getBoundingClientRect();
+  var fr=document.getElementById('matchField').getBoundingClientRect();
+  pop.style.left=(r.left-fr.left+r.width/2-20)+'px';
+  pop.style.top=(r.top-fr.top)+'px';
+  document.getElementById('matchField').appendChild(pop);
+  setTimeout(function(){pop.remove();},900);
+  // Flash correct
+  defEl.classList.add('correct');
+  termEl.classList.remove('selected');
+  updateHUD();
+  setTimeout(function(){
+    termEl.classList.add('matched-out');
+    defEl.classList.add('matched-out');
+    // Remove from active pool
+    pool.active=pool.active.filter(function(p){return p.term!==term;});
+    setTimeout(function(){
+      if(termEl.parentNode) termEl.parentNode.removeChild(termEl);
+      if(defEl.parentNode) defEl.parentNode.removeChild(defEl);
+      onPairMatched({term:term});
+      G.busy=false;
+    },420);
+  },350);
+}
+
+function onWrongMatch(termEl,defEl){
+  defEl.classList.add('wrong');
+  termEl.classList.remove('selected');
+  selectedTerm=null;
+  setTimeout(function(){defEl.classList.remove('wrong');},400);
+}
+
+// ================================================
+// TIMER
+// ================================================
+var GAME_DURATION=60;
+function startGameTimer(){
+  G.elapsed=0; updateTimerDisplay();
+  G.interval=setInterval(function(){
+    G.elapsed+=0.1;
+    updateTimerDisplay();
+    if(G.elapsed>=GAME_DURATION){
+      G.elapsed=GAME_DURATION;
+      clearInterval(G.interval);
+      G.running=false;
+      showGameOver();
+    }
+  },100);
+}
+function updateTimerDisplay(){
+  var rem=Math.max(0,GAME_DURATION-G.elapsed);
+  var frac=rem/GAME_DURATION;
+  var secs=Math.ceil(rem);
+  document.getElementById('timerFill').style.width=(frac*100)+'%';
+  document.getElementById('timerFill').style.background=frac>.5?'var(--green)':frac>.25?'var(--orange)':'var(--red)';
+  document.getElementById('timerSecs').textContent=secs+'s';
+  document.getElementById('timeVal').textContent=secs;
+  document.getElementById('timeVal').style.color=frac>.5?'var(--orange)':frac>.25?'var(--red)':'var(--red)';
+}
+
+// ================================================
+// GAME FLOW
+// ================================================
+async function startGame(){
+  if(!ALL_PAIRS.length) await loadPairs();
+  document.getElementById('scrStart').style.display='none';
+  G.score=0; G.matches=0; G.elapsed=0; G.busy=true; G.running=false;
+  if(G.interval) clearInterval(G.interval);
+  initPool();
+  renderField();
+  updateHUD();
+  runCountdown();
+}
+
+function backToStart(){
+  if(G.interval) clearInterval(G.interval);
+  G.running=false;
+  document.getElementById('scrOver').style.display='none';
+  document.getElementById('scrStart').style.display='flex';
+}
+
+function updateHUD(){
+  document.getElementById('scoreVal').textContent=G.score;
+  document.getElementById('matchVal').textContent=G.matches;
+  var hi=getHigh(); if(G.score>hi) hi=G.score;
+  document.getElementById('highVal').textContent=hi;
+  updatePoolInfo();
+}
+
+// ================================================
+// COUNTDOWN
+// ================================================
+function runCountdown(){
+  var ov=document.getElementById('cdOverlay'),ne=document.getElementById('cdNum');
+  var steps=[{text:'3',color:'var(--blue)',size:'160px'},{text:'2',color:'var(--orange)',size:'160px'},{text:'1',color:'var(--red)',size:'160px'},{text:'GO!',color:'var(--green)',size:'110px'}];
+  var i=0; ov.style.display='flex';
+  function showStep(){
+    var s=steps[i]; ne.style.fontSize=s.size; ne.style.color=s.color; ne.textContent=s.text;
+    ne.classList.remove('cdAnim'); void ne.offsetWidth; ne.classList.add('cdAnim');
+    i++;
+    if(i<steps.length){setTimeout(showStep,850);}
+    else{setTimeout(function(){ov.style.display='none';G.busy=false;G.running=true;startGameTimer();},850);}
+  }
+  showStep();
+}
+
+// ================================================
+// GAME OVER + BEST SCORE
+// ================================================
+function showGameOver(){
+  var ov=document.getElementById('goOverlay');
+  ov.style.display='flex';
+  setTimeout(function(){
+    ov.style.display='none';
+    finalScreen();
+  },1400);
+}
+
+function finalScreen(){
+  if(G.score>getHigh()) setHigh(G.score);   // best score is kept automatically
+  updateHUD();
+  document.getElementById('finalScore').textContent=G.score;
+  document.getElementById('scrOver').style.display='flex';
+}
+
+// Best score. Also reads the old saved-scores list so anyone's earlier best carries over.
+function getHigh(){
+  var best=0;
+  try{best=parseInt(localStorage.getItem('bmatch_best')||'0',10)||0;}catch(e){}
+  try{var old=JSON.parse(localStorage.getItem('bmatch_scores')||'[]');if(old.length&&old[0].score>best)best=old[0].score;}catch(e){}
+  return best;
+}
+function setHigh(v){try{localStorage.setItem('bmatch_best',String(v));}catch(e){}}
+
+// Pre-load pairs on page load
+loadPairs();
+</script>
+</body>
+</html>
