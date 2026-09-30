@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HexSmash - 4 Bit</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Teko:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;--panel:#111118;--card:#18181f;--border:#2a2a35;
+  --text:#e8e8f0;--dim:#55556a;--green:#00e676;--orange:#ff6d3b;
+  --blue:#3d9bff;--red:#ff3d5a;--yellow:#ffd600;--purple:#b04dff;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:100;}
+.shell{width:100%;max-width:440px;display:flex;flex-direction:column;border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 0 60px rgba(255,109,59,.07),0 0 0 1px rgba(255,255,255,.04) inset;}
+
+/* Header */
+.header{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Teko',sans-serif;font-size:22px;font-weight:700;letter-spacing:.12em;color:var(--orange);text-shadow:0 0 20px rgba(255,109,59,.5);text-transform:uppercase;}
+.logo span{color:var(--green);}
+
+/* Score strip */
+.score-strip{background:var(--panel);border-bottom:1px solid var(--border);display:flex;}
+.score-cell{flex:1;padding:7px 10px;text-align:center;border-right:1px solid var(--border);}
+.score-cell:last-child{border-right:none;}
+.sc-label{font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:2px;}
+.sc-val{font-family:'Teko',sans-serif;font-size:20px;font-weight:600;line-height:1;}
+
+/* Timer */
+.timer-wrap{background:var(--panel);border-bottom:1px solid var(--border);padding:7px 14px;display:flex;align-items:center;gap:10px;}
+.timer-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
+.timer-fill{height:100%;border-radius:3px;background:var(--green);transition:width .1s linear,background .4s;}
+.timer-secs{font-family:'Teko',sans-serif;font-size:16px;color:var(--text);width:32px;text-align:right;}
+
+/* ── BINARY AREA ── */
+.binary-area{background:var(--card);padding:18px 12px 14px;position:relative;border-bottom:1px solid var(--border);}
+.ba-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-bottom:10px;}
+.bit-row{display:flex;gap:6px;justify-content:center;}
+
+/* Bit cells — dual role: clickable toggle (h2b) or lit display (b2h) */
+.bit-cell{width:72px;height:72px;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid var(--border);background:rgba(255,255,255,.04);transition:all .1s;user-select:none;-webkit-user-select:none;}
+.bit-cell.toggle{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.bit-cell.toggle:active{transform:scale(.9);}
+.bit-cell.toggle.on{background:rgba(0,230,118,.18);border-color:var(--green);box-shadow:0 0 12px rgba(0,230,118,.3);}
+.bit-cell.display-lit{background:rgba(176,77,255,.22);border-color:var(--purple);box-shadow:0 0 12px rgba(176,77,255,.45);cursor:default;}
+.bit-pv{font-size:14px;color:var(--dim);}
+.bit-cell.toggle.on .bit-pv{color:rgba(0,230,118,.6);}
+.bit-cell.display-lit .bit-pv{color:rgba(176,77,255,.65);}
+.bit-val{font-family:'Teko',sans-serif;font-size:28px;font-weight:700;color:var(--dim);}
+.bit-cell.toggle.on .bit-val{color:var(--green);}
+.bit-cell.display-lit .bit-val{color:#fff;}
+
+/* Feedback banners */
+.fb-binary,.fb-hex{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;font-family:'Teko',sans-serif;font-size:38px;font-weight:700;letter-spacing:.08em;pointer-events:none;opacity:0;}
+.fb-binary{top:0;bottom:0;background:rgba(0,230,118,.07);color:var(--green);}
+.fb-hex{top:0;bottom:0;background:rgba(0,230,118,.07);color:var(--green);}
+.fb-show{animation:fbPop .55s ease forwards;}
+@keyframes fbPop{0%{opacity:0;transform:scale(.8);}25%{opacity:1;transform:scale(1.04);}65%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(.96);}}
+
+/* Wrong flash on binary area */
+.binary-area.wrong-flash{animation:wrongFlash .35s ease;}
+@keyframes wrongFlash{0%,100%{background:var(--card);}50%{background:rgba(255,61,90,.1);}}
+
+/* Task indicator */
+.task-bar{background:var(--panel);padding:7px 14px;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid var(--border);}
+.task-text{font-size:11px;color:var(--dim);letter-spacing:.05em;text-align:center;}
+.task-arrow{font-size:16px;}
+
+/* ── HEX AREA ── */
+.hex-area{background:var(--card);padding:14px 10px 16px;position:relative;}
+.ha-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-bottom:10px;}
+.hex-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;}
+
+/* Hex buttons */
+.hex-btn{width:56px;height:52px;border-radius:4px;border:1px solid var(--border);background:rgba(255,255,255,.04);font-family:'Teko',sans-serif;font-size:26px;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;transition:all .1s;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+.hex-btn.clickable{cursor:pointer;}
+.hex-btn.clickable:active{transform:scale(.9);}
+.hex-btn.target{background:rgba(176,77,255,.22);border-color:var(--purple);color:var(--purple);box-shadow:0 0 14px rgba(176,77,255,.45);cursor:default;}
+.hex-btn.wrong-btn{animation:wrongBtn .35s ease;}
+@keyframes wrongBtn{0%,100%{background:rgba(255,255,255,.04);}50%{background:rgba(255,61,90,.2);border-color:var(--red);color:var(--red);}}
+
+/* Hex reference */
+.hex-ref{display:none;margin:8px 4px 0;background:rgba(255,255,255,.03);border:0.5px solid var(--border);border-radius:4px;padding:8px 10px;}
+.hex-ref-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.hex-ref-cell{font-size:10px;text-align:center;color:var(--dim);padding:2px;}
+.hex-ref-cell b{color:var(--orange);}
+
+/* Controls row */
+.controls-row{background:var(--panel);border-top:1px solid var(--border);padding:8px 10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.tog-btn{background:none;border:1px solid var(--border);border-radius:2px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.04em;padding:4px 10px;cursor:pointer;transition:all .12s;}
+.tog-btn:hover{border-color:var(--orange);color:var(--orange);}
+.tog-btn.on{border-color:var(--green);color:var(--green);}
+
+/* Screens */
+.screen{position:fixed;inset:0;background:rgba(10,10,15,.96);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;backdrop-filter:blur(4px);}
+.screen-title{font-family:'Teko',sans-serif;font-size:38px;font-weight:700;letter-spacing:.1em;color:var(--orange);text-shadow:0 0 28px rgba(255,109,59,.5);text-align:center;text-transform:uppercase;}
+.screen-sub{font-size:14px;color:var(--dim);text-align:center;line-height:2;max-width:300px;}
+.screen-sub b{color:var(--text);}
+.big-score{font-family:'Teko',sans-serif;font-size:72px;font-weight:700;color:var(--orange);line-height:1;}
+.start-btn{padding:14px 40px;background:var(--orange);border:none;border-radius:3px;color:#1a0800;font-family:'Teko',sans-serif;font-size:24px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 24px rgba(255,109,59,.4);transition:all .12s;}
+.start-btn:hover{transform:translateY(-1px);}
+.start-toggles{display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;}
+.start-tog{width:100%;padding:11px 16px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.04em;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5;}
+.start-tog.pv-on{background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.4);color:var(--green);}
+.start-tog.pv-off{background:rgba(61,155,255,.08);border:1px solid rgba(61,155,255,.3);color:var(--blue);}
+.start-tog.hr-on{background:rgba(255,109,59,.1);border:1px solid rgba(255,109,59,.4);color:var(--orange);}
+.start-tog.hr-off{background:rgba(86,86,106,.1);border:1px solid rgba(86,86,106,.3);color:var(--dim);}
+.start-tog:hover{filter:brightness(1.15);}
+.play-again{padding:10px 24px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;}
+/* Usage-stats consent (same wording and storage key as the gcsecs.com quizzes, so one choice covers them all) */
+.consent-row{display:flex;align-items:flex-start;gap:10px;max-width:300px;padding:10px 12px;border:1px solid var(--border);border-radius:4px;background:rgba(255,255,255,.03);text-align:left;}
+.consent-row input{width:18px;height:18px;flex:0 0 auto;margin-top:1px;accent-color:var(--orange);cursor:pointer;}
+.consent-row label{font-size:11px;line-height:1.5;color:var(--dim);cursor:pointer;}
+
+/* Countdown + GO */
+.countdown-overlay{position:fixed;inset:0;background:rgba(10,10,15,.92);z-index:60;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);pointer-events:none;}
+.countdown-num{font-family:'Teko',sans-serif;font-weight:700;letter-spacing:.04em;text-align:center;}
+.cdAnim{animation:cdPop .85s ease forwards;}
+@keyframes cdPop{0%{opacity:0;transform:scale(.4);}20%{opacity:1;transform:scale(1.15);}55%{opacity:1;transform:scale(1);}85%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(1.3);}}
+.go-overlay{position:fixed;inset:0;background:rgba(10,10,15,.88);z-index:65;display:flex;align-items:center;justify-content:center;pointer-events:none;backdrop-filter:blur(6px);}
+.go-text{font-family:'Teko',sans-serif;font-size:88px;font-weight:700;color:var(--red);text-align:center;line-height:.9;letter-spacing:.06em;text-shadow:0 0 40px rgba(255,61,90,.9);animation:goAnim .55s cubic-bezier(.17,.67,.35,1.4) forwards;}
+@keyframes goAnim{0%{opacity:0;transform:scale(.25) rotate(-6deg);}55%{opacity:1;transform:scale(1.12) rotate(2deg);}100%{opacity:1;transform:scale(1) rotate(0deg);}}
+
+@media(max-width:440px){.bit-cell{width:60px;height:60px;}.bit-val{font-size:24px;}.hex-btn{width:48px;height:44px;font-size:22px;}}
+</style>
+</head>
+<body>
+
+<!-- Start screen -->
+<div class="screen" id="scrStart">
+  <div class="screen-title">Hex<span style="color:var(--green)">Smash</span></div>
+  <div class="screen-sub" style="color:var(--orange);font-size:15px;letter-spacing:.08em;">4-BIT &nbsp;&middot;&nbsp; Hex &#x21d4; Binary</div>
+  <div class="screen-sub">
+    When a <b style="color:var(--purple)">hex value glows purple</b> — set the bits to match.<br>
+    When <b style="color:var(--purple)">bits glow purple</b> — tap the correct hex value.<br>
+    How many can you convert in <b>60 seconds</b>?
+  </div>
+  <div class="start-toggles">
+    <button class="start-tog" id="pvStartBtn" onclick="togglePV()">Loading&hellip;</button>
+  </div>
+  <button class="start-btn" onclick="startGame()">START</button>
+  <div class="consent-row">
+    <input type="checkbox" id="consentBox" onchange="setConsent(this.checked)">
+    <label for="consentBox">Sharing anonymous usage stats to help improve gcsecs.com (no personal data, no ads). Untick to opt out.</label>
+  </div>
+</div>
+
+<!-- Game over screen -->
+<div class="screen" id="scrOver" style="display:none">
+  <div class="screen-title" style="font-size:32px;color:var(--red)">Game Over</div>
+  <div class="big-score" id="finalScore">0</div>
+  <button class="play-again" onclick="backToStart()">&#8617; PLAY AGAIN</button>
+</div>
+
+<!-- Shell -->
+<div class="shell">
+  <div class="header">
+    <div class="logo">Hex<span>Smash</span><span style="font-size:13px;color:var(--dim);margin-left:8px;">4-BIT</span></div>
+    <div style="font-family:'Teko',sans-serif;font-size:22px;font-weight:700;color:var(--orange);" id="gameTimerDisplay">60s</div>
+  </div>
+
+  <div class="score-strip">
+    <div class="score-cell"><div class="sc-label">Score</div><div class="sc-val" id="scoreVal" style="color:var(--orange);">0</div></div>
+    <div class="score-cell"><div class="sc-label">Best</div><div class="sc-val" id="highVal" style="color:var(--yellow);">0</div></div>
+    <div class="score-cell"><div class="sc-label">Correct</div><div class="sc-val" id="correctVal" style="color:var(--green);">0</div></div>
+    <div class="score-cell"><div class="sc-label">Time</div><div class="sc-val" id="timeVal" style="color:var(--orange);">60</div></div>
+  </div>
+
+  <div class="timer-wrap">
+    <div class="timer-track"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+    <div class="timer-secs" id="timerSecs">60s</div>
+  </div>
+
+  <!-- Binary area -->
+  <div class="binary-area" id="binaryArea">
+    <div class="ba-label" id="baLabel">Binary</div>
+    <div class="bit-row" id="bitRow"></div>
+    <div class="fb-binary" id="fbBinary">CORRECT!</div>
+  </div>
+
+  <!-- Task bar -->
+  <div class="task-bar">
+    <span class="task-text" id="taskText">Get ready&hellip;</span>
+  </div>
+
+  <!-- Hex area -->
+  <div class="hex-area" id="hexArea">
+    <div class="ha-label" id="haLabel">Hex</div>
+    <div class="hex-grid" id="hexGrid"></div>
+    <div class="fb-hex" id="fbHex">CORRECT!</div>
+  </div>
+
+  <!-- In-game toggles -->
+  <div class="controls-row">
+    <button class="tog-btn" id="pvTogBtn" onclick="togglePV()">place values: on</button>
+  </div>
+</div>
+
+<!-- Countdown -->
+<div class="countdown-overlay" id="cdOverlay" style="display:none">
+  <div class="countdown-num" id="cdNum" style="font-size:160px;color:var(--blue);">3</div>
+</div>
+<!-- GO -->
+<div class="go-overlay" id="goOverlay" style="display:none">
+  <div class="go-text">GAME<br>OVER</div>
+</div>
+
+<script>
+// ================================================
+// USAGE LOGGING (same tracker as the gcsecs.com quizzes)
+// Only runs if the player ticks the consent box. Posts to the Cloudflare
+// Worker, which adds a country code and forwards the row to Supabase.
+// Fire-and-forget: a failed request never affects the game.
+// ================================================
+var LOG_ENDPOINT='https://mcq-logger.andrewspero.workers.dev';
+var GAME_ID='hexsmash-4bit', GAME_TITLE='HexSmash 4-bit';
+// Opt-out: sharing is on unless the player has unticked the box on this device before.
+var consent=true; try{consent=localStorage.getItem('mcq_consent')!=='0';}catch(e){}
+var attemptId=null;
+function setConsent(on){consent=on;try{localStorage.setItem('mcq_consent',on?'1':'0');}catch(e){}}
+function getVisitorId(){
+  try{
+    var id=localStorage.getItem('mcq_visitor_id');
+    if(!id){id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+Math.random().toString(16).slice(2));localStorage.setItem('mcq_visitor_id',id);}
+    return id;
+  }catch(e){return null;}
+}
+function logAttempt(status){
+  if(!consent) return;
+  if(status==='started') attemptId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now());
+  var visitorId=getVisitorId();
+  if(!attemptId||!visitorId) return;
+  var payload={attempt_id:attemptId,visitor_id:visitorId,quiz_id:GAME_ID,quiz_title:GAME_TITLE,status:status,
+    score:status==='completed'?G.correct:null,          // conversions got right
+    total_questions:status==='completed'?G.shown:null}; // conversions shown (incl. one unfinished when time ran out)
+  try{
+    fetch(LOG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true})
+      .then(function(r){ if(!r.ok) r.text().then(function(t){ console.warn('HexSmash usage log refused ('+r.status+'): '+t); }); })
+      .catch(function(err){ console.warn('HexSmash usage log could not be sent:',err); });
+  }catch(e){}
+}
+
+// ================================================
+// HEX DATA
+// ================================================
+var HEX='0123456789ABCDEF';
+function hex2bits(h){var n=parseInt(h,16);var a=[];for(var i=3;i>=0;i--)a.push((n>>i)&1);return a;}
+function bits2hex(b){return HEX[b[0]*8+b[1]*4+b[2]*2+b[3]];}
+var PV=[8,4,2,1];
+
+// ================================================
+// STATE
+// ================================================
+var GAME_DURATION=60;
+var G={score:0,correct:0,shown:0,busy:false,gameElapsed:0,qStart:0,gameInterval:null,puzzle:null,userBits:[0,0,0,0]};
+var pvVisible=false; try{pvVisible=localStorage.getItem('hb4_pv')==='on';}catch(e){}
+
+// ================================================
+// PUZZLE
+// ================================================
+function makePuzzle(){
+  var val=Math.floor(Math.random()*15)+1; // 1-15 (never 0)
+  var hex=HEX[val];
+  var bits=hex2bits(hex);
+  var type=Math.random()<0.5?'h2b':'b2h';
+  return{val:val,hex:hex,bits:bits,type:type};
+}
+
+// ================================================
+// RENDER PUZZLE
+// ================================================
+function renderPuzzle(){
+  var p=G.puzzle;
+  G.userBits=[0,0,0,0];
+  // Clear hex button classes
+  document.querySelectorAll('.hex-btn').forEach(function(b){
+    b.classList.remove('target','clickable');
+  });
+
+  if(p.type==='h2b'){
+    // Hex → Binary: hex button goes purple, bits are toggleable
+    document.getElementById('taskText').textContent='Set the bits above to match the purple hex value \u2193';
+    renderBitRow('toggle');
+    // Highlight target hex button
+    var hbtn=document.getElementById('hbtn_'+p.hex);
+    if(hbtn) hbtn.classList.add('target');
+  } else {
+    // Binary → Hex: bits glow purple (display), hex buttons clickable
+    document.getElementById('taskText').textContent='Tap the hex value below that matches the purple bits \u2191';
+    renderBitRow('display');
+    // Make all hex buttons clickable
+    document.querySelectorAll('.hex-btn').forEach(function(b){
+      b.classList.add('clickable');
+    });
+  }
+}
+
+function renderBitRow(mode){
+  var row=document.getElementById('bitRow');
+  row.innerHTML='';
+  var p=G.puzzle;
+  PV.forEach(function(v,i){
+    var cell=document.createElement('div');
+    if(mode==='toggle'){
+      var on=G.userBits[i];
+      cell.className='bit-cell toggle'+(on?' on':'');
+      cell.innerHTML='<span class="bit-pv">'+v+'</span><span class="bit-val">'+(on?'1':'0')+'</span>';
+      if(pvVisible) cell.querySelector('.bit-pv').style.display='';
+      else cell.querySelector('.bit-pv').style.display='none';
+      cell.addEventListener('click',function(){
+        if(G.busy) return;
+        G.userBits[i]^=1;
+        renderBitRow('toggle');
+        checkH2B();
+      });
+    } else {
+      // display-lit if bit is 1, dark if 0
+      var lit=p.bits[i];
+      cell.className='bit-cell'+(lit?' display-lit':'');
+      cell.innerHTML='<span class="bit-pv">'+v+'</span><span class="bit-val">'+lit+'</span>';
+      if(!pvVisible) cell.querySelector('.bit-pv').style.display='none';
+    }
+    row.appendChild(cell);
+  });
+}
+
+// ================================================
+// CHECK ANSWERS
+// ================================================
+function checkH2B(){
+  var p=G.puzzle;
+  for(var i=0;i<4;i++){if(G.userBits[i]!==p.bits[i])return;}
+  onCorrect('binary');
+}
+
+function onHexClick(hex,btn){
+  if(G.busy||!G.puzzle||G.puzzle.type!=='b2h') return;
+  if(hex===G.puzzle.hex){
+    onCorrect('hex');
+  } else {
+    btn.classList.add('wrong-btn');
+    setTimeout(function(){btn.classList.remove('wrong-btn');},380);
+  }
+}
+
+function onCorrect(area){
+  if(G.busy) return;
+  G.busy=true;
+  var timeTaken=G.gameElapsed-G.qStart;
+  var speedBonus=Math.max(0,Math.round(15-timeTaken*1.5));
+  var pvMult=pvVisible?1:2;
+  var earned=(10+speedBonus)*pvMult;
+  G.score+=earned; G.correct++;
+  // Flash CORRECT over the right area
+  var fbId=area==='binary'?'fbBinary':'fbHex';
+  var fbEl=document.getElementById(fbId);
+  fbEl.classList.remove('fb-show'); void fbEl.offsetWidth; fbEl.classList.add('fb-show');
+  updateHUD();
+  setTimeout(function(){G.busy=false;nextPuzzle();},550);
+}
+
+// ================================================
+// TIMER
+// ================================================
+function startGameTimer(){
+  G.gameElapsed=0; updateTimerDisplay();
+  G.gameInterval=setInterval(function(){
+    G.gameElapsed+=0.1;
+    updateTimerDisplay();
+    if(G.gameElapsed>=GAME_DURATION){
+      G.gameElapsed=GAME_DURATION;
+      clearInterval(G.gameInterval);
+      G.busy=true;
+      gameOver();
+    }
+  },100);
+}
+
+function updateTimerDisplay(){
+  var rem=Math.max(0,GAME_DURATION-G.gameElapsed);
+  var frac=rem/GAME_DURATION;
+  var secs=Math.ceil(rem);
+  document.getElementById('timerFill').style.width=((1-frac)*100)+'%';
+  document.getElementById('timerFill').style.background=frac>.5?'var(--green)':frac>.25?'var(--orange)':'var(--red)';
+  document.getElementById('timerSecs').textContent=secs+'s';
+  document.getElementById('gameTimerDisplay').textContent=secs+'s';
+  document.getElementById('gameTimerDisplay').style.color=frac>.5?'var(--orange)':'var(--red)';
+  var tv=document.getElementById('timeVal');
+  if(tv){tv.textContent=secs;tv.style.color=frac>.5?'var(--orange)':'var(--red)';}
+}
+
+// ================================================
+// GAME FLOW
+// ================================================
+function nextPuzzle(){
+  G.puzzle=makePuzzle();
+  G.shown++;
+  G.qStart=G.gameElapsed;
+  renderPuzzle();
+}
+
+function startGame(){
+  document.getElementById('scrStart').style.display='none';
+  applyToggles();
+  buildHexGrid();
+  G.score=0;G.correct=0;G.shown=0;G.busy=true;G.gameElapsed=0;
+  if(G.gameInterval) clearInterval(G.gameInterval);
+  updateHUD();
+  runCountdown();
+}
+
+function backToStart(){
+  if(G.gameInterval) clearInterval(G.gameInterval);
+  G.busy=false;
+  document.getElementById('scrOver').style.display='none';
+  document.getElementById('scrStart').style.display='flex';
+}
+
+function updateHUD(){
+  document.getElementById('scoreVal').textContent=G.score;
+  document.getElementById('correctVal').textContent=G.correct;
+  var hi=getHigh();if(G.score>hi)hi=G.score;
+  document.getElementById('highVal').textContent=hi;
+}
+
+// ================================================
+// BUILD HEX GRID (1-F only)
+// ================================================
+function buildHexGrid(){
+  var grid=document.getElementById('hexGrid');
+  grid.innerHTML='';
+  // 1 through F (skip 0)
+  for(var i=1;i<16;i++){
+    (function(hex){
+      var btn=document.createElement('div');
+      btn.className='hex-btn';
+      btn.id='hbtn_'+hex;
+      btn.textContent=hex;
+      btn.addEventListener('click',function(){onHexClick(hex,btn);});
+      grid.appendChild(btn);
+    })(HEX[i]);
+  }
+}
+
+
+// ================================================
+// TOGGLES
+// ================================================
+function togglePV(){
+  pvVisible=!pvVisible;
+  try{localStorage.setItem('hb4_pv',pvVisible?'on':'off');}catch(e){}
+  applyToggles();
+  if(G.puzzle) renderPuzzle();
+}
+function applyToggles(){
+  var pvb=document.getElementById('pvTogBtn');
+  if(pvb){pvb.textContent='place values: '+(pvVisible?'on':'off');pvb.className='tog-btn'+(pvVisible?' on':'');}
+  var pvs=document.getElementById('pvStartBtn');
+  if(pvs){pvs.className='start-tog '+(pvVisible?'pv-on':'pv-off');pvs.innerHTML=pvVisible?'Place values: ON<br><span style="font-size:10px;opacity:.7">Shows 8 4 2 1 on the bits</span>':'Place values: OFF<br><span style="font-size:10px;opacity:.7">No hints &mdash; &times;2 score!</span>';}
+}
+
+// ================================================
+// COUNTDOWN
+// ================================================
+function runCountdown(){
+  var ov=document.getElementById('cdOverlay'),ne=document.getElementById('cdNum');
+  var steps=[{text:'3',color:'var(--blue)',size:'160px'},{text:'2',color:'var(--orange)',size:'160px'},{text:'1',color:'var(--red)',size:'160px'},{text:'GO!',color:'var(--green)',size:'110px'}];
+  var i=0; ov.style.display='flex';
+  function showStep(){
+    var s=steps[i];ne.style.fontSize=s.size;ne.style.color=s.color;ne.textContent=s.text;
+    ne.classList.remove('cdAnim');void ne.offsetWidth;ne.classList.add('cdAnim');
+    i++;
+    if(i<steps.length){setTimeout(showStep,850);}
+    else{setTimeout(function(){ov.style.display='none';G.busy=false;startGameTimer();nextPuzzle();logAttempt('started');},850);}
+  }
+  showStep();
+}
+
+// ================================================
+// GAME OVER + BEST SCORE
+// ================================================
+function gameOver(){
+  if(G.gameInterval) clearInterval(G.gameInterval);
+  if(G.score>getHigh()) setHigh(G.score);   // best score is kept automatically on this device
+  updateHUD();
+  logAttempt('completed');
+  var gov=document.getElementById('goOverlay');
+  gov.style.display='flex';
+  setTimeout(function(){
+    gov.style.display='none';
+    document.getElementById('finalScore').textContent=G.score;
+    document.getElementById('scrOver').style.display='flex';
+  },1400);
+}
+
+// Best score. Also reads the old saved-scores list so an earlier best carries over.
+function getHigh(){
+  var best=0;
+  try{best=parseInt(localStorage.getItem('hb4_best')||'0',10)||0;}catch(e){}
+  try{var old=JSON.parse(localStorage.getItem('hb4_scores')||'[]');if(old.length&&old[0].score>best)best=old[0].score;}catch(e){}
+  return best;
+}
+function setHigh(v){try{localStorage.setItem('hb4_best',String(v));}catch(e){}}
+
+// Init
+applyToggles();
+document.getElementById('consentBox').checked=consent;
+</script>
+</body>
+</html>
