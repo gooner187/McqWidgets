@@ -1,1 +1,621 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hex to Denary Converter</title>
+<style>body{margin:0;background:#fff;padding:24px 16px}</style>
+</head>
+<body>
+<!-- ===== gcsecs.com · 2-digit hex to denary converter (J277 1.2.1) · paste from here down into a Weebly Embed Code block ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+#h2d{--ink:#14213d;--muted:#5b6478;--line:#d9deea;--accent:#f5a524;--teal:#1d7c71;--bad:#c0392b;
+  --arrow-stroke:#4f81bd;--arrow-fill:#c6d9f1;--nibble-l:#7c3aed;--nibble-r:#d6336c;
+  font-family:"DM Sans",system-ui,sans-serif;color:var(--ink);max-width:800px;margin:0 auto;box-sizing:border-box}
+#h2d *,#h2d *::before,#h2d *::after{box-sizing:border-box}
+#h2d .h2d-head{text-align:center;margin-bottom:14px}
+#h2d .h2d-head h3{font-size:1.5rem;margin:0 0 4px;font-weight:700;color:var(--ink)}
+#h2d .h2d-head p{margin:0;color:var(--muted);font-size:.95rem}
+
+#h2d .h2d-controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:18px 0}
+#h2d .h2d-input-wrap{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;padding:6px 6px 6px 14px;background:#f4f6fb}
+#h2d .h2d-input-wrap label{font-size:.85rem;color:var(--muted);font-weight:600}
+#h2d input[type=text]{font-family:"Space Mono",monospace;font-size:1.3rem;font-weight:700;letter-spacing:.06em;
+  width:2.3em;text-align:center;border:1.5px solid var(--line);border-radius:8px;padding:8px 4px;color:var(--ink);
+  background:#fff;text-transform:uppercase}
+#h2d input[type=text]:focus{outline:none;border-color:var(--accent)}
+#h2d button{font:inherit;cursor:pointer}
+#h2d .h2d-btn{border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:10px;
+  min-height:44px;font-weight:600;font-family:"DM Sans",system-ui,sans-serif;font-size:.9rem}
+#h2d .h2d-btn:hover{border-color:var(--ink)}
+#h2d .h2d-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+#h2d .h2d-btn.primary:hover{opacity:.9}
+#h2d .h2d-btn.accent{background:var(--accent);color:#14213d;border-color:var(--accent)}
+#h2d .h2d-btn.accent:hover{opacity:.9}
+#h2d .h2d-btn:disabled{opacity:.4;cursor:default}
+#h2d .h2d-btn:focus-visible,#h2d input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#h2d .h2d-error{text-align:center;color:var(--bad);font-size:.9rem;min-height:1.3em;margin:-6px 0 8px}
+
+#h2d .h2d-steps{display:flex;flex-direction:column;gap:2px}
+#h2d .h2d-step{display:none;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:14px;
+  background:#f8f9fc;padding:16px 14px;margin-top:10px;opacity:0;transform:translateY(6px);
+  transition:opacity .35s ease,transform .35s ease;overflow:hidden}
+#h2d .h2d-step.shown{display:flex;opacity:1;transform:translateY(0)}
+#h2d .h2d-step-label{flex:0 0 auto;width:108px;max-width:24%;font-size:.85rem;color:var(--muted);font-weight:600;line-height:1.3}
+#h2d .h2d-step-label b{color:var(--ink)}
+
+/* ---- block arrow, matching the hand-made diagrams ---- */
+#h2d .h2d-arrow{flex:0 0 auto;width:48px;height:auto}
+#h2d .h2d-arrow svg{display:block;width:100%;height:auto}
+#h2d .h2d-arrow path{stroke:var(--arrow-stroke);fill:var(--arrow-fill);stroke-width:2.5;stroke-linejoin:round}
+
+#h2d .h2d-step-body{flex:1 1 auto;position:relative;min-height:56px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+#h2d .h2d-chip{font-family:"Space Mono",monospace;font-weight:700;font-size:1.4rem;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 16px;white-space:nowrap}
+#h2d .h2d-chip.big{font-size:1.9rem}
+#h2d .h2d-chip.result{background:var(--teal);color:#fff;border-color:var(--teal)}
+#h2d .h2d-eq{font-size:1.4rem;color:var(--muted);font-weight:700}
+#h2d .h2d-final-label{font-size:.95rem;color:var(--muted);font-weight:600}
+
+/* pop-in entrance used on the simple (non-choreographed) steps */
+@keyframes h2dPop{0%{opacity:0;transform:scale(.7)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+#h2d .h2d-step.shown .h2d-popin{animation:h2dPop .45s cubic-bezier(.34,1.56,.64,1) both;animation-delay:.25s}
+
+/* ---- step 2: split stage ---- */
+#h2d .h2d-split-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+#h2d .h2d-split-btn{transition:opacity .3s ease,transform .3s ease,margin .3s ease,max-height .3s ease;
+  overflow:hidden;max-height:60px;margin-top:0}
+#h2d .h2d-split-btn.is-hidden{opacity:0;transform:scale(.9);pointer-events:none;max-height:0;margin-top:-12px;padding-top:0;padding-bottom:0;border-width:0}
+#h2d .h2d-split-stage{position:relative;width:100%;min-height:64px;display:flex;align-items:center;justify-content:center}
+#h2d .h2d-split-combined{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:"Space Mono",monospace;font-weight:700;font-size:1.6rem;color:var(--ink);
+  opacity:1;transition:opacity .3s ease}
+#h2d .h2d-split-combined.is-hidden{opacity:0}
+#h2d .h2d-slot{position:absolute;left:50%;top:50%;display:flex;flex-direction:column;align-items:center;gap:5px;
+  opacity:0;transition:transform .6s cubic-bezier(.34,1,.4,1),opacity .3s ease}
+#h2d .h2d-slot.is-left{transform:translate(-50%,-50%) translateX(-11px)}
+#h2d .h2d-slot.is-right{transform:translate(-50%,-50%) translateX(11px)}
+#h2d .h2d-slot.is-visible{opacity:1}
+#h2d .h2d-slot.is-left.is-moved{transform:translate(-50%,-50%) translateX(-92px)}
+#h2d .h2d-slot.is-right.is-moved{transform:translate(-50%,-50%) translateX(92px)}
+#h2d .h2d-slot-tag{font-size:.72rem;color:var(--muted);background:#eef1f8;border-radius:999px;padding:2px 9px;font-weight:700;white-space:nowrap}
+#h2d .h2d-slot-box{font-family:"Space Mono",monospace;font-weight:700;font-size:1.1rem;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;white-space:nowrap}
+#h2d .h2d-slot-result{font-size:.85rem;font-weight:700;color:var(--teal);opacity:0;transition:opacity .35s ease;white-space:nowrap}
+#h2d .h2d-slot-result.is-visible{opacity:1}
+
+/* ---- step 3: digit box, then its place-value columns appear first
+   (lines + values), then each binary digit flies into its column ---- */
+#h2d .h2d-bits-pair{display:flex;gap:8px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+#h2d .h2d-bits-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+#h2d .h2d-bits-row{display:flex;align-items:flex-end;gap:3px}
+#h2d .h2d-bits-box{font-family:"Space Mono",monospace;font-weight:700;font-size:1.1rem;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:7px 10px;white-space:nowrap}
+#h2d .h2d-bits-row .h2d-eq{align-self:center;padding-bottom:12px;font-size:1rem}
+#h2d .h2d-bits-out{display:flex;gap:3px}
+#h2d .h2d-bits-out .h2d-dcol{width:19px}
+#h2d .h2d-bit{display:inline-block;font-family:"Space Mono",monospace;font-weight:700;font-size:1.1rem;color:var(--ink);
+  opacity:0;transform:translateX(-12px);transition:opacity .3s ease,transform .3s ease}
+#h2d .h2d-bit.is-visible{opacity:1;transform:translateX(0)}
+#h2d .h2d-bit[data-side="L"]{color:var(--nibble-l)}
+#h2d .h2d-bit[data-side="R"]{color:var(--nibble-r)}
+#h2d .h2d-bits-btn{font-size:.82rem;padding:7px 12px;min-height:38px;
+  transition:opacity .3s ease,transform .3s ease,margin .3s ease,max-height .3s ease;
+  overflow:hidden;max-height:50px}
+#h2d .h2d-bits-btn.is-hidden{opacity:0;transform:scale(.9);pointer-events:none;max-height:0;margin-top:-6px;padding-top:0;padding-bottom:0;border-width:0}
+
+/* ---- step 4: merge stage (mirror of the split) ---- */
+#h2d .h2d-merge-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+#h2d .h2d-merge-btn{transition:opacity .3s ease,transform .3s ease,margin .3s ease,max-height .3s ease;
+  overflow:hidden;max-height:60px;margin-top:0}
+#h2d .h2d-merge-btn.is-hidden{opacity:0;transform:scale(.9);pointer-events:none;max-height:0;margin-top:-12px;padding-top:0;padding-bottom:0;border-width:0}
+#h2d .h2d-merge-stage{position:relative;width:100%;min-height:92px;display:flex;align-items:center;justify-content:center}
+#h2d .h2d-merge-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translateX(0);
+  font-family:"Space Mono",monospace;font-weight:700;font-size:1.3rem;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;white-space:nowrap;
+  transition:transform .6s cubic-bezier(.34,1,.4,1),background-color .3s ease,border-color .3s ease,color .3s ease}
+#h2d .h2d-merge-box.is-left{transform:translate(-50%,-50%) translateX(-78px);color:var(--nibble-l)}
+#h2d .h2d-merge-box.is-right{transform:translate(-50%,-50%) translateX(78px);color:var(--nibble-r)}
+#h2d .h2d-merge-box.is-left.is-merged{transform:translate(-50%,-50%) translateX(-46px)}
+#h2d .h2d-merge-box.is-right.is-merged{transform:translate(-50%,-50%) translateX(46px)}
+#h2d .h2d-merge-box.is-plain{background-color:transparent;border-color:transparent}
+#h2d .h2d-merge-box.is-left.is-uniting,#h2d .h2d-merge-box.is-right.is-uniting{color:var(--ink)}
+#h2d .h2d-merge-result{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:"Space Mono",monospace;font-weight:700;font-size:1.9rem;color:var(--ink);opacity:0;transition:opacity .3s ease}
+#h2d .h2d-merge-result.is-visible{opacity:1}
+#h2d .h2d-merge-label{position:absolute;left:50%;top:calc(50% + 28px);transform:translate(-50%,0);
+  font-size:.8rem;color:var(--muted);font-weight:700;opacity:0;transition:opacity .35s ease;white-space:nowrap}
+#h2d .h2d-merge-label.is-visible{opacity:1}
+
+/* ---- step 5: place-value breakdown building up to the denary total ---- */
+#h2d .h2d-denary-stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+#h2d .h2d-denary-groups{display:flex;align-items:flex-end;gap:10px;flex-wrap:nowrap;justify-content:center;
+  max-width:100%;overflow-x:auto;padding:2px 2px 4px}
+#h2d .h2d-denary-group{display:flex;gap:0}
+#h2d .h2d-denary-answer{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto}
+#h2d .h2d-dcol{display:flex;flex-direction:column;align-items:center;width:26px;flex:0 0 auto}
+#h2d .h2d-dbit{display:inline-block;text-align:center;font-family:"Space Mono",monospace;
+  font-weight:700;font-size:1.3rem;color:var(--ink)}
+#h2d .h2d-dline{display:block;width:0;height:2.5px;background:var(--ink);border-radius:2px;
+  margin-top:4px;transition:width .3s ease}
+#h2d .h2d-dline.is-visible{width:20px}
+#h2d .h2d-dplace{display:inline-block;text-align:center;white-space:nowrap;margin-top:5px;
+  font-family:"Space Mono",monospace;font-weight:700;font-size:.76rem;color:var(--muted);
+  opacity:0;transform:translateY(-5px);transition:opacity .3s ease,transform .3s ease}
+#h2d .h2d-dplace.is-visible{opacity:1;transform:translateY(0)}
+#h2d .h2d-denary-eq{font-size:1.2rem;color:var(--muted);font-weight:700;opacity:0;transition:opacity .3s ease}
+#h2d .h2d-denary-eq.is-visible{opacity:1}
+#h2d .h2d-denary-result{font-family:"Space Mono",monospace;font-weight:700;font-size:.95rem;color:#fff;
+  background:var(--teal);border-radius:8px;padding:5px 10px;white-space:nowrap;
+  opacity:0;transform:scale(.7);transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
+#h2d .h2d-denary-result.is-visible{opacity:1;transform:scale(1)}
+#h2d .h2d-denary-btn{transition:opacity .3s ease,transform .3s ease,margin .3s ease,max-height .3s ease;
+  overflow:hidden;max-height:60px}
+#h2d .h2d-denary-btn.is-hidden{opacity:0;transform:scale(.9);pointer-events:none;max-height:0;margin-top:-12px;padding-top:0;padding-bottom:0;border-width:0}
+
+#h2d .h2d-nav{display:flex;justify-content:center;gap:10px;margin-top:16px}
+
+@media (max-width:560px){
+  #h2d .h2d-step{flex-direction:column;align-items:stretch;gap:6px}
+  #h2d .h2d-step-label{width:auto;max-width:100%}
+  #h2d .h2d-arrow{width:32px;align-self:center;transform:rotate(90deg);margin:2px 0}
+  #h2d .h2d-step-body{justify-content:center;width:100%}
+  #h2d .h2d-denary-groups{gap:6px}
+  #h2d .h2d-dcol{width:21px}
+  #h2d .h2d-dbit{font-size:1.05rem}
+  #h2d .h2d-dplace{font-size:.66rem}
+  #h2d .h2d-denary-eq{font-size:1rem}
+  #h2d .h2d-denary-result{font-size:.82rem;padding:4px 8px}
+}
+@media (prefers-reduced-motion:reduce){
+  #h2d .h2d-step,#h2d .h2d-slot,#h2d .h2d-merge-box,#h2d .h2d-merge-result,#h2d .h2d-split-combined,#h2d .h2d-slot-result,
+  #h2d .h2d-bit,#h2d .h2d-dline,#h2d .h2d-dplace,#h2d .h2d-denary-eq,#h2d .h2d-denary-result,
+  #h2d .h2d-split-btn,#h2d .h2d-bits-btn,#h2d .h2d-merge-btn,#h2d .h2d-denary-btn{
+    transition:none !important;animation:none !important}
+}
+</style>
+
+<div id="h2d">
+  <div class="h2d-head">
+    <h3>2-digit hex to denary converter</h3>
+    <p>Type any 2-digit hex number and step through the conversion.</p>
+  </div>
+
+  <div class="h2d-controls">
+    <div class="h2d-input-wrap">
+      <label for="h2dInput">Hex:</label>
+      <input type="text" id="h2dInput" maxlength="2" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="2F">
+    </div>
+    <button type="button" class="h2d-btn primary" data-act="go">Convert</button>
+    <button type="button" class="h2d-btn" data-act="random">Random</button>
+  </div>
+  <p class="h2d-error" id="h2dError" role="alert"></p>
+
+  <div class="h2d-steps" id="h2dSteps"></div>
+
+  <div class="h2d-nav" id="h2dNav" style="display:none">
+    <button type="button" class="h2d-btn" data-act="next">Show next step</button>
+    <button type="button" class="h2d-btn" data-act="all">Show all steps</button>
+    <button type="button" class="h2d-btn" data-act="reset">Reset</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById("h2d");
+  var input = document.getElementById("h2dInput");
+  var errorEl = document.getElementById("h2dError");
+  var stepsEl = document.getElementById("h2dSteps");
+  var navEl = document.getElementById("h2dNav");
+
+  var shownCount = 0;
+  var totalSteps = 6;
+  var animatedSteps = {};   // which step choreographies have already played for this build
+  var pendingTimers = [];
+
+  function hexDigitValue(ch){ return parseInt(ch, 16); }
+  function toBin4(n){ return n.toString(2).padStart(4, "0"); }
+
+  function clearTimers(){
+    pendingTimers.forEach(function(t){ clearTimeout(t); });
+    pendingTimers = [];
+  }
+  function after(ms, fn){ pendingTimers.push(setTimeout(fn, ms)); }
+
+  var ARROW_SVG =
+    '<div class="h2d-arrow" aria-hidden="true"><svg viewBox="0 0 60 34" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M2,12 H32 V3 L58,17 L32,31 V22 H2 Z"/>' +
+    '</svg></div>';
+
+  function buildSteps(hex){
+    var d1 = hex[0], d2 = hex[1];
+    var v1 = hexDigitValue(d1), v2 = hexDigitValue(d2);
+    var b1 = toBin4(v1), b2 = toBin4(v2);
+    var byte = b1 + " " + b2;
+    var byteJoined = b1 + b2;
+    var finalVal = parseInt(byteJoined, 2);
+
+    stepsEl.innerHTML =
+      step(1, "This is a 2-digit hex number",
+        '<span class="h2d-chip big h2d-popin">' + hex + '</span>') +
+
+      step(2, "Split the hex number and convert each digit to denary",
+        '<div class="h2d-split-wrap">' +
+          '<div class="h2d-split-stage" id="h2dSplitStage">' +
+            '<div class="h2d-split-combined" id="h2dSplitCombined">' + hex + '</div>' +
+            '<div class="h2d-slot is-left" id="h2dSlotL">' +
+              '<span class="h2d-slot-tag">' + d1 + ' in hex</span>' +
+              '<span class="h2d-slot-box">' + d1 + '</span>' +
+              '<span class="h2d-slot-result" id="h2dResultL">' + v1 + ' in denary</span>' +
+            '</div>' +
+            '<div class="h2d-slot is-right" id="h2dSlotR">' +
+              '<span class="h2d-slot-tag">' + d2 + ' in hex</span>' +
+              '<span class="h2d-slot-box">' + d2 + '</span>' +
+              '<span class="h2d-slot-result" id="h2dResultR">' + v2 + ' in denary</span>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" class="h2d-btn accent h2d-split-btn" id="h2dSplitBtn" data-act="split-hex">Click to split</button>' +
+        '</div>') +
+
+      step(3, "Write down the 4-bit binary value for each hex digit",
+        '<div class="h2d-bits-pair" id="h2dBitsPair">' +
+          bitsItem("L", d1, v1, b1) +
+          bitsItem("R", d2, v2, b2) +
+        '</div>') +
+
+      step(4, "Re-write the binary closer together (a byte)",
+        '<div class="h2d-merge-wrap">' +
+          '<div class="h2d-merge-stage" id="h2dMergeStage">' +
+            '<div class="h2d-merge-box is-left" id="h2dMergeL">' + b1 + '</div>' +
+            '<div class="h2d-merge-box is-right" id="h2dMergeR">' + b2 + '</div>' +
+            '<div class="h2d-merge-result" id="h2dMergeResult">' + byte + '</div>' +
+            '<div class="h2d-merge-label" id="h2dMergeLabel">(byte)</div>' +
+          '</div>' +
+          '<button type="button" class="h2d-btn accent h2d-merge-btn" id="h2dMergeBtn" data-act="merge-hex">Click to combine</button>' +
+        '</div>') +
+
+      step(5, "Convert the 8 bits (byte) to denary", denaryStage(b1, b2, finalVal)) +
+
+      step(6, "Putting it all together",
+        '<span class="h2d-chip big h2d-popin">' + hex + '</span>' +
+        '<span class="h2d-final-label h2d-popin">in hexadecimal</span>' +
+        '<span class="h2d-eq h2d-popin">=</span>' +
+        '<span class="h2d-chip result big h2d-popin">' + finalVal + '</span>' +
+        '<span class="h2d-final-label h2d-popin">in denary</span>');
+
+    animatedSteps = {};
+  }
+
+  function step(n, label, bodyHtml){
+    return (
+      '<div class="h2d-step" data-step="' + n + '">' +
+        '<div class="h2d-step-label"><b>' + n + '.</b> ' + label + '</div>' +
+        ARROW_SVG +
+        '<div class="h2d-step-body">' + bodyHtml + '</div>' +
+      '</div>'
+    );
+  }
+
+  /* one digit's box + its 4 place-value columns, ready to be revealed
+     by animateBitsSide(): the place values (with underline) appear
+     first, then each binary digit flies into its column */
+  function bitsItem(side, digit, value, bin){
+    var places = [8, 4, 2, 1];
+    var colsHtml = "";
+    for (var i = 0; i < 4; i++){
+      colsHtml +=
+        '<div class="h2d-dcol">' +
+          '<span class="h2d-bit" data-side="' + side + '" data-i="' + i + '">' + bin[i] + '</span>' +
+          '<span class="h2d-dline" data-side="' + side + '" data-i="' + i + '"></span>' +
+          '<span class="h2d-dplace" data-side="' + side + '" data-i="' + i + '">' + places[i] + '</span>' +
+        '</div>';
+    }
+    return (
+      '<div class="h2d-bits-item">' +
+        '<span class="h2d-slot-tag">' + value + ' in denary</span>' +
+        '<div class="h2d-bits-row">' +
+          '<span class="h2d-chip h2d-bits-box h2d-popin">' + digit + '</span>' +
+          '<span class="h2d-eq h2d-popin">=</span>' +
+          '<span class="h2d-bits-out" id="h2dBitsOut' + side + '">' + colsHtml + '</span>' +
+        '</div>' +
+        '<button type="button" class="h2d-btn accent h2d-bits-btn" data-act="bits-' + side + '">Convert to 4-bit</button>' +
+      '</div>'
+    );
+  }
+
+  /* the byte broken into 8 individual bit columns, each with its own
+     underline, ready for animateDenaryPlaces() to reveal — per bit,
+     the line draws in first, then its place value — one at a time
+     from the lowest place value up to the highest, then the "="
+     and, on request, the answer */
+  function denaryStage(b1, b2, finalVal){
+    var places = [128, 64, 32, 16, 8, 4, 2, 1];
+    var bits = (b1 + b2).split("");
+
+    function group(startIdx){
+      var colsHtml = "";
+      for (var i = startIdx; i < startIdx + 4; i++){
+        colsHtml +=
+          '<div class="h2d-dcol">' +
+            '<span class="h2d-dbit">' + bits[i] + '</span>' +
+            '<span class="h2d-dline" data-i="' + i + '"></span>' +
+            '<span class="h2d-dplace" data-i="' + i + '">' + places[i] + '</span>' +
+          '</div>';
+      }
+      return '<div class="h2d-denary-group">' + colsHtml + '</div>';
+    }
+
+    return (
+      '<div class="h2d-denary-stage" id="h2dDenaryStage">' +
+        '<div class="h2d-denary-groups">' +
+          group(0) +
+          group(4) +
+          '<span class="h2d-denary-answer">' +
+            '<span class="h2d-denary-eq" id="h2dDenaryEq">=</span>' +
+            '<span class="h2d-denary-result" id="h2dDenaryResult">' + finalVal + '</span>' +
+          '</span>' +
+        '</div>' +
+        '<button type="button" class="h2d-btn accent h2d-denary-btn is-hidden" id="h2dDenaryBtn" data-act="show-denary">Display denary</button>' +
+      '</div>'
+    );
+  }
+
+  /* ---- step 2 choreography: the merged hex number fades, and the two
+     digits slide apart into their own boxes, then their denary value
+     fades in once they've landed ---- */
+  function animateSplit(){
+    var combined = document.getElementById("h2dSplitCombined");
+    var slotL = document.getElementById("h2dSlotL");
+    var slotR = document.getElementById("h2dSlotR");
+    var resL = document.getElementById("h2dResultL");
+    var resR = document.getElementById("h2dResultR");
+    if (!combined) return;
+
+    after(300, function(){
+      combined.classList.add("is-hidden");
+      slotL.classList.add("is-visible");
+      slotR.classList.add("is-visible");
+    });
+    after(650, function(){
+      slotL.classList.add("is-moved");
+      slotR.classList.add("is-moved");
+    });
+    after(1300, function(){
+      resL.classList.add("is-visible");
+      resR.classList.add("is-visible");
+      postHeight();
+    });
+  }
+
+  /* ---- step 3 choreography: one digit's 4 bits appear one at a time,
+     exiting to the right of its box. Triggered independently per side
+     by its own "Convert to 4-bit" button ---- */
+  function animateBitsSide(side){
+    var lineEls = stepsEl.querySelectorAll('.h2d-dline[data-side="' + side + '"]');
+    var placeEls = stepsEl.querySelectorAll('.h2d-dplace[data-side="' + side + '"]');
+    var bitEls = stepsEl.querySelectorAll('.h2d-bit[data-side="' + side + '"]');
+    if (!lineEls.length) return;
+
+    var n = lineEls.length; // 4
+    var placeStagger = 200;
+    var placeStart = 150;
+
+    /* phase 1: the place values appear first, lowest to highest
+       (right to left) — each with its underline, just like step 5 */
+    for (var i = 0; i < n; i++){
+      var revealIdx = n - 1 - i;
+      (function(lineEl, placeEl, delay){
+        after(delay, function(){
+          lineEl.classList.add("is-visible");
+          placeEl.classList.add("is-visible");
+          postHeight();
+        });
+      })(lineEls[revealIdx], placeEls[revealIdx], placeStart + i * placeStagger);
+    }
+
+    /* phase 2: once the place values are all in, the binary digits
+       fly into their correct columns, left to right */
+    var bitStart = placeStart + n * placeStagger + 300;
+    var bitStagger = 230;
+    for (var j = 0; j < n; j++){
+      (function(bitEl, delay){
+        after(delay, function(){ bitEl.classList.add("is-visible"); postHeight(); });
+      })(bitEls[j], bitStart + j * bitStagger);
+    }
+  }
+
+  /* ---- step 4 choreography: the mirror of step 2 — the two binary
+     bytes slide together and merge into the combined byte ---- */
+  function animateMerge(){
+    var boxL = document.getElementById("h2dMergeL");
+    var boxR = document.getElementById("h2dMergeR");
+    var result = document.getElementById("h2dMergeResult");
+    var label = document.getElementById("h2dMergeLabel");
+    if (!boxL) return;
+
+    after(250, function(){
+      boxL.classList.add("is-plain");
+      boxR.classList.add("is-plain");
+    });
+    after(550, function(){
+      boxL.classList.add("is-merged");
+      boxR.classList.add("is-merged");
+    });
+    after(1050, function(){
+      // the two colours unite into black — they're one byte now
+      boxL.classList.add("is-uniting");
+      boxR.classList.add("is-uniting");
+    });
+    after(1350, function(){
+      boxL.style.opacity = "0";
+      boxR.style.opacity = "0";
+      result.classList.add("is-visible");
+      label.classList.add("is-visible");
+      postHeight();
+    });
+  }
+
+  /* ---- step 5 choreography: bit by bit, lowest (1) to highest (128) —
+     right to left — draw that bit's underline, then write its place
+     value underneath it. Once all 8 are done, the "=" fades in and
+     the "Display denary" button grows in beneath it ---- */
+  function animateDenaryPlaces(){
+    var denaryStageEl = document.getElementById("h2dDenaryStage");
+    if (!denaryStageEl) return;
+    var lineEls = denaryStageEl.querySelectorAll(".h2d-dline");
+    var placeEls = denaryStageEl.querySelectorAll(".h2d-dplace");
+    var eqEl = document.getElementById("h2dDenaryEq");
+    var btnEl = document.getElementById("h2dDenaryBtn");
+    if (!lineEls.length) return;
+
+    var n = lineEls.length;
+    var bitStagger = 340;   // time from one bit's turn to the next
+    var placeAfterLine = 170; // the number appears this long after its line
+    var start = 300;
+
+    for (var i = 0; i < n; i++){
+      var revealIdx = n - 1 - i; // rightmost (lowest place value) first
+      var bitStart = start + i * bitStagger;
+      (function(lineEl, placeEl, lineDelay){
+        after(lineDelay, function(){ lineEl.classList.add("is-visible"); postHeight(); });
+        after(lineDelay + placeAfterLine, function(){ placeEl.classList.add("is-visible"); postHeight(); });
+      })(lineEls[revealIdx], placeEls[revealIdx], bitStart);
+    }
+
+    var lastPlaceTime = start + (n - 1) * bitStagger + placeAfterLine;
+    after(lastPlaceTime + 120, function(){
+      eqEl.classList.add("is-visible");
+      btnEl.classList.remove("is-hidden");
+      postHeight();
+    });
+  }
+
+  function revealUpTo(n){
+    shownCount = n;
+    var els = stepsEl.querySelectorAll(".h2d-step");
+    els.forEach(function(el){
+      var idx = parseInt(el.getAttribute("data-step"), 10);
+      var wasShown = el.classList.contains("shown");
+      var nowShown = idx <= n;
+      el.classList.toggle("shown", nowShown);
+      if (nowShown && !wasShown && idx === 5 && !animatedSteps[5]){
+        animatedSteps[5] = true;
+        animateDenaryPlaces();
+      }
+    });
+    var nextBtn = navEl.querySelector('[data-act="next"]');
+    if (nextBtn){
+      nextBtn.disabled = (shownCount >= totalSteps);
+      nextBtn.textContent = (shownCount === totalSteps - 1) ? "Show final step" : "Show next step";
+    }
+    postHeight();
+  }
+
+  function validateAndBuild(){
+    clearTimers();
+    var raw = input.value.trim().toUpperCase();
+    input.value = raw;
+    if (!/^[0-9A-F]{2}$/.test(raw)){
+      errorEl.textContent = raw.length === 0
+        ? "Enter a 2-digit hex number, e.g. 2F"
+        : "“" + raw + "” isn’t a valid 2-digit hex number (use 0–9 and A–F).";
+      stepsEl.innerHTML = "";
+      navEl.style.display = "none";
+      postHeight();
+      return;
+    }
+    errorEl.textContent = "";
+    buildSteps(raw);
+    navEl.style.display = "flex";
+    revealUpTo(1);
+  }
+
+  function randomHex(){
+    var n = Math.floor(Math.random() * 256);
+    return n.toString(16).toUpperCase().padStart(2, "0");
+  }
+
+  root.addEventListener("click", function(e){
+    var btn = e.target.closest("[data-act]");
+    if (!btn) return;
+    var act = btn.getAttribute("data-act");
+    if (act === "go"){ validateAndBuild(); }
+    else if (act === "random"){ input.value = randomHex(); validateAndBuild(); }
+    else if (act === "split-hex"){
+      if (animatedSteps[2]) return;
+      animatedSteps[2] = true;
+      btn.classList.add("is-hidden");
+      btn.disabled = true;
+      animateSplit();
+      after(350, postHeight);
+    }
+    else if (act === "bits-L" || act === "bits-R"){
+      var side = act.slice(-1);
+      var key = "bits" + side;
+      if (animatedSteps[key]) return;
+      animatedSteps[key] = true;
+      btn.classList.add("is-hidden");
+      btn.disabled = true;
+      animateBitsSide(side);
+      after(350, postHeight);
+    }
+    else if (act === "merge-hex"){
+      if (animatedSteps[4]) return;
+      animatedSteps[4] = true;
+      btn.classList.add("is-hidden");
+      btn.disabled = true;
+      animateMerge();
+      after(350, postHeight);
+    }
+    else if (act === "show-denary"){
+      if (animatedSteps.denary) return;
+      animatedSteps.denary = true;
+      btn.classList.add("is-hidden");
+      btn.disabled = true;
+      document.getElementById("h2dDenaryResult").classList.add("is-visible");
+      after(350, postHeight);
+    }
+    else if (act === "next"){ revealUpTo(Math.min(shownCount + 1, totalSteps)); }
+    else if (act === "all"){ revealUpTo(totalSteps); }
+    else if (act === "reset"){
+      clearTimers();
+      errorEl.textContent = "";
+      stepsEl.innerHTML = "";
+      navEl.style.display = "none";
+      shownCount = 0;
+      postHeight();
+    }
+  });
+
+  input.addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); validateAndBuild(); }
+  });
+  input.addEventListener("input", function(){
+    input.value = input.value.toUpperCase().replace(/[^0-9A-F]/g, "").slice(0, 2);
+  });
+
+  /* iframe auto-resize: tell the parent page our height whenever it changes */
+  var lastHeight = 0;
+  function postHeight(){
+    requestAnimationFrame(function(){
+      var h = document.body.scrollHeight;
+      if (h !== lastHeight){
+        lastHeight = h;
+        try { window.parent.postMessage({ mcqWidgetHeight: h }, "*"); } catch(e){}
+      }
+    });
+  }
+  window.addEventListener("load", postHeight);
+  window.addEventListener("resize", postHeight);
+  postHeight();
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ postHeight(); }).observe(document.body);
+  }
+})();
+</script>
+<!-- ===== end gcsecs.com hex to denary converter ===== -->
+</body>
+</html>
 
