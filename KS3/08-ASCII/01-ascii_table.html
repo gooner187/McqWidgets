@@ -29,7 +29,7 @@
 #gcs-ascii[data-fontsize="larger"]{font-size:18px}
 #gcs-ascii[data-fontsize="largest"]{font-size:20px}
 
-#gcs-ascii{font-family:"DM Sans",system-ui,sans-serif;color:var(--text);background:var(--pageBg);max-width:1040px;margin:0 auto;padding:20px;border-radius:18px;box-sizing:border-box;line-height:1.4}
+#gcs-ascii{container-type:inline-size;font-family:"DM Sans",system-ui,sans-serif;color:var(--text);background:var(--pageBg);max-width:1040px;margin:0 auto;padding:20px;border-radius:18px;box-sizing:border-box;line-height:1.4}
 #gcs-ascii *{box-sizing:border-box}
 #gcs-ascii .head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px;margin-bottom:14px}
 #gcs-ascii h3{margin:0;font-size:1.6em;font-weight:700;letter-spacing:-.01em;color:var(--text)}
@@ -42,15 +42,18 @@
 #gcs-ascii .icon-btn{width:40px;height:40px;border-radius:999px;border:1.5px solid var(--iconBorder);background:var(--iconBg);color:var(--iconColor);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-family:"DM Sans",system-ui,sans-serif;font-weight:600;line-height:1}
 #gcs-ascii button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #gcs-ascii .grid{display:grid;grid-template-columns:1fr;gap:16px}
-@media (min-width:900px){#gcs-ascii .grid{grid-template-columns:repeat(3,1fr)}#gcs-ascii .blk.wide{grid-column:1/-1}}
-#gcs-ascii .blk{background:var(--cardBg);border:1px solid var(--cardBorder);border-radius:14px;padding:14px 14px 8px;min-width:0}
+#gcs-ascii .blk.wide{grid-column:1/-1}
+@container (min-width:815px){#gcs-ascii[data-fontsize="normal"] .grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (min-width:875px){#gcs-ascii[data-fontsize="larger"] .grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container (min-width:950px){#gcs-ascii[data-fontsize="largest"] .grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+#gcs-ascii .blk{background:var(--cardBg);border:1px solid var(--cardBorder);border-radius:14px;padding:14px 12px 8px;min-width:0}
 #gcs-ascii h4{margin:0;font-size:1em;font-weight:700;color:var(--text)}
 #gcs-ascii .rng{font-family:"Space Mono",monospace;font-size:.78em;font-weight:700;color:#fff;background:var(--accent);border-radius:6px;padding:2px 7px;margin-right:4px;vertical-align:1px}
 #gcs-ascii[data-theme="dark"] .rng{color:#1B1D1B}
 #gcs-ascii .note{margin:4px 0 8px;font-size:.8em;color:var(--secondary)}
 #gcs-ascii table{width:100%;border-collapse:collapse;font-size:.88em}
-#gcs-ascii th{text-align:left;font-size:.8em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--secondary);padding:6px;border-bottom:1.5px solid var(--cardBorder)}
-#gcs-ascii td{padding:3px 6px;height:1.95em;line-height:1.3;border-bottom:1px solid var(--badgeBg);font-family:"Space Mono",monospace;white-space:nowrap}
+#gcs-ascii th{text-align:left;font-size:.8em;font-weight:700;letter-spacing:0;color:var(--secondary);padding:6px 4px;border-bottom:1.5px solid var(--cardBorder)}
+#gcs-ascii td{padding:3px 4px;height:1.95em;line-height:1.3;border-bottom:1px solid var(--badgeBg);font-family:"Space Mono",monospace;white-space:nowrap}
 #gcs-ascii tbody tr:hover td{background:var(--accentBg)}
 #gcs-ascii tbody tr:last-child td{border-bottom:0}
 #gcs-ascii .dn{color:var(--dn)}
@@ -67,7 +70,8 @@
 #gcs-ascii .b8{display:none;opacity:.55}
 #gcs-ascii.show8 .b8{display:inline}
 @media (max-width:600px){#gcs-ascii{padding:14px 12px;border-radius:14px}#gcs-ascii .tag{display:table;margin:3px 0 0}}
-@media (max-width:380px){#gcs-ascii[data-fontsize="larger"]{font-size:17px}#gcs-ascii[data-fontsize="largest"]{font-size:18px}#gcs-ascii .blk{padding:12px 8px 6px}#gcs-ascii table{font-size:.8em}#gcs-ascii td,#gcs-ascii th{padding-left:4px;padding-right:4px}}
+@media (max-width:420px){#gcs-ascii[data-fontsize="larger"]{font-size:17px}#gcs-ascii[data-fontsize="largest"]{font-size:18px}#gcs-ascii .blk{padding:12px 8px 6px}#gcs-ascii table{font-size:.8em}#gcs-ascii td,#gcs-ascii th{padding-left:4px;padding-right:4px}}
+@container (max-width:330px){#gcs-ascii .blk{padding:12px 6px 6px}#gcs-ascii table{font-size:.76em}#gcs-ascii td,#gcs-ascii th{padding-left:3px;padding-right:3px}#gcs-ascii th{font-size:.72em;letter-spacing:0;text-transform:none}#gcs-ascii .tag{white-space:normal}#gcs-ascii[data-fontsize="larger"] .grid,#gcs-ascii[data-fontsize="largest"] .grid{font-size:17px}}
 </style>
 
 <div id="gcs-ascii" data-theme="light" data-fontsize="normal">
@@ -155,4 +159,3 @@
 <!-- ===== end gcsecs.com ASCII table ===== -->
 </body>
 </html>
-
