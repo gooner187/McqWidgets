@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KS3 Scratch - Selection</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  /* ============ THEME TOKENS (values verified against WCAG AA, see spec) ============ */
+  body[data-theme="light"]{
+    --pageBg:#F7F5F1; --text:#1F2421; --secondary:#636A78; --mutedLabel:#736E64; --wordmark:#8A8477;
+    --cardBg:#FFFFFF; --cardBorder:#E5E1D8; --badgeBg:#F1EFE9; --badgeText:#636A78;
+    --accent:#3B5BDB; --accentBg:#F5F7FF; --accentBadgeBg:#E8ECFC; --accentText:#3B5BDB;
+    --navDoneBorder:#1F2421; --navDoneText:#1F2421; --navDoneBg:#FFFFFF;
+    --navLockedBg:#EDEAE3; --navLockedText:#B5AF9F;
+    --iconBg:#FFFFFF; --iconBorder:#E5E1D8; --iconColor:#1F2421;
+    --correctBg:#E4F5EC; --correctText:#0F9D6C; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+  body[data-theme="dark"]{
+    --pageBg:#1B1D1B; --text:#F2F0EA; --secondary:#A9A79E; --mutedLabel:#8C897E; --wordmark:#8C897E;
+    --cardBg:#262825; --cardBorder:#3A3C37; --badgeBg:#33352F; --badgeText:#A9A79E;
+    --accent:#7C93F2; --accentBg:#2A2D45; --accentBadgeBg:#33375C; --accentText:#AAB8FA;
+    --navDoneBorder:#F2F0EA; --navDoneText:#F2F0EA; --navDoneBg:#262825;
+    --navLockedBg:#2E302B; --navLockedText:#65635A;
+    --iconBg:#262825; --iconBorder:#3A3C37; --iconColor:#F2F0EA;
+    --correctBg:#1E3A2E; --correctText:#5FD9A4; --incorrectBg:#3B2323; --incorrectText:#F28B8B;
+  }
+  body[data-theme="accessible"]{
+    --pageBg:#FDF6E3; --text:#3B3A36; --secondary:#6B675D; --mutedLabel:#757161; --wordmark:#8A8574;
+    --cardBg:#FFFBEF; --cardBorder:#E8DCC0; --badgeBg:#F3E9D2; --badgeText:#6B675D;
+    --accent:#6B4A94; --accentBg:#F1EAF7; --accentBadgeBg:#E6D9F0; --accentText:#5A3D7D;
+    --navDoneBorder:#3B3A36; --navDoneText:#3B3A36; --navDoneBg:#FFFBEF;
+    --navLockedBg:#EFE6CE; --navLockedText:#B3A98C;
+    --iconBg:#FFFBEF; --iconBorder:#E8DCC0; --iconColor:#3B3A36;
+    --correctBg:#E9E4CC; --correctText:#4A5D3A; --incorrectBg:#F1DCCB; --incorrectText:#8A4A2E;
+  }
+  body[data-theme="ocean"]{
+    --pageBg:#F3F6FB; --text:#182233; --secondary:#5C6B84; --mutedLabel:#656F7F; --wordmark:#8A97AC;
+    --cardBg:#FFFFFF; --cardBorder:#DCE4F0; --badgeBg:#EAF0FA; --badgeText:#5C6B84;
+    --accent:#1D6FE0; --accentBg:#E9F1FE; --accentBadgeBg:#D6E7FD; --accentText:#1B67D2;
+    --navDoneBorder:#182233; --navDoneText:#182233; --navDoneBg:#FFFFFF;
+    --navLockedBg:#E4EAF3; --navLockedText:#A8B4C7;
+    --iconBg:#FFFFFF; --iconBorder:#DCE4F0; --iconColor:#182233;
+    --correctBg:#E1F3EC; --correctText:#0F9D6C; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+  body[data-theme="forest"]{
+    --pageBg:#F2F8F6; --text:#122420; --secondary:#4E6A61; --mutedLabel:#5D766E; --wordmark:#7FA096;
+    --cardBg:#FFFFFF; --cardBorder:#D8EAE3; --badgeBg:#E6F3EE; --badgeText:#4E6A61;
+    --accent:#0E8F72; --accentBg:#E4F5EF; --accentBadgeBg:#CFEEE3; --accentText:#0A7D62;
+    --navDoneBorder:#122420; --navDoneText:#122420; --navDoneBg:#FFFFFF;
+    --navLockedBg:#DEEEE7; --navLockedText:#9BBBB0;
+    --iconBg:#FFFFFF; --iconBorder:#D8EAE3; --iconColor:#122420;
+    --correctBg:#DCEFE6; --correctText:#0E8F72; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+  body[data-theme="plum"]{
+    --pageBg:#F7F2FA; --text:#28183A; --secondary:#6F5C82; --mutedLabel:#796A88; --wordmark:#9987AD;
+    --cardBg:#FFFFFF; --cardBorder:#E7DAF0; --badgeBg:#F1E7F7; --badgeText:#6F5C82;
+    --accent:#8034C2; --accentBg:#F1E6FA; --accentBadgeBg:#E4D0F5; --accentText:#8034C2;
+    --navDoneBorder:#28183A; --navDoneText:#28183A; --navDoneBg:#FFFFFF;
+    --navLockedBg:#EBDFF3; --navLockedText:#B49FC6;
+    --iconBg:#FFFFFF; --iconBorder:#E7DAF0; --iconColor:#28183A;
+    --correctBg:#E7E0F2; --correctText:#5A3D7D; --incorrectBg:#FCE8E6; --incorrectText:#DC2626;
+  }
+
+  body[data-fontsize="normal"]{ --qSize:21px; --qLine:1.45; --aSize:15.5px; --badgeSize:13px; --btnPad:16px 18px; }
+  body[data-fontsize="larger"]{ --qSize:24px; --qLine:1.45; --aSize:17.5px; --badgeSize:14px; --btnPad:18px 18px; }
+  body[data-fontsize="largest"]{ --qSize:27px; --qLine:1.4; --aSize:19.5px; --badgeSize:15px; --btnPad:20px 18px; }
+
+  * { box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'DM Sans',system-ui,sans-serif;
+    background: var(--pageBg);
+    color: var(--text);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  button{ font-family:inherit; }
+  #app{ width:100%; max-width:640px; margin:0 auto; position:relative; overflow:hidden; }
+  .mono{ font-family:'Space Mono',monospace; }
+
+  /* ---- header ---- */
+  .hdr{ display:flex; justify-content:space-between; align-items:center; padding:20px 24px; gap:8px; flex-wrap:wrap; }
+  .hdr-title{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--wordmark); }
+  .hdr-controls{ display:flex; align-items:center; gap:8px; }
+  .icon-btn{ width:36px; height:36px; border-radius:999px; border:1.5px solid var(--iconBorder); background:var(--iconBg); color:var(--iconColor); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .icon-btn:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .qbadge{ background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:999px; padding:6px 12px; font-family:'Space Mono',monospace; font-size:12px; white-space:nowrap; }
+
+  /* ---- title screen ---- */
+  .title-wrap{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:14px; padding:24px 40px 8px; }
+  .eyebrow{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent); }
+  h1.qtitle{ margin:0; font-size:34px; font-weight:700; line-height:1.15; }
+  .sub{ margin:0; font-size:16px; color:var(--secondary); }
+  .btn-primary{ margin-top:10px; padding:16px 44px; border-radius:999px; border:none; background:var(--accent); color:#fff; font-size:16px; font-weight:600; cursor:pointer; box-shadow:0 10px 24px rgba(59,91,219,0.28); }
+  .btn-secondary{ margin-top:4px; padding:10px 26px; border-radius:999px; border:1.5px solid var(--cardBorder); background:var(--cardBg); color:var(--secondary); font-size:13.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+  .footer-hint{ margin:18px 40px 26px; text-align:center; font-size:13px; color:var(--mutedLabel); }
+  .progress-badge{ display:inline-flex; align-items:center; gap:7px; padding:6px 14px; border-radius:999px; background:var(--badgeBg); border:1px solid var(--cardBorder); font-family:'Space Mono',monospace; font-size:12px; color:var(--secondary); }
+
+  /* ---- consent banner ---- */
+  .consent-row{ display:flex; align-items:flex-start; gap:10px; margin:22px 32px 4px; padding:12px 14px; border-radius:12px; background:var(--badgeBg); border:1px solid var(--cardBorder); text-align:left; }
+  .consent-row input[type=checkbox]{ width:20px; height:20px; flex:0 0 auto; margin-top:1px; accent-color: var(--accent); }
+  .consent-row label{ font-size:12.5px; line-height:1.5; color:var(--secondary); cursor:pointer; }
+
+  /* ---- video ---- */
+  .video-wrap{ padding: 0 24px; }
+  .video-toggle{ display:none; align-items:center; gap:6px; background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:999px; padding:5px 12px 5px 10px; font-size:11.5px; font-weight:600; color:var(--accent); cursor:pointer; margin: 0 24px 8px; }
+  .video-frame{ width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; border:1.5px solid var(--cardBorder); margin-bottom:10px; }
+  .video-frame iframe{ width:100%; height:100%; border:0; display:block; }
+  .video-collapsible{ overflow:hidden; transition:max-height .28s ease, margin .28s ease; }
+
+  /* ---- question screen ---- */
+  .qbody{ padding: 4px 32px 0; }
+  h2.qtext{ margin:20px 0 22px; font-size:var(--qSize); font-weight:600; line-height:var(--qLine); }
+  .q-image-wrap{ margin:0 0 20px; border-radius:14px; overflow:hidden; border:1.5px solid var(--cardBorder); cursor:zoom-in; position:relative; }
+  .q-image-wrap img{ width:100%; display:block; }
+  .answers{ display:flex; flex-direction:column; gap:12px; }
+  .ans-btn{ display:flex; align-items:center; gap:14px; width:100%; padding:var(--btnPad); border-radius:14px; border:2px solid var(--cardBorder); background:var(--cardBg); font-size:var(--aSize); color:var(--text); text-align:left; cursor:pointer; }
+  .ans-btn.selected{ border-color:var(--accent); background:var(--accentBg); }
+  .ans-btn:disabled{ cursor:default; opacity:.88; }
+  .ans-badge{ flex:0 0 auto; width:26px; height:26px; border-radius:8px; background:var(--badgeBg); display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-size:var(--badgeSize); color:var(--badgeText); }
+  .ans-btn.selected .ans-badge{ background:var(--accentBadgeBg); color:var(--accentText); }
+
+  .fill-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .fill-input{ flex:1 1 200px; min-width:160px; padding:14px 16px; border-radius:14px; border:2px solid var(--cardBorder); background:var(--cardBg); color:var(--text); font-size:var(--aSize); font-family:inherit; }
+  .fill-input:focus{ outline:none; border-color:var(--accent); }
+  .fill-check-btn{ margin-top:0; padding:14px 28px; white-space:nowrap; }
+
+  .img-answers{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .img-ans{ position:relative; border-radius:14px; overflow:hidden; border:2px solid var(--cardBorder); background:var(--cardBg); cursor:pointer; padding:0; }
+  .img-ans.selected{ border-color:var(--accent); }
+  .img-ans img{ width:100%; display:block; aspect-ratio:4/3; object-fit:contain; background:var(--badgeBg); }
+  .img-ans .ans-badge{ position:absolute; top:8px; left:8px; background:var(--cardBg); border:1px solid var(--cardBorder); }
+  .img-zoom-btn{ position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:999px; border:1px solid var(--cardBorder); background:rgba(255,255,255,0.92); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  @media (hover:hover){ .img-zoom-btn{ opacity:0; transition:opacity .15s; } .img-ans:hover .img-zoom-btn, .img-ans:focus-within .img-zoom-btn{ opacity:1; } }
+
+  .finish-row{ margin-top:22px; display:flex; justify-content:center; }
+
+  /* ---- nav ---- */
+  .nav-section{ margin-top:26px; border-top:1px solid var(--cardBorder); padding-top:18px; }
+  .nav-label{ margin:0 0 12px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--mutedLabel); }
+  .nav-btn{ width:44px; height:44px; border-radius:999px; font-family:'Space Mono',monospace; font-size:13px; display:flex; align-items:center; justify-content:center; padding:0; flex:0 0 44px; }
+  .nav-btn.answered{ background:var(--navDoneBg); border:1.5px solid var(--navDoneBorder); color:var(--navDoneText); font-weight:600; cursor:pointer; }
+  .nav-btn.current{ background:var(--accent); border:1.5px solid var(--accent); color:#fff; font-weight:700; cursor:pointer; }
+  .nav-btn.locked{ background:var(--navLockedBg); border:1.5px solid var(--cardBorder); color:var(--navLockedText); cursor:not-allowed; }
+  .nav-row{ display:flex; flex-wrap:wrap; gap:8px; padding-bottom:24px; }
+  .nav-strip{ display:none; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; padding-bottom:24px; }
+  .nav-strip .nav-btn{ scroll-snap-align:center; }
+  .nav-grid-outer{ display:flex; align-items:center; gap:10px; padding-bottom:24px; }
+  .nav-grid-viewport{ overflow:hidden; flex:1 1 auto; }
+  .nav-grid-track{ display:flex; transition:transform .4s cubic-bezier(.65,0,.35,1); }
+  .nav-grid-page{ flex:0 0 100%; box-sizing:border-box; display:grid; grid-template-columns:repeat(10,1fr); grid-auto-rows:44px; gap:8px; }
+  .nav-grid-page.tight{ column-gap:3px; }
+  .nav-arrow{ flex:0 0 auto; width:32px; height:96px; border-radius:12px; border:1.5px solid var(--accent); background:var(--cardBg); color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; }
+  .nav-arrow:disabled{ visibility:hidden; }
+  .restart-mid{ display:flex; justify-content:center; margin: 6px 0 0; }
+  .restart-mid button{ background:none; border:none; color:var(--secondary); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:6px; }
+
+  /* ---- results ---- */
+  .result-card{ margin:8px 32px 0; background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:22px; padding:36px 32px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  /* Perfect-score badge: a real <img> (drawn from a hidden <canvas>, see
+     syncCompletionBadge) so right-click "Copy image" / "Save image as", and
+     long-press-save on mobile, work exactly like any other picture. */
+  .badge-score-row{ display:flex; align-items:center; justify-content:center; gap:18px; flex-wrap:wrap; width:100%; }
+  .badge-wrap{ display:flex; justify-content:center; margin:0; }
+  .badge-img{ max-width:170px; width:170px; height:auto; display:block; }
+  .score-block{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .result-score{ font-family:'Space Mono',monospace; font-size:52px; font-weight:700; color:var(--accent); line-height:1; margin-top:4px; }
+  .review-header{ display:flex; align-items:center; justify-content:center; gap:8px; margin:32px 0 16px; color:var(--mutedLabel); font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.5px; text-transform:uppercase; }
+  .review-list{ padding:0 32px 40px; display:flex; flex-direction:column; gap:14px; }
+  .review-card{ background:var(--cardBg); border:1.5px solid var(--cardBorder); border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:8px; }
+  .review-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .review-qtext{ font-size:14.5px; font-weight:500; line-height:1.4; flex:1; }
+  .chip{ flex:0 0 auto; display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-family:'Space Mono',monospace; font-size:11px; font-weight:700; }
+  .chip.correct{ background:var(--correctBg); color:var(--correctText); }
+  .chip.incorrect{ background:var(--incorrectBg); color:var(--incorrectText); }
+  .review-answer{ font-size:13px; color:var(--secondary); }
+  .review-thumbs{ display:flex; gap:20px; }
+  .review-thumb-col{ display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .review-thumb-col span{ font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; }
+  .review-thumb{ width:72px; height:54px; border-radius:8px; object-fit:contain; background:var(--badgeBg); border:2px solid var(--cardBorder); }
+
+  /* ---- zoom overlay ---- */
+  .zoom-overlay{ position:absolute; inset:0; background:rgba(10,10,10,0.86); display:flex; align-items:center; justify-content:center; z-index:50; touch-action:none; }
+  .zoom-stage{ position:relative; width:92%; height:82%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .zoom-stage img{ max-width:100%; max-height:100%; object-fit:contain; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+  .zoom-stage img.zoomed{ cursor:grab; }
+  .zoom-stage img.dragging{ cursor:grabbing; }
+  .zoom-toolbar{ position:absolute; top:10px; right:10px; display:flex; gap:8px; }
+  .zoom-toolbar button{ width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.14); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .zoom-toolbar button:hover, .zoom-toolbar button:focus-visible{ background:rgba(255,255,255,0.26); }
+  .zoom-alt{ position:absolute; bottom:10px; left:0; right:0; text-align:center; color:#e8e6e0; font-size:12px; font-family:'Space Mono',monospace; padding:0 20px; }
+
+  /* ---- error state ---- */
+  .error-box{ margin:40px 32px; padding:24px; border-radius:14px; background:var(--incorrectBg); border:1.5px solid var(--incorrectText); color:var(--text); text-align:center; }
+  .broken-q-note{ margin:12px 0; padding:14px; border-radius:10px; background:var(--incorrectBg); color:var(--incorrectText); font-size:13px; text-align:center; }
+
+  /* ---- mobile (<=480px): collapsible video, split header, swipeable nav strip only ---- */
+  @media (max-width:480px){
+    .hdr{ flex-direction:column; align-items:stretch; gap:9px; padding:14px 16px 0; }
+    .hdr-row1{ display:flex; justify-content:space-between; align-items:center; }
+    .hdr-row2{ display:flex; justify-content:space-between; align-items:center; }
+    .icon-btn{ width:32px; height:32px; }
+    .video-toggle{ display:inline-flex; }
+    .video-collapsible.collapsed{ max-height:0; margin:0; }
+    .qbody{ padding:4px 18px 0; }
+    .title-wrap{ padding:20px 20px 8px; }
+    h1.qtitle{ font-size:28px; }
+    .nav-grid-outer{ display:none; }
+    .nav-row{ display:none; }
+    .nav-strip{ display:flex !important; }
+    /* Shrink the badge and score number a bit so they still sit side by
+       side (not stacked) inside the narrower card on a phone. */
+    .result-card{ padding:28px 20px; margin-left:16px; margin-right:16px; }
+    .badge-score-row{ gap:10px; }
+    .badge-img{ width:120px; }
+    .result-score{ font-size:40px; }
+  }
+</style>
+</head>
+<body data-theme="light" data-fontsize="normal">
+<div id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   QUIZ CONTENT — plain text, exactly the file format agreed in
+   the spec. Andy's real content, pasted as given: YouTube watch
+   URL normalised to an embed URL by parseQuiz(), leading
+   question-number labels ("1", "2", ...) stripped since they're
+   not part of the grammar. Once the planned converter tool exists,
+   this will live in its own small content file loaded via a
+   ?quiz= parameter instead of being embedded here — see spec.
+   ============================================================ */
+var QUIZ_TEXT =
+"TITLE: KS3 Scratch - Selection\n" +
+"\n" +
+
+// Q1
+"What does “selection” mean?\n" +
+"Where a choice or a decision needs to be made\n" +
+"Where a choice needs to be made\n" +
+"Where a decision needs to be made\n" +
+"\n" +
+
+// Q2
+"Which of the following is likely to contain selection?\n" +
+"All of these contain selection\n" +
+"Game\n" +
+"Application (app)\n" +
+"Software\n" +
+"\n" +
+
+// Q3
+"Which of the following are keywords associated with Selection?\n" +
+"If and else\n" +
+"If and or\n" +
+"Else and or\n" +
+"If and more\n" +
+"\n" +
+
+// Q4
+"Selection is used when picking a mode in a game?\n" +
+"True\n" +
+"False\n" +
+"\n" +
+
+// Q5
+"An algorithm might contain selection?\n" +
+"True\n" +
+"False\n" +
+"\n" +
+
+// Q6
+"This simple algorithm that determines correct bus fares contains selection. 1 - ask how old you are. 2 - if you are under 16, pay half fare otherwise pay full fare\n" +
+"True\n" +
+"False\n" +
+"\n" +
+
+// Q7
+"Most programming languages allow the developer to code using selection\n" +
+"True\n" +
+"False\n" +
+"\n" +
+
+// Q8
+"Which of the following is another name for selection?\n" +
+"Both of these are correct\n" +
+"If statements\n" +
+"Conditionals\n" +
+"\n" +
+
+// Q9
+"When writing an algorithm to find out your shoe size, it is possible selection could be used?\n" +
+"True\n" +
+"False\n" +
+"\n" +
+
+// Q10
+"Which of the following Scratch blocks is \"Conditionals\" or \"Selection\"?\n" +
+"IMG: IFELSE | Scratch “if … then … else” block\n" +
+"IMG: RUNTIL | Scratch “repeat until” block\n" +
+"IMG: FOREVER | Scratch “forever” block\n" +
+"IMG: REPEAT | Scratch “repeat” block\n";
+
+/* This quiz has no images, so resolveImage() is just a passthrough —
+   an image-based quiz would give real hosted file paths here (per the
+   spec's IMG: grammar), needing no change to this function. */
+/* Scratch block pictures, embedded so the quiz is a single file */
+var IMAGES = {
+  "IFELSE": "data:image/webp;base64,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",
+  "RUNTIL": "data:image/webp;base64,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",
+  "FOREVER": "data:image/webp;base64,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",
+  "REPEAT": "data:image/webp;base64,UklGRi4QAABXRUJQVlA4ICIQAAAwXgCdASqaATMBPj0ejUSiIaGRaoz4IAPEpu6YAMQtyN6Vcx8D/3r+jfuBsq3YfyC/tv7O9JDuv3k/KfrsDGex/tb+g/vX7v/4f5qf2b/X+xL80f9T3AP0l/2/9u/xn7H/Fj+gHuX/pP/B9QH82/sf/l/xvvMf6//K/273Gf4D++/67+zfAB/Qv8L6UXsEegP+y3q3/8P9tPg4/bD9vvgU/Yj/5+wB///UA/9XWb9Iv9V248/T6IkT0k+Jn+k8D+AF613XcAX5z/XuJbSI6AHibZ2fsLgY/t6NigWxfVxRorhLOJFm+nQLYvq4o0VwlnEizfHS8I7WZlvbMFkCQQD9qfhQlsr8KEtlfhQlsr8KEtJxK/uSedf3szLgT7NFvejsquZ491co8JrWKXeTaoBBKcSVTi5IVylK8BkwKtI21FflBQLlkTc1uz3kSRhR98l01oBNMrViySwNiSOq1GcZCFJHxM1XqCpRVYDJYqTYLgJOo2RbF8pVMS/4zR9o0Rc3fNFVt6JI+F4OxqB4nkA+9n9L1w+/sWryWodHA1o3JXRIuo5vkgGqjNMNf+WG6quEsozp3fUbV0wCP/DDA2gLpnQt6zwoSeCziCjHUJVNzRN0Gm8GmlvFwVfqTtY0O1JA2EuetBmLM98hLYt4UJbK/Cg4rZProaX/Ah14jpJziRZvp0C2LkNU4wHVnxXCWcSLN9OfuV+i5GF0kWxfVxRorhLOJBXbaXIP6WmbECqUKXfVXzKVPAWlMUJbK/ChLZX4UJbKvZUhpyuNqCizxRzaWEhpt2Um8s+K4Szcxu4Bv4GKm84yminSjOr6dAti+rijRUd3ATElEEhCTA7LTVMTALOJFm+nQJu0kduFLSbn/a10v8L4NgO+Zx9NfeXri5yujyIFVCdrTkEjZSbQSWpbK/ChIQsSFoGxe6Kr1tFFjfaU8l6IT/qU8L6dAti+rijRXCWcSLN9OgWxfVxRorhLOJFm+nQLYvq4o0VwlnEizfToFsX1cUaKiAAA/v0ZQAAAAAAy4PBGaZmtFXyzYG6V8vyCqPmLA7vBQOcb8DT9nrlYBO1fJjee7rTCAoqLdub8+g7L4NC8H2HFtkt6A394NGC9Xk23N4lxUMLUiqC1i4zTQzJ39nR5ISGmaNYWk+nMLF2GfAqqBWO4DE/inbgUX7g9sFUf8STuVDiTQ5FQD4dpmFMwpmFMwpmFMwpmDw6igDDDmSlZRhGCH46g+vYgrjjKrXq0YMoO5ogaOB96IJbmB/sWB2xB+gbhFsu1G0ZYelYgMae0e5P6YJ5QAH6VzrurdQCV9LbsPcgKvI9/Lv5gl+MQWt2IB//GNOeKNyQMiyCT7xGYI5zJ+5Riq8IU/4DfZYH+Dcxa0OCpppHuJFIe0Xkw0ftA4giF7OW25iHT5j6C2M3WscPN4D+lOGoRW3ZkPbOx5hiXqErxPvOFTezHd3j4/1DPKsynIyofdxGFKUck+4CT1m/G7mWMmxjVDrV+eYgDn2MRd3KA5Owt3t0nrkPwQjKJfoZjfXyDe2AC4eEfi3coIVXMIz5nDVExHjXXMQRnwiKF8NxetqTwO++Y4h8E/nMTSZlOJAhG8ppGql+bcJF6gJPwT4UtObPCZ67+LCaILXPcLqKkh6O7/yGcQskjsTrY9b7OPllGYfxX/53QJ/Duvo1I2oCRZowDBe2vNi1tIv6V3rGGg5ZxK4HrYY8MYyXUxD0MCTKnoocSAjAcBzEfu+ot5g/nVKRxVm8bj/p2HKeVTdpNfTxE4TvudVwv4yiq88Spv3rQEaw5f3RYrGFobVT8nadnxkRabW4jpQ+dnHtR7z/K3k93ovSHZkrwy+BEoGQ29vXkIwfV6sxUPJvLxm8HHg/ejhyUvQ557MlKWRpo9KFwxY/mJRy1124/UBRLxwN0GACk/FsTFxcMrm7xIaxNiiAtvcviPmOe9V9hy4Ijr8DLp52a3AEktARdt3mR2+qD3fp8pbFfOuhdRcLRa+2l+lBwvFNCXPWaqrkYzc9/VuHiWHtRZp0atuIpcXgSGdKjI7M0jRafY5oDSU1QUj5oGIjYIcKN63N32octSjbQaED6H7hvlfh49CIlhHBAxN2LdFbIarTIdlv7GOVks+pHUegMIsmQ19N5BT4UueZo3n2PnjtM9oBNpeEFNdeSg9rRFjfobX5iYC7iVTSY809EubSJJS2J1/jUMPbNLBbyc5bTPAJEz71rVrTW9yVcV1+tdGzZXNh5gtb3IDHWtdPIBUD1ucGhq5A3NGlNQFjtYAR+0fp38i4L1jP7Dw26+Czr+KL3YMsOhKyP+AEGsu2W1AcKZefunKOmEBO5RPG4SyqS6l5pEKL5Ghd8zM5kIm7Kg5Yd/DJh94x0kcVI7MDj+rHdvbi8rA1ISmI55kgYBsiZGOADluhx3VwA58YFY0YS3/7G5y1OCrgRVwnQLKC+9BXeXM98bMvR/qg0clJFPbjpEQ1P7usp043Kwpo9DT/cPhTkFxuRgxy8EbdpzAIITwO9AjOnDiKR37NXqo2/p7Hu+5jRwgCqVFBa/KguxWrDvI4tgLkHC6zKit5JPUX8cBsUWg3OhAB7lF4JDe8ey7FBJoScXkLbhNxi0AUbCOWAVHUACRjpz5E7R2viwAGXY4Ul+2rfB9lV9XvBNskSRu86tXg2GxUr8w+ppIE4fmIvMvSnSXBwuFWV0czL6ky8TsmswBUTkpQ9NIxWh0M/ip9p8ed/XT9VchkKHqodoO4f4DeZeCoi5G4zTVZ6ImEmEKIi+w0tF9x4SqSog3OlhptU0pznv91EW72xtPn7nIIsGy9P723D/2Alqw+dy1eoEw6HHfLBXdajX64xny3m7pbecMZ7lYlCyEK+SeARJcwQb0VINvlsAQsN5EnQ9oJZMLKTsodenOPV6+id35ZCjOdg9PP0Q80V9J7zV+WYy+nfgKcCX1WFd19v4IVJQ85YQn4EZdzbkGxK1aDTXzjOJPFWOGf+PqpcE98R3gtS0uplGOqtOE+bxRYMrJ6orBDxwlESjoU+VTTd2yFGS0bNbSqqSCxmFv7nOU+2fQP5kKU9a4+gtkdksslvAulWf0JCiBjxnlrT3/dn0uYNuNMtRGyugUCYUNoMmzHregdVY26IeCQ6OaaP0cfonOwZx9CZ5oVyPyBIHpekdJ9cdsNt8COHLDhJgzv20KNEYBxaocHKcuIXjSJr7QwnnFCV8zlaIXGDPf6a7fACPg80o6tBecjCQC1ap+zYaP+TZIhfIj7XjoRY+yHw1jktlNhvro0Eu7uIZa+mxHODoyu2D+/DMHILr3mfLDcPvvK+Cc8NRbR/65CXfHZ5QywStz5YeK7INeDD3X19nswOsbt32EdSsXys1Ez1c+DR7XKjQbNcJdhyUXxM6Lz9IoWIbtK0EH/yK0sRkIyTI4vV94KHXGAevRyUgazxK+e2DpEqqWyVUB8j0JqGCJI+NyhbNT5/ObezHokmKQB9z8AeZeuwQcarO7+iOsPBlZFk5pP1/eH3SFtqWZ8C9s95yG1yQP0z2SdBgKLoVya6NOhwAYe4tW+BacYABACPi8jI9Uhv3LI8dbZzkZF7xP2ITnl/4LI9bW5RHfCfD+5IjYD4UhDMQH9rvmKWwsbIWG7EuZEVUKzGwggshoBCXPeFilRFA9I0fnRIpCWuXwqtTs7z+UCz7O7jOlNpgf35lvURhJfodTJMVBrKKEc00KbWE1OgkUr61KV8UrDD3xAYmhOAjI5Gh+/NRxgVEx5MEJ4c1IRso18lcJiKbUVj0FAakJKZqx5ZFRAD4Kwo/RbX1XuvFFYL5L9Si0yG72E15s3JQam/eFVdlsUwB9ZuvolYpsbwIin0pj7ZDaCqPdT+sAGOqLo8knud8Bm+JSAbBg0KB+vg5CZyNEPQQSzkHkTyAiP01ObKBi/mKT3Qeuzedin9r+35BUiV2MRi25ISbcK2SuVlV2I007uMtBexgcDSx+a12VJ0Tj5bhdILgkdsVIWNN08CKIla+sC1TIi8osmVBaNNNE9zR1nyv0WrOYLPCehgauFKNMqnZWmPPm18CzUtosSwDfVdQQBNkWmUYuLihYg9Fn87lNCzT7qqE4iwBfoxlBpDuslRZfLAajbmlyNJJcuRpKHcGjue2wCVYYaB7kev8Vgz9tvRkdVqVljrMPJw31e0b/y2SKgAAADOmtAYABtTWbjhfvGq8hQ082itLFPMDTqppv9UgABnTWHcc0kbzGU9ADou4HBaQWiBBK5nqVpjOppX+2M53mSSPdrlIfIjt3LtHubqthq48ESo2sV/ztNFm9NHG1mhf6gQzZ4p/oBTAzrKjSFB6adlAzpLT8Qfg9iT322AJwOuRaxeF9UFsUO9fcz8hqk2Dw5/377NTgjz+fOZdRMMPGDBYJoPy4yTDliMLerkEjGchpyYDTKv7+SZ3ZdCMuNnWGzrDZ1hs6w2dYbOsNnWGzrDZ1hs6w2cNtr4gDPUEyvahJQ6+3mBfHwYm8B5VvtibCGukzEvAmGwx/w3qmLgknpiAEYQ9bUH37DiOahvQlHvr8AsQGsNKJCHKGmLI5umcxW84rkaOv8E79St0sgvZyTlTajM8dYIzbQDSwONYOyaMIsBvQN9fh05kD1rKHMBBOSloHweJLgpulpgXGUU/gSimzurwb8mlrDD2L/7zGMDIprINt2bPwFtV0qum9AVKgtyQ6iMeCd8EDuLQn7EqY9xCd0ND/+XFtPkrfRNBC8J/Je0b57VV9m2pXZrhAAKvp3OXEcBHd7aDzOB4N+/6TPcO1TimbYB9weF/IH/5X6kiaSYkHS5K6Q1t2luStwUc09ZE4xHWPrMP3xchhR/guknwZYyMDy9KwMT3y2waLmg8bqWPk/s0bT1NhZAMyLAqn2mu1UzbRS7Q+8i1WrDW5oCFjIPnkgD6U1QCG5rATtzsfAcWSYs68QTN8yTHhMcrtHTHt/0AR7StwmHkPJoPgHyJep32T2OV+sa10vpLNQZ0+aAHoW811rv4XxPx6O3Q30PVMmjTAZT3arLV4FmnlwWzC3vI2Foq1zWYBNpa6vM4v7NDt9RQGAokRpp/kqcjIxvWj6YIomfU/BB5O4EPgMhFBk7yCA4yhn78+NfJ/PclTgaqP3cHWj2iSDL2VArj5GygqCQmFx95GvgpaGpoDNhRY3dHd5i0TWQ/0eXta6T9AdF1x8KUmvvPEFPtAn1RGehatkLjPWwIfvqZ0AVK38Xv7sgtaSPex+UqiJTdAw6IZcJMlovWONB0AxwaTEZzuK1ToUqjParcDQw2PhpsMQxKHMmoOAUtAQytEj8AAAVA4mBSYe6YbE9z5QVpeupvTOhfzd6IDgmRrdoyiA9mjDjlr62Roft4Pc8NaoQjvS9nFrFBbSsw+P6CUkLe3pOsaogqSHRIfFq7LCK3KCc21q3HnV+z/fYv4FeBMPGl9aA3Na3IYx2hDdZhcD+3w2q68KYdsn0FNqE/x8zW8aNoOnfv42tbHM5qAAAAAAAAAAAAAAAAA=="
+};
+function resolveImage(path){ return IMAGES[path] || path; }
+
+/* ============================================================
+   PARSER — implements the plain-text grammar from the spec.
+   Malformed questions are isolated (flagged, not dropped),
+   so one bad edit doesn't break the whole quiz. This same
+   parser is what the converter tool's preview should share,
+   per Architecture in the spec.
+   ============================================================ */
+function parseQuiz(text){
+  var lines = text.replace(/\r\n/g, "\n").split("\n");
+  var i = 0;
+  var title = null, videoUrl = null;
+  while (i < lines.length && lines[i].trim() !== "") {
+    var line = lines[i].trim();
+    var mTitle = line.match(/^TITLE:\s*(.+)$/i);
+    var mVideo = line.match(/^VIDEO:\s*(.+)$/i);
+    if (mTitle) title = mTitle[1].trim();
+    else if (mVideo) videoUrl = normalizeYouTubeUrl(mVideo[1].trim());
+    i++;
+  }
+  while (i < lines.length && lines[i].trim() === "") i++;
+
+  var blocks = [];
+  var current = [];
+  for (; i < lines.length; i++){
+    if (lines[i].trim() === ""){
+      if (current.length){ blocks.push(current); current = []; }
+    } else {
+      current.push(lines[i]);
+    }
+  }
+  if (current.length) blocks.push(current);
+
+  var questions = blocks.map(function(block, idx){
+    return parseQuestionBlock(block, idx);
+  });
+
+  return {
+    title: title || "Untitled quiz",
+    videoUrl: videoUrl || null,
+    questions: questions
+  };
+}
+
+/* Authors will naturally paste whatever URL YouTube gives them when they
+   hit Share (a normal watch/youtu.be link, sometimes with tracking params
+   tacked on) rather than hand-build an /embed/ URL. A raw watch URL can't
+   be framed (YouTube blocks it), so normalise anything recognisable down
+   to the video ID and rebuild a proper embed URL. Anything unrecognised
+   is passed through as-is rather than dropped, so a non-YouTube embed URL
+   still works. */
+function normalizeYouTubeUrl(url){
+  if (!url) return url;
+  var m = url.match(/[?&]v=([A-Za-z0-9_-]{6,})/) ||
+          url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/) ||
+          url.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/) ||
+          url.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{6,})/);
+  return m ? ("https://www.youtube.com/embed/" + m[1]) : url;
+}
+
+function parseImgLine(line){
+  var m = line.match(/^IMG:\s*(.+?)\s*\|\s*(.+)$/i);
+  if (!m) return null;
+  return { path: m[1].trim(), alt: m[2].trim() };
+}
+
+function parseQuestionBlock(block, idx){
+  var lines = block.slice();
+  var questionImage = null, questionImageAlt = null;
+
+  if (lines.length && /^IMG:/i.test(lines[0].trim())){
+    var img = parseImgLine(lines[0].trim());
+    if (img){ questionImage = img.path; questionImageAlt = img.alt; lines = lines.slice(1); }
+  }
+
+  if (!lines.length){
+    return brokenQuestion(idx, "This question has no question text.");
+  }
+
+  // A "FILL:" prefix on the question line switches this question from
+  // multiple-choice to free-text: the pupil types an answer instead of
+  // picking one, and every remaining line is an accepted spelling of the
+  // correct answer (matched trimmed + case-insensitive) rather than a
+  // shuffled set of options — so there's no right/wrong distractor list.
+  var fillMatch = lines[0].trim().match(/^FILL:\s*(.+)$/i);
+  var isFillBlank = !!fillMatch;
+  var questionText = isFillBlank ? fillMatch[1].trim() : lines[0].trim();
+  var answerLines = lines.slice(1).filter(function(l){ return l.trim() !== ""; });
+
+  if (!answerLines.length){
+    return brokenQuestion(idx, "“" + questionText + "” has no answers listed.", questionText);
+  }
+
+  if (isFillBlank){
+    var acceptedBroken = false;
+    var accepted = answerLines.map(function(line, i){
+      var trimmed = line.trim();
+      if (/^IMG:/i.test(trimmed)){ acceptedBroken = true; return null; }
+      return { id: i, kind: "text", text: trimmed, correct: true };
+    });
+    if (acceptedBroken){
+      return brokenQuestion(idx, "“" + questionText + "” is a fill-in-the-blank question but lists an image as an accepted answer — not supported.", questionText);
+    }
+    return {
+      broken: false,
+      questionText: questionText,
+      questionImage: questionImage,
+      questionImageAlt: questionImageAlt,
+      isImageQuestion: false,
+      isFillBlank: true,
+      answers: accepted
+    };
+  }
+
+  var answers = answerLines.map(function(line, i){
+    var trimmed = line.trim();
+    var img = /^IMG:/i.test(trimmed) ? parseImgLine(trimmed) : null;
+    if (img){
+      return { id: i, kind: "image", image: img.path, alt: img.alt, correct: i === 0 };
+    }
+    return { id: i, kind: "text", text: trimmed, correct: i === 0 };
+  });
+
+  var imageAnswerCount = answers.filter(function(a){ return a.kind === "image"; }).length;
+  var isImageQuestion = imageAnswerCount > 0;
+
+  if (isImageQuestion && imageAnswerCount !== answers.length){
+    return brokenQuestion(idx, "“" + questionText + "” mixes image and text answers on the same option list — not supported.", questionText);
+  }
+  if (isImageQuestion && (answers.length < 2 || answers.length > 4)){
+    return brokenQuestion(idx, "“" + questionText + "” has " + answers.length + " image answers — image questions need 2–4.", questionText);
+  }
+  if (!isImageQuestion && (answers.length < 2 || answers.length > 7)){
+    return brokenQuestion(idx, "“" + questionText + "” has " + answers.length + " answers — text questions need 2–7.", questionText);
+  }
+  if (isImageQuestion){
+    var missingAlt = answers.some(function(a){ return !a.alt; });
+    if (missingAlt) return brokenQuestion(idx, "“" + questionText + "” is missing alt text on an image answer.", questionText);
+  }
+  if (questionImage && !questionImageAlt){
+    return brokenQuestion(idx, "“" + questionText + "” is missing alt text on its question image.", questionText);
+  }
+
+  return {
+    broken: false,
+    questionText: questionText,
+    questionImage: questionImage,
+    questionImageAlt: questionImageAlt,
+    isImageQuestion: isImageQuestion,
+    isFillBlank: false,
+    answers: answers
+  };
+}
+function brokenQuestion(idx, message, questionText){
+  return { broken: true, error: message, questionText: questionText || ("Question " + (idx+1)) };
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var QUIZ_ID = "ks3-scratch-selection"; // used for progress storage + logging; matches this quiz's file name
+var quiz = parseQuiz(QUIZ_TEXT);
+
+var state = {
+  screen: "title",            // title | question | results
+  resumeAvailable: false,
+  order: [],                  // per-question shuffled answer arrays
+  answered: {},                // qIndex -> {id, correct} for MC/image, {text, correct} for fill-blank
+  fillDraft: {},               // qIndex -> in-progress typed text, not yet submitted (survives theme/fontsize re-renders)
+  currentIndex: 0,
+  navPage: 0,
+  theme: localStorage.getItem("mcq_theme") || "light",
+  fontSize: localStorage.getItem("mcq_fontsize") || "normal",
+  consent: localStorage.getItem("mcq_consent") !== "0", // opt-out: on unless the user has unticked it
+  videoOpen: false,
+  zoom: null                  // {src, alt, stage, scale, tx, ty}
+};
+
+var PROGRESS_KEY = "mcq_progress_" + QUIZ_ID;
+
+function shuffledIds(answers){
+  var ids = answers.map(function(a){ return a.id; });
+  for (var i = ids.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = ids[i]; ids[i] = ids[j]; ids[j] = t;
+  }
+  return ids;
+}
+
+function newAttempt(){
+  state.order = quiz.questions.map(function(q){
+    return q.broken ? [] : shuffledIds(q.answers);
+  });
+  state.answered = {};
+  state.fillDraft = {};
+  state.currentIndex = 0;
+  state.navPage = 0;
+  saveProgress();
+  logAttempt("started");
+}
+
+function saveProgress(){
+  try {
+    sessionStorage.setItem(PROGRESS_KEY, JSON.stringify({
+      order: state.order, answered: state.answered, currentIndex: state.currentIndex
+    }));
+  } catch(e){}
+}
+function loadProgress(){
+  try {
+    var raw = sessionStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e){ return null; }
+}
+function clearProgress(){
+  try { sessionStorage.removeItem(PROGRESS_KEY); } catch(e){}
+}
+
+/* Usage logging. Gated by consent, per spec. Posts to the Cloudflare
+   Worker (which tags a country code and forwards to Supabase) on both
+   quiz start and finish, sharing one attempt_id between the two rows.
+   Fire-and-forget: a failed or slow request never blocks or breaks the
+   quiz for the pupil. */
+var LOG_ENDPOINT = "https://mcq-logger.andrewspero.workers.dev";
+var attemptId = null;
+
+function getVisitorId(){
+  try {
+    var id = localStorage.getItem("mcq_visitor_id");
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : (String(Date.now()) + Math.random().toString(16).slice(2)));
+      localStorage.setItem("mcq_visitor_id", id);
+    }
+    return id;
+  } catch(e){ return null; }
+}
+
+function logAttempt(status){
+  if (!state.consent) return;
+  if (status === "started") attemptId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  var visitorId = getVisitorId();
+  if (!attemptId || !visitorId) return;
+  var scoreInfo = status === "completed" ? computeScore() : null;
+  var payload = {
+    attempt_id: attemptId, visitor_id: visitorId, quiz_id: QUIZ_ID, quiz_title: quiz.title, status: status,
+    score: scoreInfo ? scoreInfo.correct : null, total_questions: quiz.questions.length
+  };
+  try {
+    fetch(LOG_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function(){ /* silent - logging must never break the quiz for the pupil */ });
+  } catch(e){ /* silent, same reason */ }
+}
+
+function computeScore(){
+  var correct = 0, total = 0;
+  quiz.questions.forEach(function(q, idx){
+    if (q.broken) return;
+    total++;
+    var a = state.answered[idx];
+    if (a && a.correct) correct++;
+  });
+  return { correct: correct, total: total };
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+/* #app is built ONCE, as a fixed three-slot skeleton, rather than having
+   its whole innerHTML replaced on every render(). This matters only for
+   #videoSlot: see the big comment above ensureVideoHost() below for why —
+   in short, an iframe reloads on ANY DOM move in Chromium (confirmed by
+   direct testing), even a "safe"-looking one, so the video slot must be
+   created once and never moved, appended-to-elsewhere, or rebuilt again.
+   #headerSlot and #bodySlot hold no iframes, so they're simply
+   re-rendered via innerHTML every time, same as the old single-slot
+   approach — no persistence concerns there. */
+var app = document.getElementById("app");
+app.innerHTML = '<div id="headerSlot"></div><div id="videoSlot" style="display:none;"></div><div id="bodySlot"></div>';
+var headerSlot = document.getElementById("headerSlot");
+var videoSlot = document.getElementById("videoSlot");
+var bodySlot = document.getElementById("bodySlot");
+
+function render(){
+  document.body.setAttribute("data-theme", state.theme);
+  document.body.setAttribute("data-fontsize", state.fontSize);
+  headerSlot.innerHTML = (state.screen === "question") ? renderQuestionHeader() : renderHeader(true);
+  var bodyHtml = "";
+  if (state.screen === "title") bodyHtml = renderTitleScreen();
+  else if (state.screen === "question") bodyHtml = renderQuestionScreen();
+  else if (state.screen === "results") bodyHtml = renderResultsScreen();
+  bodySlot.innerHTML = bodyHtml;
+  var existingZoom = app.querySelector(".zoom-overlay");
+  if (existingZoom) existingZoom.remove();
+  if (state.zoom) app.insertAdjacentHTML("beforeend", renderZoomOverlay());
+  syncVideoHost();
+  syncCompletionBadge();
+  bindZoomDrag();
+  postHeight();
+}
+
+function themeIconSvg(){
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"></path></svg>';
+}
+function fontIconHtml(){
+  return '<span style="font-size:10px;">A</span><span style="font-size:15px;margin-left:1px;">A</span>';
+}
+function chevronSvg(open){
+  return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(' + (open?180:0) + 'deg);transition:transform .2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+}
+
+function renderHeader(showControls){
+  var themeName = { light:"Light", dark:"Dark", accessible:"Accessibility", ocean:"Ocean", forest:"Forest", plum:"Plum" }[state.theme];
+  return (
+    '<div class="hdr">' +
+      '<div class="hdr-row1" style="display:flex;justify-content:space-between;align-items:center;flex:1;gap:8px;">' +
+        '<span class="hdr-title mono">' + escapeHtml(quiz.title) + '</span>' +
+        (showControls ? (
+        '<div class="hdr-controls">' +
+          '<button class="icon-btn" data-action="toggle-fontsize" aria-label="Change text size (currently ' + state.fontSize + ')">' + fontIconHtml() + '</button>' +
+          '<button class="icon-btn" data-action="toggle-theme" aria-label="Change colour theme (currently ' + themeName + ')">' + themeIconSvg() + '</button>' +
+        '</div>') : '') +
+      '</div>' +
+    '</div>'
+  );
+}
+function renderQuestionHeader(){
+  var idx = state.currentIndex;
+  var total = quiz.questions.length;
+  return (
+    '<div class="hdr">' +
+      '<div class="hdr-row1" style="display:flex;justify-content:space-between;align-items:center;flex:1;gap:8px;">' +
+        '<span class="hdr-title mono">' + escapeHtml(quiz.title) + '</span>' +
+        '<div class="hdr-controls">' +
+          '<span class="qbadge mono">Q' + (idx+1) + ' of ' + total + '</span>' +
+          '<button class="icon-btn" data-action="toggle-fontsize" aria-label="Change text size">' + fontIconHtml() + '</button>' +
+          '<button class="icon-btn" data-action="toggle-theme" aria-label="Change colour theme">' + themeIconSvg() + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ---- video: why it kept resetting, and what actually fixes it ----
+   renderVideoBlock() used to return the video markup as a string, baked
+   straight into the big innerHTML rebuild on every render() call. That
+   destroyed and recreated the <iframe> on every interaction, which
+   resets YouTube playback to 0:00 even though nothing about the video
+   changed.
+
+   Attempt 2: keep ONE real iframe DOM node alive in a module-level
+   variable and move it into a placeholder anchor via appendChild after
+   each render. A test confirming the SAME node survived every render
+   passed, but the video still reset in real use.
+
+   Attempt 3: suspected the problem was app.innerHTML briefly
+   disconnecting that node before the later appendChild reconnected it,
+   so tried "parking" the host in a permanent element first (so it's
+   supposedly never disconnected), moving it there and back via
+   appendChild each render.
+
+   Neither attempt actually works, and direct testing shows why: in
+   Chromium, moving an iframe to a different parent via appendChild
+   reloads it — every time, unconditionally — even when both the old and
+   new parents are already connected to the document and stay connected
+   the whole time. There is no "safe" way to reparent a live iframe via
+   ordinary DOM moves; the move itself is what triggers the reload, not
+   disconnection.
+
+   The only fix that actually works: never move the iframe AT ALL, ever,
+   after its first insertion. #videoSlot (created once, in the #app
+   skeleton above) is a permanent fixed slot that always sits in the
+   same place in the page — right after the header, before the body
+   content — on every screen. ensureVideoHost() creates the host div
+   (with its iframe) exactly once and appends it into #videoSlot exactly
+   once, guarded so it can never run a second time. syncVideoHost() then
+   only ever toggles #videoSlot's visibility and updates the toggle
+   button / collapse state in place — plain attribute and style changes,
+   never a DOM move — so the iframe's browsing context, and playback,
+   are left completely alone. */
+var videoHostEl = null;
+function ensureVideoHost(){
+  if (videoHostEl || !quiz.videoUrl) return videoHostEl;
+  videoHostEl = document.createElement("div");
+  videoHostEl.className = "video-host";
+  videoHostEl.innerHTML =
+    '<button class="video-toggle mono" data-action="toggle-video" id="videoToggleBtn"></button>' +
+    '<div class="video-wrap video-collapsible" id="videoCollapseWrap">' +
+      '<div class="video-frame"><iframe src="' + quiz.videoUrl + '?cc_load_policy=1" title="Quiz companion video" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>' +
+    '</div>';
+  videoSlot.appendChild(videoHostEl); // the ONE and ONLY time this node is ever inserted anywhere
+  return videoHostEl;
+}
+function syncVideoHost(){
+  if (!quiz.videoUrl || state.screen !== "question"){
+    videoSlot.style.display = "none";
+    return;
+  }
+  var host = ensureVideoHost();
+  videoSlot.style.display = "block";
+  var open = state.videoOpen;
+  host.querySelector("#videoToggleBtn").innerHTML = chevronSvg(open) + (open ? "Hide video" : "Watch video");
+  var wrap = host.querySelector("#videoCollapseWrap");
+  wrap.classList.toggle("collapsed", !open);
+  wrap.style.maxHeight = window.innerWidth <= 480 ? (open ? "210px" : "0px") : "400px";
+}
+
+/* ---- perfect-score badge ----
+   Drawn onto a hidden <canvas> and copied into a real <img> via
+   toDataURL(), rather than built as SVG/HTML — a plain <img> is what gets
+   the browser's native "Copy image" / "Save image as" context-menu entries
+   (and long-press-save on phones) for free, which is the actual point:
+   Andy wants pupils to be able to easily lift this out of the quiz and
+   paste it elsewhere. Regenerated on every render() call (cheap — it's
+   only ever present at all on the results screen with a 100% score), so
+   no persistence trickery is needed here the way the video iframe needed. */
+function syncCompletionBadge(){
+  var canvas = document.getElementById("badgeCanvas");
+  var img = document.getElementById("badgeImg");
+  if (!canvas || !img) return; // not on the results screen, or not 100%
+  drawCompletionBadge(canvas, quiz.title);
+  img.src = canvas.toDataURL("image/png");
+}
+
+function drawCompletionBadge(canvas, title){
+  var W = 640, H = 420, DPR = 2; // draw at 2x for a crisp saved/pasted image
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+  var ctx = canvas.getContext("2d");
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, W, H); // transparent background — pastes cleanly onto anything
+
+  var cx = W / 2, cy = 148, r = 96;
+
+  function ribbonTail(sign){
+    // Tails peek out just below the title banner (by1=350) rather than
+    // running all the way down to where the "PERFECT SCORE" caption sits
+    // (by1+24=374) — otherwise the gold tail tips visually collide with
+    // that letter-spaced caption text and make it hard to read.
+    var tailBottom = cy + r + 112; // ~356, a few px clear of by1 (350)
+    ctx.beginPath();
+    ctx.moveTo(cx + sign * 14, cy + r - 22);
+    ctx.lineTo(cx + sign * 62, tailBottom);
+    ctx.lineTo(cx + sign * 34, tailBottom);
+    ctx.lineTo(cx + sign * 2, cy + r - 4);
+    ctx.closePath();
+    var g = ctx.createLinearGradient(cx, cy, cx + sign * 62, tailBottom);
+    g.addColorStop(0, "#E4AE33");
+    g.addColorStop(1, "#A9750E");
+    ctx.fillStyle = g;
+    ctx.fill();
+  }
+  ribbonTail(-1);
+  ribbonTail(1);
+
+  // medal disc
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  var mg = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.1, cx, cy, r);
+  mg.addColorStop(0, "#FFF7DE");
+  mg.addColorStop(0.45, "#FFD966");
+  mg.addColorStop(0.8, "#E3AC1C");
+  mg.addColorStop(1, "#B9860E");
+  ctx.fillStyle = mg;
+  ctx.fill();
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#8A6407";
+  ctx.stroke();
+
+  // inner bevel ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, r - 12, 0, Math.PI * 2);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(255,255,255,0.55)";
+  ctx.stroke();
+
+  drawStar(ctx, cx, cy - 44, 8, 20, 5, "#FFFDF2", "#9C6F08");
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "700 21px 'Space Mono', monospace";
+  ctx.fillStyle = "#5C3F04";
+  ctx.fillText("GCSECS.COM", cx, cy + 4);
+  ctx.font = "700 26px 'Space Mono', monospace";
+  ctx.fillStyle = "#6B4A05";
+  ctx.fillText("100%", cx, cy + 40);
+
+  // ribbon banner (hexagon: rectangle with pointed notched ends)
+  var bx0 = 56, bx1 = W - 56, by0 = 284, by1 = 350, notch = 22, bmid = (by0 + by1) / 2;
+  ctx.beginPath();
+  ctx.moveTo(bx0 + notch, by0);
+  ctx.lineTo(bx1 - notch, by0);
+  ctx.lineTo(bx1, bmid);
+  ctx.lineTo(bx1 - notch, by1);
+  ctx.lineTo(bx0 + notch, by1);
+  ctx.lineTo(bx0, bmid);
+  ctx.closePath();
+  var bg = ctx.createLinearGradient(0, by0, 0, by1);
+  bg.addColorStop(0, "#F3C346");
+  bg.addColorStop(1, "#C9971C");
+  ctx.fillStyle = bg;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#8A6407";
+  ctx.stroke();
+
+  // quiz title, shrunk to fit the banner on one line
+  var maxTextWidth = (bx1 - notch) - (bx0 + notch) - 28;
+  var size = 25;
+  var font;
+  do {
+    font = "700 " + size + "px 'Space Mono', monospace";
+    ctx.font = font;
+    size -= 1;
+  } while (ctx.measureText(title).width > maxTextWidth && size > 12);
+  ctx.fillStyle = "#3E2A00";
+  ctx.fillText(title, cx, bmid + 1);
+
+  ctx.font = "600 12px 'Space Mono', monospace";
+  ctx.fillStyle = "#8A6407";
+  ctx.fillText("P E R F E C T   S C O R E", cx, by1 + 24);
+}
+
+function drawStar(ctx, cx, cy, innerR, outerR, points, fill, stroke){
+  ctx.save();
+  ctx.beginPath();
+  for (var i = 0; i < points * 2; i++){
+    var rr = i % 2 === 0 ? outerR : innerR;
+    var a = (Math.PI / points) * i - Math.PI / 2;
+    var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = stroke;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function renderTitleScreen(){
+  var resume = loadProgress();
+  var answeredCount = resume ? Object.keys(resume.answered || {}).length : 0;
+  var isResume = !!resume && answeredCount > 0 && answeredCount < quiz.questions.length;
+
+  var body;
+  if (isResume){
+    body =
+      '<h1 class="qtitle">' + escapeHtml(quiz.title) + '</h1>' +
+      '<span class="progress-badge mono">In progress · question ' + (answeredCount+1) + ' of ' + quiz.questions.length + '</span>' +
+      '<button class="btn-primary" data-action="continue-quiz">Continue quiz</button>' +
+      '<button class="btn-secondary" data-action="restart-quiz">Restart from question 1</button>';
+  } else {
+    body =
+      '<h1 class="qtitle">' + escapeHtml(quiz.title) + '</h1>' +
+      '<p class="sub">' + quiz.questions.length + ' questions · multiple choice</p>' +
+      '<button class="btn-primary" data-action="start-quiz">Start quiz</button>';
+  }
+
+  return (
+    '<div class="title-wrap">' + body + '</div>' +
+    '<div class="consent-row">' +
+      '<input type="checkbox" id="consentBox" ' + (state.consent ? "checked" : "") + ' data-action="toggle-consent">' +
+      '<label for="consentBox">Help improve gcsecs.com — share anonymous usage stats (no personal data, no cookies used for ads)</label>' +
+    '</div>' +
+    '<p class="footer-hint">' + (isResume ? 'Restarting will reshuffle the answers and clear your progress' : 'Retry as many times as you like — aim for 100%') + '</p>'
+  );
+}
+
+function totalAnsweredCount(){ return Object.keys(state.answered).length; }
+
+function renderQuestionScreen(){
+  var idx = state.currentIndex;
+  var q = quiz.questions[idx];
+
+  if (q.broken){
+    return '<div class="broken-q-note">This question couldn’t be shown: ' + escapeHtml(q.error) + '<br>Skipping to the next one.</div>' +
+      renderNav();
+  }
+
+  var order = state.order[idx];
+  var answeredEntry = state.answered[idx];
+  var isAnswered = !!answeredEntry;
+
+  var qImageHtml = "";
+  if (q.questionImage){
+    qImageHtml = '<div class="q-image-wrap" data-action="zoom-open" data-src="' + resolveImage(q.questionImage) + '" data-alt="' + escapeHtml(q.questionImageAlt) + '" tabindex="0" role="button" aria-label="Enlarge diagram">' +
+      '<img src="' + resolveImage(q.questionImage) + '" alt="' + escapeHtml(q.questionImageAlt) + '"></div>';
+  }
+
+  var answersHtml;
+  if (q.isFillBlank){
+    var draftText = isAnswered ? answeredEntry.text : (state.fillDraft[idx] || "");
+    answersHtml =
+      '<div class="fill-row">' +
+        '<input type="text" class="fill-input" id="fillInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer" value="' + escapeHtml(draftText) + '">' +
+        '<button class="btn-primary fill-check-btn" data-action="submit-fill">Check</button>' +
+      '</div>';
+  } else if (q.isImageQuestion){
+    answersHtml = '<div class="img-answers">' + order.map(function(id, i){
+      var a = q.answers[id];
+      var letter = String.fromCharCode(65+i);
+      var selected = isAnswered && answeredEntry.id === id;
+      return (
+        // Deliberately never disabled once answered: the numbered nav lets a
+        // pupil jump back to any answered question specifically to change a
+        // wrongly-picked answer, so the buttons must stay clickable there —
+        // only the .selected highlight shows which one is currently chosen.
+        '<div class="img-ans ' + (selected ? "selected" : "") + '">' +
+          '<button style="all:unset;display:block;cursor:pointer;width:100%;" data-action="select-answer" data-id="' + id + '" aria-label="Answer ' + letter + '">' +
+            '<span class="ans-badge">' + letter + '</span>' +
+            '<img src="' + resolveImage(a.image) + '" alt="' + escapeHtml(a.alt) + '">' +
+          '</button>' +
+          '<button class="img-zoom-btn" data-action="zoom-open" data-src="' + resolveImage(a.image) + '" data-alt="' + escapeHtml(a.alt) + '" aria-label="Enlarge this answer image">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>' +
+          '</button>' +
+        '</div>'
+      );
+    }).join("") + '</div>';
+  } else {
+    answersHtml = '<div class="answers">' + order.map(function(id, i){
+      var a = q.answers[id];
+      var letter = String.fromCharCode(65+i);
+      var selected = isAnswered && answeredEntry.id === id;
+      return (
+        // Same as the image-answer buttons above: never disabled, so a
+        // pupil can change an answer after navigating back to it.
+        '<button class="ans-btn ' + (selected ? "selected" : "") + '" data-action="select-answer" data-id="' + id + '">' +
+          '<span class="ans-badge">' + letter + '</span>' + escapeHtml(a.text) +
+        '</button>'
+      );
+    }).join("") + '</div>';
+  }
+
+  var isLast = idx === quiz.questions.length - 1;
+  var finishHtml = "";
+  if (isAnswered && isLast){
+    finishHtml = '<div class="finish-row"><button class="btn-primary" style="margin-top:0;" data-action="finish-quiz">Click to finish</button></div>';
+  }
+
+  return (
+    '<div class="qbody">' +
+      qImageHtml +
+      '<h2 class="qtext">' + escapeHtml(q.questionText) + '</h2>' +
+      answersHtml +
+      finishHtml +
+      renderNav() +
+    '</div>' +
+    '<div class="restart-mid"><button data-action="restart-quiz">Restart quiz</button></div>' +
+    '<div style="height:20px;"></div>'
+  );
+}
+
+function renderNav(){
+  var total = quiz.questions.length;
+  var current = state.currentIndex;
+
+  function btnClass(i){
+    if (i === current) return "current";
+    if (state.answered.hasOwnProperty(i)) return "answered";
+    return "locked";
+  }
+  function btnHtml(i){
+    var cls = btnClass(i);
+    var clickable = cls !== "locked";
+    return '<button class="nav-btn ' + cls + '" ' + (clickable ? 'data-action="goto-question" data-idx="' + i + '"' : 'disabled') + '>' + (i+1) + '</button>';
+  }
+
+  var label = '<p class="nav-label mono">Jump back to a previous question</p>';
+
+  // Mobile: always a single swipeable strip regardless of count (CSS forces this at <=480px)
+  var stripHtml = '<div class="nav-strip">' + Array.from({length: total}, function(_,i){ return btnHtml(i); }).join("") + '</div>';
+
+  if (total <= 20){
+    return '<div class="nav-section">' + label + '<div class="nav-row">' + Array.from({length: total}, function(_,i){ return btnHtml(i); }).join("") + '</div>' + stripHtml + '</div>';
+  }
+
+  // Desktop/tablet paged grid (v3: 44px fixed, gaps tighten on middle pages)
+  var perPage = 20;
+  var pageCount = Math.ceil(total / perPage);
+  var page = Math.min(state.navPage, pageCount - 1);
+  var pagesHtml = "";
+  for (var p = 0; p < pageCount; p++){
+    var start = p * perPage;
+    var end = Math.min(start + perPage, total);
+    var isMiddle = p > 0 && p < pageCount - 1;
+    var btns = "";
+    for (var i = start; i < end; i++) btns += btnHtml(i);
+    pagesHtml += '<div class="nav-grid-page ' + (isMiddle ? "tight" : "") + '">' + btns + '</div>';
+  }
+  var showPrev = page > 0, showNext = page < pageCount - 1;
+  return (
+    '<div class="nav-section">' + label +
+    '<div class="nav-grid-outer">' +
+      '<button class="nav-arrow" data-action="nav-page-prev" ' + (showPrev?"":"disabled") + ' aria-label="Show earlier questions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg></button>' +
+      '<div class="nav-grid-viewport"><div class="nav-grid-track" style="transform:translateX(-' + (page*100) + '%);width:' + (pageCount*100) + '%;">' + pagesHtml + '</div></div>' +
+      '<button class="nav-arrow" data-action="nav-page-next" ' + (showNext?"":"disabled") + ' aria-label="Show later questions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></button>' +
+    '</div>' +
+    stripHtml +
+    '</div>'
+  );
+}
+
+function renderResultsScreen(){
+  var score = computeScore();
+  var pct = score.total ? Math.round((score.correct / score.total) * 100) : 0;
+  var reviewCards = quiz.questions.map(function(q, idx){
+    if (q.broken) return "";
+    var a = state.answered[idx];
+    var correct = a && a.correct;
+    var correctAns = q.answers.filter(function(x){ return x.correct; })[0];
+
+    if (q.isFillBlank){
+      var typedAnswer = a ? a.text : "—";
+      return (
+        '<div class="review-card">' +
+          '<div class="review-top"><span class="review-qtext">' + (idx+1) + '. ' + escapeHtml(q.questionText) + '</span>' +
+            '<span class="chip ' + (correct?"correct":"incorrect") + '">' + (correct ? checkSvg() + "Correct" : xSvg() + "Incorrect") + '</span></div>' +
+          '<span class="review-answer">Your answer: ' + escapeHtml(typedAnswer) + (correct ? "" : " · Correct answer: " + escapeHtml(correctAns.text)) + '</span>' +
+        '</div>'
+      );
+    }
+
+    var chosen = a ? findAnswerById(q, a.id) : null;
+
+    if (q.isImageQuestion){
+      return (
+        '<div class="review-card">' +
+          '<div class="review-top"><span class="review-qtext">' + (idx+1) + '. ' + escapeHtml(q.questionText) + '</span>' +
+            '<span class="chip ' + (correct?"correct":"incorrect") + '">' + (correct ? checkSvg() + "Correct" : xSvg() + "Incorrect") + '</span></div>' +
+          (correct ? '<div class="review-thumbs"><div class="review-thumb-col"><span>Your answer</span><img class="review-thumb" src="' + resolveImage(chosen.image) + '" alt="' + escapeHtml(chosen.alt) + '"></div></div>' :
+          '<div class="review-thumbs">' +
+            '<div class="review-thumb-col"><span style="color:var(--incorrectText)">Your answer</span><img class="review-thumb" style="border-color:var(--incorrectText)" src="' + resolveImage(chosen.image) + '" alt="' + escapeHtml(chosen.alt) + '"></div>' +
+            '<div class="review-thumb-col"><span style="color:var(--correctText)">Correct answer</span><img class="review-thumb" style="border-color:var(--correctText)" src="' + resolveImage(correctAns.image) + '" alt="' + escapeHtml(correctAns.alt) + '"></div>' +
+          '</div>') +
+        '</div>'
+      );
+    }
+    return (
+      '<div class="review-card">' +
+        '<div class="review-top"><span class="review-qtext">' + (idx+1) + '. ' + escapeHtml(q.questionText) + '</span>' +
+          '<span class="chip ' + (correct?"correct":"incorrect") + '">' + (correct ? checkSvg() + "Correct" : xSvg() + "Incorrect") + '</span></div>' +
+        '<span class="review-answer">Your answer: ' + escapeHtml(chosen ? chosen.text : "—") + (correct ? "" : " · Correct answer: " + escapeHtml(correctAns.text)) + '</span>' +
+      '</div>'
+    );
+  }).join("");
+
+  // A canvas-drawn, downloadable/copyable "perfect score" badge — only
+  // when every (non-broken) question was answered correctly. The canvas
+  // itself is drawn (and turned into the <img>'s actual src) by
+  // syncCompletionBadge(), called from render() after this HTML is in the
+  // page — it can't be drawn inline here since canvas drawing needs a real
+  // DOM element to exist first. See drawCompletionBadge() for why it's a
+  // real <img>, not an SVG or styled DOM: browsers only offer "Copy image" /
+  // "Save image as" on an actual <img>.
+  var isPerfect = score.total > 0 && score.correct === score.total;
+  var badgeHtml = isPerfect
+    ? '<div class="badge-wrap"><canvas id="badgeCanvas" style="display:none;" aria-hidden="true"></canvas><img id="badgeImg" class="badge-img" alt="Perfect score badge — 100% on ' + escapeHtml(quiz.title) + '"></div>'
+    : "";
+
+  // On a perfect score, the badge sits next to the score number rather than
+  // stacked above it (Andy's request, after seeing the first stacked
+  // version) — same row, wraps to stacked automatically on a screen too
+  // narrow to fit both side by side (see .badge-score-row).
+  var scoreBlock =
+    '<div class="score-block">' +
+      '<div class="result-score">' + score.correct + '/' + score.total + '</div>' +
+      '<span style="font-size:18px;font-weight:600;">' + pct + '%</span>' +
+    '</div>';
+  var topRow = badgeHtml
+    ? '<div class="badge-score-row">' + badgeHtml + scoreBlock + '</div>'
+    : scoreBlock;
+
+  // On a perfect score, the card's own "Try again" is redundant right next
+  // to the badge/marks (Andy's request) — the one below the review section
+  // stays either way, so restarting is still always reachable.
+  var cardTryAgainBtn = isPerfect
+    ? ""
+    : '<button class="btn-primary" data-action="restart-quiz">Try again</button>';
+
+  return (
+    '<div class="result-card">' +
+      '<span class="mono" style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mutedLabel);">Quiz complete</span>' +
+      topRow +
+      '<span style="font-size:14px;color:var(--secondary);">' + escapeHtml(quiz.title) + '</span>' +
+      cardTryAgainBtn +
+    '</div>' +
+    '<div class="review-header">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>Review your answers' +
+    '</div>' +
+    '<div class="review-list">' + reviewCards +
+      '<div style="display:flex;justify-content:center;"><button class="btn-primary" data-action="restart-quiz">Try again</button></div>' +
+    '</div>'
+  );
+}
+function findAnswerById(q, id){ return q.answers.filter(function(a){ return a.id === id; })[0]; }
+
+/* Fill-in-the-blank: matched trimmed + case-insensitive against every
+   accepted spelling in q.answers (all marked correct:true by the parser —
+   there are no wrong options to pick, only right ones to type). Mirrors
+   select-answer's auto-advance behaviour so the two question types feel
+   the same to use. Reads straight from the DOM rather than from
+   state.fillDraft so the Enter-key path and the Check-button path share
+   one code path with no risk of them disagreeing. */
+function submitFillAnswer(){
+  var idx = state.currentIndex;
+  var q = quiz.questions[idx];
+  var inputEl = document.getElementById("fillInput");
+  if (!inputEl) return;
+  var typed = inputEl.value.trim();
+  if (!typed) return;
+  var normalized = typed.toLowerCase();
+  var isCorrect = q.answers.some(function(a){ return a.text.trim().toLowerCase() === normalized; });
+  state.answered[idx] = { text: typed, correct: isCorrect };
+  delete state.fillDraft[idx];
+  saveProgress();
+  render();
+  if (idx < quiz.questions.length - 1){
+    setTimeout(function(){
+      if (state.currentIndex === idx){ state.currentIndex = idx + 1; saveProgress(); render(); }
+    }, 420);
+  }
+}
+function checkSvg(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'; }
+function xSvg(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'; }
+
+function renderZoomOverlay(){
+  var z = state.zoom;
+  var stage2 = z.stage === 2;
+  return (
+    '<div class="zoom-overlay" data-action="zoom-close-backdrop">' +
+      '<div class="zoom-stage" data-action="zoom-stage">' +
+        '<img id="zoomImg" src="' + z.src + '" alt="' + escapeHtml(z.alt) + '" class="' + (stage2 ? "zoomed" : "") + '" style="transform: translate(' + z.tx + 'px,' + z.ty + 'px) scale(' + (stage2 ? z.scale : 1) + ');">' +
+        '<div class="zoom-toolbar">' +
+          '<button data-action="zoom-toggle" aria-label="' + (stage2 ? "Zoom out" : "Zoom in further") + '"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>' + (stage2 ? "" : '<line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line>') + '</svg></button>' +
+          '<button data-action="zoom-close" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
+        '</div>' +
+        '<div class="zoom-alt">' + escapeHtml(z.alt) + '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function escapeHtml(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+app.addEventListener("click", function(e){
+  var el = e.target.closest("[data-action]");
+  if (!el) return;
+  var action = el.getAttribute("data-action");
+
+  if (action === "start-quiz"){ newAttempt(); state.screen = "question"; render(); }
+  else if (action === "continue-quiz"){
+    var p = loadProgress();
+    if (p){ state.order = p.order; state.answered = p.answered; state.currentIndex = p.currentIndex; }
+    state.screen = "question"; render();
+  }
+  else if (action === "restart-quiz"){ clearProgress(); newAttempt(); state.screen = "question"; render(); }
+  else if (action === "finish-quiz"){ clearProgress(); logAttempt("completed"); state.screen = "results"; render(); }
+  else if (action === "toggle-theme"){
+    var order = ["light","dark","accessible","ocean","forest","plum"];
+    state.theme = order[(order.indexOf(state.theme)+1) % order.length];
+    localStorage.setItem("mcq_theme", state.theme); render();
+  }
+  else if (action === "toggle-fontsize"){
+    var forder = ["normal","larger","largest"];
+    state.fontSize = forder[(forder.indexOf(state.fontSize)+1) % forder.length];
+    localStorage.setItem("mcq_fontsize", state.fontSize); render();
+  }
+  else if (action === "toggle-consent"){
+    state.consent = el.checked;
+    localStorage.setItem("mcq_consent", state.consent ? "1" : "0"); render();
+  }
+  else if (action === "toggle-video"){ state.videoOpen = !state.videoOpen; render(); }
+  else if (action === "select-answer"){
+    var idx = state.currentIndex;
+    var q = quiz.questions[idx];
+    var id = parseInt(el.getAttribute("data-id"), 10);
+    var ans = findAnswerById(q, id);
+    state.answered[idx] = { id: id, correct: !!ans.correct };
+    saveProgress();
+    render();
+    // Selecting an answer always auto-advances to the next question —
+    // whether it's the first time this question's been answered, or the
+    // pupil jumped back via the nav to fix an earlier one. An earlier
+    // version of this only auto-advanced on a question's first answer, on
+    // the theory that a revisit-to-fix should leave the pupil in place —
+    // but that theory was wrong in practice: e.g. answering Q3 and
+    // immediately clicking nav button "2" (before Q3's own 420ms
+    // auto-advance had fired) left Q3 marked "answered" without the pupil
+    // ever having actually left it, so navigating back to Q3 afterwards
+    // was indistinguishable from a deliberate revisit-to-fix and wrongly
+    // got stuck too. Simpler and matches what's actually expected:
+    // picking an answer always moves forward one question; the nav is
+    // there for jumping anywhere else afterward.
+    if (idx < quiz.questions.length - 1){
+      setTimeout(function(){
+        if (state.currentIndex === idx){ state.currentIndex = idx + 1; saveProgress(); render(); }
+      }, 420);
+    }
+  }
+  else if (action === "submit-fill"){ submitFillAnswer(); }
+  else if (action === "goto-question"){
+    state.currentIndex = parseInt(el.getAttribute("data-idx"), 10); render();
+  }
+  else if (action === "nav-page-prev"){ state.navPage = Math.max(0, state.navPage - 1); render(); }
+  else if (action === "nav-page-next"){ state.navPage = state.navPage + 1; render(); }
+  else if (action === "zoom-open"){
+    state.zoom = { src: el.getAttribute("data-src"), alt: el.getAttribute("data-alt"), stage: 1, scale: 2.1, tx: 0, ty: 0 };
+    render();
+  }
+  else if (action === "zoom-toggle"){
+    state.zoom.stage = state.zoom.stage === 1 ? 2 : 1;
+    state.zoom.tx = 0; state.zoom.ty = 0;
+    render();
+  }
+  else if (action === "zoom-close" || action === "zoom-close-backdrop"){
+    if (action === "zoom-close-backdrop" && e.target.closest(".zoom-stage") && !e.target.closest(".zoom-toolbar")) {
+      // click inside the image area (not toolbar) while zoomed out just does nothing extra;
+      // dragging is handled separately. Only true backdrop clicks close it.
+      if (e.target.id !== undefined && el === e.target){ state.zoom = null; render(); }
+      return;
+    }
+    state.zoom = null; render();
+  }
+}, false);
+
+app.addEventListener("keydown", function(e){
+  var el = e.target.closest('[data-action="zoom-open"]');
+  if (el && (e.key === "Enter" || e.key === " ")){
+    e.preventDefault();
+    state.zoom = { src: el.getAttribute("data-src"), alt: el.getAttribute("data-alt"), stage: 1, scale: 2.1, tx: 0, ty: 0 };
+    render();
+  }
+  if (e.key === "Escape" && state.zoom){ state.zoom = null; render(); }
+  if (e.key === "Enter" && e.target.classList && e.target.classList.contains("fill-input")){
+    e.preventDefault();
+    submitFillAnswer();
+  }
+});
+
+/* Keeps a not-yet-submitted fill-in-the-blank answer alive across a
+   render() triggered by something else entirely — toggling theme or text
+   size rebuilds bodySlot's innerHTML from scratch, which would otherwise
+   silently wipe out whatever the pupil had half-typed. */
+app.addEventListener("input", function(e){
+  if (e.target.classList && e.target.classList.contains("fill-input")){
+    state.fillDraft[state.currentIndex] = e.target.value;
+  }
+});
+
+/* Drag-to-pan (stage 2), pointer events unify mouse + touch */
+function bindZoomDrag(){
+  var img = document.getElementById("zoomImg");
+  if (!img || !state.zoom || state.zoom.stage !== 2) return;
+  var dragging = false, startX, startY, startTx, startTy;
+  var frame = img.parentElement;
+
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+  function bounds(){
+    var scale = state.zoom.scale;
+    var fw = frame.clientWidth, fh = frame.clientHeight;
+    var iw = img.naturalWidth || fw, ih = img.naturalHeight || fh;
+    var fitScale = Math.min(fw / iw, fh / ih);
+    var dispW = iw * fitScale * scale, dispH = ih * fitScale * scale;
+    var maxX = Math.max(0, (dispW - fw) / 2), maxY = Math.max(0, (dispH - fh) / 2);
+    return { maxX: maxX, maxY: maxY };
+  }
+
+  img.addEventListener("pointerdown", function(e){
+    dragging = true; img.classList.add("dragging");
+    startX = e.clientX; startY = e.clientY; startTx = state.zoom.tx; startTy = state.zoom.ty;
+    img.setPointerCapture(e.pointerId);
+  });
+  img.addEventListener("pointermove", function(e){
+    if (!dragging) return;
+    var b = bounds();
+    state.zoom.tx = clamp(startTx + (e.clientX - startX), -b.maxX, b.maxX);
+    state.zoom.ty = clamp(startTy + (e.clientY - startY), -b.maxY, b.maxY);
+    img.style.transform = "translate(" + state.zoom.tx + "px," + state.zoom.ty + "px) scale(" + state.zoom.scale + ")";
+  });
+  function endDrag(){ dragging = false; img.classList.remove("dragging"); }
+  img.addEventListener("pointerup", endDrag);
+  img.addEventListener("pointercancel", endDrag);
+}
+
+/* Cross-widget sync: theme/text-size/consent set in another
+   same-origin iframe update this one immediately (spec: Multiple
+   widgets on one page). */
+window.addEventListener("storage", function(e){
+  if (e.key === "mcq_theme" && e.newValue){ state.theme = e.newValue; render(); }
+  if (e.key === "mcq_fontsize" && e.newValue){ state.fontSize = e.newValue; render(); }
+  if (e.key === "mcq_consent"){ state.consent = e.newValue !== "0"; render(); }
+});
+
+/* iframe auto-resize: tell the parent page our height whenever it changes */
+var lastHeight = 0;
+function postHeight(){
+  requestAnimationFrame(function(){
+    var h = document.body.scrollHeight;
+    if (h !== lastHeight){
+      lastHeight = h;
+      try { window.parent.postMessage({ mcqWidgetHeight: h }, "*"); } catch(e){}
+    }
+  });
+}
+window.addEventListener("resize", function(){ render(); });
+
+/* Catches height changes render() doesn't know about — most importantly
+   the Google Fonts (Space Mono / DM Sans) swapping in shortly after first
+   paint, which can make the page taller than what postHeight() measured
+   at the initial render (a `display=swap` web font renders with a
+   fallback font first, then reflows once the real one loads). Without
+   this, the iframe can be left "chopped" — correct content, wrong box
+   height — until something else happens to trigger a resize. That's
+   exactly the failure seen live on gcsecs.com: a widget looked cut off
+   until the browser's zoom level was changed, which forces the same
+   resize/render/postHeight cycle this ResizeObserver now runs
+   automatically instead, catching font loads, image loads, or any other
+   future async content change, not just this one specific cause. */
+if (window.ResizeObserver){
+  new ResizeObserver(function(){ postHeight(); }).observe(document.body);
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+render();
+
+})();
+</script>
+<script>
+/* When this quiz is shown in a frame, tell the page how tall it is so the frame can fit it exactly
+   (no empty space under short screens, no scrollbar on the results screen). Does nothing on its own page. */
+(function(){
+  if(window.parent===window) return;
+  var el=document.getElementById('app'); if(!el) return;
+  var last=0;
+  function report(){
+    var h=Math.ceil(el.getBoundingClientRect().bottom+(window.pageYOffset||0));
+    if(h>0&&h!==last){ last=h; try{ window.parent.postMessage({gcsWidget:'mcq',height:h},'*'); }catch(e){} }
+  }
+  if(window.ResizeObserver) new ResizeObserver(report).observe(el); else setInterval(report,500);
+  window.addEventListener('load',report); window.addEventListener('resize',report);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(report);
+  report();
+})();
+</script>
+</body>
+</html>
