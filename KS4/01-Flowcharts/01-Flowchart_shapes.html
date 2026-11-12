@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en-GB" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flowchart Shape Snap</title>
+<style>
+:root,[data-theme="day"]{--bg:#ffffff;--card:#f3f5f6;--ink:#111111;--muted:#4b5157;--line:#c5ccd2;--accent:#2b7a80;--accentInk:#ffffff;--good:#1d7a35;--goodBg:#e2f3e5;--bad:#b3261e;--badBg:#fce8e6;--aBg:#e4eefb;--aInk:#0c4a8a;--bBg:#efe8fb;--bInk:#4b2a8a;--focus:#1a5fb4;--bw:2px}
+[data-theme="night"]{--bg:#121417;--card:#1d2126;--ink:#eef1f4;--muted:#aab2ba;--line:#3b434b;--accent:#4db6bc;--accentInk:#071314;--good:#63d483;--goodBg:#163522;--bad:#ff8a80;--badBg:#3f1d1b;--aBg:#18304d;--aInk:#a9cdf6;--bBg:#2e2548;--bInk:#d2c2f7;--focus:#8ab4f8}
+[data-theme="send"]{--bg:#f7f0d6;--card:#ede3bf;--ink:#222222;--muted:#4f4836;--line:#c4b68c;--accent:#2b6d71;--accentInk:#fffaea;--good:#1d6a2e;--goodBg:#d9e9c4;--bad:#9e2b1f;--badBg:#f1d3c4;--aBg:#d8e2e6;--aInk:#1d4466;--bBg:#e3d9e6;--bInk:#4a2f6b;--focus:#1d4466}
+[data-theme="blue"]{--bg:#dde9f4;--card:#cbdbeb;--ink:#15202b;--muted:#3c4a58;--line:#9fb5ca;--accent:#245f8c;--accentInk:#ffffff;--good:#1d6a2e;--goodBg:#d3ead1;--bad:#a12a1f;--badBg:#f1d4cf;--aBg:#bfd4ea;--aInk:#103b63;--bBg:#d6cfea;--bInk:#3f2d6b;--focus:#103b63}
+[data-theme="contrast"]{--bg:#000000;--card:#000000;--ink:#ffff00;--muted:#ffffff;--line:#ffff00;--accent:#ffff00;--accentInk:#000000;--good:#00ff66;--goodBg:#003a17;--bad:#ff6b6b;--badBg:#3d0000;--aBg:#000000;--aInk:#00e5ff;--bBg:#000000;--bInk:#ff9cff;--focus:#00e5ff;--bw:3px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{min-height:100vh;line-height:1.45}
+[hidden]{display:none!important}
+.app{max-width:620px;margin:0 auto;padding:10px 14px 18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.top h1{font-size:1.15rem;margin:0;font-weight:700}
+.top .tools{display:flex;gap:6px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{min-height:48px;padding:10px 18px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:1rem}
+.btn.small{min-height:40px;padding:6px 12px;font-size:.9rem;border-radius:10px}
+.btn.primary{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+.btn:focus-visible,.opt:focus-visible,.swatch:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 12px;padding:10px;border:var(--bw) solid var(--line);border-radius:12px;background:var(--card)}
+.swatch{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border-radius:10px;border:var(--bw) solid transparent;background:transparent;color:var(--ink);text-align:left;font-size:.92rem}
+.swatch[aria-pressed="true"]{border-color:var(--accent);font-weight:700}
+.dot{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #888;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.screen h2{font-size:1.3rem;margin:.2rem 0 .5rem}
+.lead{margin:0 0 14px;font-size:1.02rem}
+.strip{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:6px 0 16px}
+.strip svg{width:76px;height:auto}
+.col{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row .btn{flex:1 1 140px}
+.best{margin:14px 0 0;color:var(--muted);text-align:center}
+.shape .s-line{fill:none;stroke:var(--ink);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.shape .s-text{fill:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-weight:600}
+.hud{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:1rem}
+.timer{font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:3.2ch}
+.timer.low{color:var(--bad)}
+.stat{color:var(--muted)}
+.stat b{color:var(--ink);font-size:1.25rem;font-variant-numeric:tabular-nums;display:inline-block}
+.tbar{height:8px;border-radius:4px;background:var(--card);border:1px solid var(--line);overflow:hidden;margin:6px 0 10px}
+.tbar div{height:100%;width:100%;background:var(--accent);transition:width .1s linear}
+.badge{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:1.02rem;padding:8px 12px;border-radius:10px;border:var(--bw) solid currentColor;margin-bottom:8px}
+.badge.modeA{background:var(--aBg);color:var(--aInk)}
+.badge.modeB{background:var(--bBg);color:var(--bInk)}
+.badge svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.slot{min-height:156px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.slot .shape{width:100%;max-width:250px;height:auto}
+.pname{font-size:1.7rem;font-weight:800;text-align:center;padding:10px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{position:relative;min-height:72px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:1.02rem;padding:10px 8px;display:flex;align-items:center;justify-content:center}
+.opt-shape{min-height:100px;padding:6px}
+.opt-shape .shape{width:100%;max-width:150px;height:auto}
+.opt.good{border-color:var(--good);background:var(--goodBg);box-shadow:0 0 0 2px var(--good) inset}
+.opt.bad{border-color:var(--bad);background:var(--badBg);box-shadow:0 0 0 2px var(--bad) inset}
+@media (hover:hover) and (pointer:fine){.opt:hover{border-color:var(--accent)}}
+.fb{width:100%;padding:12px 14px;border-radius:12px;border:var(--bw) solid var(--bad);background:var(--badBg)}
+.fb p{margin:0 0 6px}
+.fbTitle{font-weight:800;font-size:1.15rem;color:var(--bad)}
+.fbRow{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.fbRow .shape{flex:none;width:96px;height:auto}
+.muted{color:var(--muted)}
+.exam{font-weight:700}
+.fbFoot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+.fbFoot .muted{font-size:.9rem;margin:0}
+.card{border:var(--bw) solid var(--line);background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.card p{margin:0 0 8px}
+.card code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:.95em;background:var(--bg);padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
+.tutShape{display:flex;justify-content:center;margin-bottom:4px}
+.tutShape .shape{width:100%;max-width:280px;height:auto}
+.tutHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:var(--muted);font-weight:600}
+.dots{display:flex;gap:6px}
+.dots span{width:10px;height:10px;border-radius:50%;border:2px solid var(--muted)}
+.dots span.on{background:var(--accent);border-color:var(--accent)}
+.tip{padding:8px 10px;border-left:4px solid var(--accent);background:var(--bg);border-radius:0 8px 8px 0}
+.examBox{padding:8px 10px;border:var(--bw) solid var(--bad);border-radius:8px;background:var(--badBg);font-weight:600}
+.sumGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.sumItem{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--bg);text-align:center;font-weight:700;font-size:.95rem}
+.sumItem .shape{width:100%;max-width:130px;height:auto}
+.endScore{text-align:center;margin:4px 0 2px}
+.endScore b{font-size:3rem;line-height:1;display:block}
+.newbest{text-align:center;font-weight:800;color:var(--good);margin:6px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stats div{border:var(--bw) solid var(--line);background:var(--card);border-radius:10px;padding:8px;text-align:center;font-size:.85rem;color:var(--muted)}
+.stats b{display:block;font-size:1.3rem;color:var(--ink)}
+.revise{margin:0 0 12px}
+.revise h3{font-size:1rem;margin:0 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-weight:600;font-size:.9rem}
+.chip .shape{width:54px;height:auto}
+.pop{animation:pop .3s ease-out}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.pop{animation:none}.tbar div{transition:none}}
+@media (max-width:360px){.app{padding:8px 10px 14px}.opt{font-size:.95rem}.pname{font-size:1.45rem}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1>Flowchart Shape Snap</h1>
+    <div class="tools">
+      <button id="menuBtn" class="btn small" type="button" hidden>Menu</button>
+      <button id="themeBtn" class="btn small" type="button" aria-expanded="false" aria-controls="themePanel">Colours</button>
+    </div>
+  </header>
+  <div id="themePanel" class="themes" role="group" aria-label="Colour theme" hidden></div>
+
+  <main>
+    <section id="scrStart" class="screen">
+      <p class="lead">Match the OCR flowchart symbols to their names. Some questions show you a shape, others show you a name. They switch randomly, so stay sharp. You have 60 seconds.</p>
+      <div id="strip" class="strip" aria-hidden="true"></div>
+      <div class="col">
+        <button id="startBtn" class="btn primary" type="button">Start the 60-second challenge</button>
+        <button id="tutBtn" class="btn" type="button">New to the shapes? Take the tutorial</button>
+      </div>
+      <p class="best">Your best score: <b id="bestScore">–</b></p>
+    </section>
+
+    <section id="scrTut" class="screen" hidden>
+      <div class="tutHead"><span id="tutStep"></span><div id="dots" class="dots" aria-hidden="true"></div></div>
+      <div id="tutCard" class="card" aria-live="polite"></div>
+      <div class="row">
+        <button id="tutPrev" class="btn" type="button">Back</button>
+        <button id="tutNext" class="btn primary" type="button">Next</button>
+      </div>
+    </section>
+
+    <section id="scrGame" class="screen" hidden>
+      <div class="hud">
+        <div class="timer" id="timer" aria-label="Seconds left">60</div>
+        <div class="stat">Score <b id="hudScore">0</b></div>
+        <div class="stat">Streak <b id="hudStreak">0</b></div>
+      </div>
+      <div class="tbar" aria-hidden="true"><div id="tFill"></div></div>
+      <div id="badge" class="badge modeA"></div>
+      <div class="slot">
+        <div id="prompt" style="width:100%;display:flex;justify-content:center"></div>
+        <div id="fb" class="fb" role="status" hidden>
+          <div id="fbBody"></div>
+          <div class="fbFoot">
+            <button id="fbNext" class="btn primary" type="button">Continue</button>
+            <p class="muted">Timer paused</p>
+          </div>
+        </div>
+      </div>
+      <div id="opts" class="opts"></div>
+    </section>
+
+    <section id="scrEnd" class="screen" hidden>
+      <h2 style="text-align:center">Time's up!</h2>
+      <p class="endScore"><b id="endScore">0</b>correct</p>
+      <p id="newBest" class="newbest" hidden>New personal best!</p>
+      <div class="stats">
+        <div>Best score<b id="endBest">0</b></div>
+        <div>Accuracy<b id="endAcc">–</b></div>
+        <div>Best streak<b id="endStreak">0</b></div>
+      </div>
+      <div id="revise" class="revise"></div>
+      <div class="row">
+        <button id="againBtn" class="btn primary" type="button">Play again</button>
+        <button id="endTutBtn" class="btn" type="button">Tutorial</button>
+      </div>
+    </section>
+  </main>
+  <noscript><p>This game needs JavaScript switched on.</p></noscript>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var DURATION = 60000;
+  var ORDER = ['terminal', 'flow', 'io', 'process', 'decision', 'sub'];
+  var EXAM_TIP = 'Exam tip: always label the exits of a decision Yes and No. Leaving them off can lose you marks.';
+
+  var SHAPES = {
+    terminal: {
+      name: 'Terminal – Start/End',
+      use: 'Shows where the algorithm starts and where it stops. Every flowchart begins with a Start terminal and finishes with at least one End terminal.',
+      example: 'Start   …   End',
+      inside: 'Start',
+      tip: 'Rounded ends, like a capsule. You get on at the start and off at the end.'
+    },
+    flow: {
+      name: 'Logical flow',
+      use: 'An arrow that joins the shapes together and shows the order the steps happen in.',
+      example: 'Start → INPUT name → … → End',
+      inside: '',
+      tip: 'Arrows point the way. Follow the arrowheads from Start to End.'
+    },
+    io: {
+      name: 'Input/Output',
+      use: 'Data coming into the algorithm (input), or data sent out, such as being displayed on screen (output).',
+      example: 'name = input("Enter name")   or   print(total)',
+      inside: 'INPUT name',
+      tip: 'Slanted because data is sliding in or out.'
+    },
+    process: {
+      name: 'Process',
+      use: 'A calculation or an assignment: the algorithm is doing some work.',
+      example: 'total = total + price',
+      inside: 'total = total + 1',
+      tip: 'A plain box for plain work: calculations and assignments.'
+    },
+    decision: {
+      name: 'Decision',
+      use: 'A question with a Yes or No answer. The flowchart branches depending on the answer.',
+      example: 'Is score > 50?',
+      inside: 'score > 50?',
+      tip: 'A diamond has corners to branch off, and every exit is labelled Yes or No.'
+    },
+    sub: {
+      name: 'Sub program',
+      use: 'Calls a function or procedure that is written somewhere else. The algorithm jumps to it, runs it, then comes back.',
+      example: 'calculateVAT(price)',
+      inside: 'calcVAT(price)',
+      tip: 'Extra walls mean a separate room. Go in, do the job, come back.'
+    }
+  };
+
+  var CONFUSE = {
+    terminal: { process: 5, sub: 4, io: 2, decision: 1, flow: 1 },
+    process: { sub: 5, terminal: 4, io: 4, decision: 1, flow: 1 },
+    sub: { process: 5, terminal: 4, io: 2, decision: 1, flow: 1 },
+    io: { process: 5, decision: 3, terminal: 2, sub: 2, flow: 1 },
+    decision: { io: 4, process: 2, terminal: 2, sub: 1, flow: 1 },
+    flow: { process: 2, io: 2, terminal: 2, decision: 2, sub: 1 }
+  };
+
+  var THEMES = [
+    { id: 'day', label: 'Day', bg: '#ffffff', ink: '#111111' },
+    { id: 'night', label: 'Night', bg: '#121417', ink: '#eef1f4' },
+    { id: 'send', label: 'Soft lighting', bg: '#f7f0d6', ink: '#222222' },
+    { id: 'blue', label: 'Soft blue', bg: '#dde9f4', ink: '#15202b' },
+    { id: 'contrast', label: 'High contrast', bg: '#000000', ink: '#ffff00' }
+  ];
+
+  var KEY_BEST = 'gcsecs-flowchart-shapes-best';
+  var KEY_THEME = 'gcsecs-flowchart-shapes-theme';
+
+  var store = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } }
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  /* ---------- Shape drawing ---------- */
+  function head(x, y, dir) {
+    var p = dir === 'right' ? [x, y, x - 12, y - 7, x - 12, y + 7] : [x, y, x - 7, y - 12, x + 7, y - 12];
+    return '<polygon class="s-line" points="' + p.join(',') + '"/>';
+  }
+  function txt(x, y, s, size) {
+    return '<text class="s-text" x="' + x + '" y="' + y + '" font-size="' + size + '" text-anchor="middle" dominant-baseline="central">' + esc(s) + '</text>';
+  }
+  function shapeSVG(id, opt) {
+    opt = opt || {};
+    var t = opt.text || '';
+    var b = '';
+    switch (id) {
+      case 'terminal':
+        b = '<rect class="s-line" x="30" y="34" width="140" height="52" rx="26"/>' + (t ? txt(100, 60, t, 16) : '');
+        break;
+      case 'process':
+        b = '<rect class="s-line" x="26" y="32" width="148" height="56"/>' + (t ? txt(100, 60, t, 14) : '');
+        break;
+      case 'sub':
+        b = '<rect class="s-line" x="20" y="32" width="160" height="56"/>' +
+            '<line class="s-line" x1="36" y1="32" x2="36" y2="88"/>' +
+            '<line class="s-line" x1="164" y1="32" x2="164" y2="88"/>' + (t ? txt(100, 60, t, 13) : '');
+        break;
+      case 'io':
+        b = '<polygon class="s-line" points="58,32 182,32 142,88 18,88"/>' + (t ? txt(100, 60, t, 14) : '');
+        break;
+      case 'flow':
+        b = '<line class="s-line" x1="22" y1="60" x2="164" y2="60"/>' + head(178, 60, 'right');
+        break;
+      case 'decision':
+      case 'trap':
+        b = '<polygon class="s-line" points="80,6 130,48 80,90 30,48"/>' +
+            '<line class="s-line" x1="130" y1="48" x2="172" y2="48"/>' + head(186, 48, 'right') +
+            '<line class="s-line" x1="80" y1="90" x2="80" y2="103"/>' + head(80, 116, 'down') +
+            (t ? txt(80, 48, t, 12) : '');
+        if (id === 'decision') b += txt(154, 34, 'Yes', 15) + txt(100, 104, 'No', 15);
+        break;
+    }
+    var a11y = opt.label ? 'role="img" aria-label="' + esc(opt.label) + '"' : 'aria-hidden="true"';
+    return '<svg class="shape" viewBox="0 0 200 122" ' + a11y + ' focusable="false">' + b + '</svg>';
+  }
+
+  /* ---------- Themes ---------- */
+  function applyTheme(id) {
+    var ok = THEMES.some(function (t) { return t.id === id; });
+    if (!ok) id = 'day';
+    document.documentElement.setAttribute('data-theme', id);
+    store.set(KEY_THEME, id);
+    var btns = $('themePanel').querySelectorAll('.swatch');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-t') === id ? 'true' : 'false');
+    }
+  }
+  function buildThemes() {
+    var panel = $('themePanel');
+    THEMES.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch';
+      b.setAttribute('data-t', t.id);
+      b.innerHTML = '<span class="dot" style="background:' + t.bg + ';color:' + t.ink + '" aria-hidden="true">A</span><span>' + esc(t.label) + '</span>';
+      b.addEventListener('click', function () {
+        applyTheme(t.id);
+        panel.hidden = true;
+        $('themeBtn').setAttribute('aria-expanded', 'false');
+        $('themeBtn').focus();
+      });
+      panel.appendChild(b);
+    });
+    $('themeBtn').addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    applyTheme(store.get(KEY_THEME) || 'day');
+  }
+
+  /* ---------- Screens ---------- */
+  var SCREENS = ['scrStart', 'scrTut', 'scrGame', 'scrEnd'];
+  function show(id) {
+    SCREENS.forEach(function (s) { $(s).hidden = s !== id; });
+    $('menuBtn').hidden = id === 'scrStart';
+    if (id === 'scrStart') refreshBest();
+    try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+  }
+  function getBest() { return parseInt(store.get(KEY_BEST) || '0', 10) || 0; }
+  function refreshBest() { var b = getBest(); $('bestScore').textContent = b > 0 ? String(b) : '–'; }
+
+  /* ---------- Tutorial ---------- */
+  var tutIdx = 0;
+  var TUT_TOTAL = ORDER.length + 1;
+  function renderTut() {
+    var card = $('tutCard');
+    if (tutIdx < ORDER.length) {
+      var id = ORDER[tutIdx];
+      var s = SHAPES[id];
+      $('tutStep').textContent = 'Shape ' + (tutIdx + 1) + ' of ' + ORDER.length;
+      var html = '<div class="tutShape">' + shapeSVG(id, { text: s.inside, label: s.name + ' symbol' }) + '</div>' +
+        '<h2>' + esc(s.name) + '</h2>' +
+        '<p><b>What it’s for:</b> ' + esc(s.use) + '</p>' +
+        '<p><b>Example:</b> <code>' + esc(s.example) + '</code></p>' +
+        '<p class="tip"><b>Memory tip:</b> ' + esc(s.tip) + '</p>';
+      if (id === 'decision') html += '<p class="examBox">' + esc(EXAM_TIP) + '</p>';
+      card.innerHTML = html;
+    } else {
+      $('tutStep').textContent = 'Summary';
+      card.innerHTML = '<h2>All six shapes</h2><p>Have a final look, then try the challenge.</p><div class="sumGrid">' +
+        ORDER.map(function (id) {
+          return '<div class="sumItem">' + shapeSVG(id) + '<span>' + esc(SHAPES[id].name) + '</span></div>';
+        }).join('') + '</div>';
+    }
+    $('tutPrev').textContent = tutIdx === 0 ? 'Menu' : 'Back';
+    $('tutNext').textContent = tutIdx === TUT_TOTAL - 1 ? 'Start the challenge' : 'Next';
+    var dots = '';
+    for (var i = 0; i < TUT_TOTAL; i++) dots += '<span class="' + (i === tutIdx ? 'on' : '') + '"></span>';
+    $('dots').innerHTML = dots;
+  }
+  function openTutorial() { tutIdx = 0; stopGame(); show('scrTut'); renderTut(); }
+  function tutPrev() { if (tutIdx === 0) { show('scrStart'); return; } tutIdx--; renderTut(); }
+  function tutNext() { if (tutIdx === TUT_TOTAL - 1) { startGame(); return; } tutIdx++; renderTut(); }
+
+  /* ---------- Game helpers ---------- */
+  function weightedPick(pool) {
+    var total = 0, i;
+    for (i = 0; i < pool.length; i++) total += pool[i][1];
+    var r = Math.random() * total;
+    for (i = 0; i < pool.length; i++) { r -= pool[i][1]; if (r < 0) return pool[i][0]; }
+    return pool[pool.length - 1][0];
+  }
+  function pickDistractors(target, n) {
+    var pool = Object.keys(CONFUSE[target]).map(function (k) { return [k, CONFUSE[target][k]]; });
+    var out = [];
+    while (out.length < n && pool.length) {
+      var id = weightedPick(pool);
+      out.push(id);
+      pool = pool.filter(function (p) { return p[0] !== id; });
+    }
+    return out;
+  }
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  /* ---------- Game state ---------- */
+  var G = {};
+  function resetGame() {
+    G = { state: 'idle', remaining: DURATION, last: 0, timerId: null, score: 0, streak: 0, bestStreak: 0,
+          answered: 0, missed: {}, lastTarget: null, modeRun: [], current: null, flashId: null, hiddenPaused: false };
+  }
+  resetGame();
+
+  function startTimer() {
+    stopTimer();
+    G.last = performance.now();
+    G.timerId = setInterval(tick, 100);
+  }
+  function stopTimer() { if (G.timerId) { clearInterval(G.timerId); G.timerId = null; } }
+  function tick() {
+    var now = performance.now();
+    G.remaining -= now - G.last;
+    G.last = now;
+    if (G.remaining <= 0) {
+      G.remaining = 0;
+      updateTimer();
+      stopTimer();
+      if (G.state === 'question') endGame();
+      return;
+    }
+    updateTimer();
+  }
+  function updateTimer() {
+    var secs = Math.ceil(G.remaining / 1000);
+    var el = $('timer');
+    el.textContent = String(secs);
+    el.classList.toggle('low', secs <= 10);
+    $('tFill').style.width = (G.remaining / DURATION * 100).toFixed(1) + '%';
+  }
+  function updateHud(bump) {
+    $('hudScore').textContent = String(G.score);
+    $('hudStreak').textContent = String(G.streak);
+    if (bump) {
+      var s = $('hudScore');
+      s.classList.remove('pop');
+      void s.offsetWidth;
+      s.classList.add('pop');
+    }
+  }
+
+  function chooseMode() {
+    var r = G.modeRun;
+    var m = Math.random() < 0.5 ? 'A' : 'B';
+    if (r.length >= 3) {
+      var lastM = r[r.length - 1];
+      if (r[r.length - 2] === lastM && r[r.length - 3] === lastM) m = lastM === 'A' ? 'B' : 'A';
+    }
+    r.push(m);
+    if (r.length > 6) r.shift();
+    return m;
+  }
+  function chooseTarget() {
+    var pool = ORDER.filter(function (id) { return id !== G.lastTarget; })
+      .map(function (id) { return [id, 1 + Math.min(3, G.missed[id] || 0) * 2]; });
+    return weightedPick(pool);
+  }
+
+  function startGame() {
+    stopGame();
+    resetGame();
+    show('scrGame');
+    updateHud(false);
+    updateTimer();
+    nextQuestion();
+    startTimer();
+  }
+  function stopGame() {
+    stopTimer();
+    if (G.flashId) { clearTimeout(G.flashId); G.flashId = null; }
+    G.state = 'idle';
+  }
+
+  function nextQuestion() {
+    var mode = chooseMode();
+    var target = chooseTarget();
+    G.lastTarget = target;
+    var options;
+    if (mode === 'B' && target === 'decision' && Math.random() < 0.6) {
+      options = [target, 'trap'].concat(pickDistractors(target, 2));
+    } else {
+      options = [target].concat(pickDistractors(target, 3));
+    }
+    shuffle(options);
+    G.current = { mode: mode, target: target, options: options };
+
+    var badge = $('badge');
+    if (mode === 'A') {
+      badge.className = 'badge modeA';
+      badge.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10l6 5-6 5H4z"/></svg>Name this shape';
+      $('prompt').innerHTML = shapeSVG(target, { label: 'A flowchart symbol' });
+    } else {
+      badge.className = 'badge modeB';
+      badge.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M15 15l5 5"/></svg>Find the shape';
+      $('prompt').innerHTML = '<div class="pname">' + esc(SHAPES[target].name) + '</div>';
+    }
+    $('fb').hidden = true;
+    $('prompt').hidden = false;
+
+    var opts = $('opts');
+    opts.innerHTML = '';
+    options.forEach(function (id, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      if (mode === 'A') {
+        b.className = 'opt opt-name';
+        b.textContent = SHAPES[id].name;
+      } else {
+        b.className = 'opt opt-shape';
+        b.innerHTML = shapeSVG(id);
+        b.setAttribute('aria-label', 'Shape option ' + (i + 1));
+      }
+      b.addEventListener('click', function () { answer(i); });
+      opts.appendChild(b);
+    });
+    G.state = 'question';
+  }
+
+  function answer(i) {
+    if (G.state !== 'question') return;
+    var c = G.current;
+    var picked = c.options[i];
+    var btns = $('opts').children;
+    G.answered++;
+    if (picked === c.target) {
+      G.score++;
+      G.streak++;
+      if (G.streak > G.bestStreak) G.bestStreak = G.streak;
+      btns[i].classList.add('good');
+      G.state = 'flash';
+      updateHud(true);
+      G.flashId = setTimeout(function () {
+        G.flashId = null;
+        if (G.state !== 'flash') return;
+        if (G.remaining <= 0) endGame(); else nextQuestion();
+      }, 450);
+    } else {
+      G.streak = 0;
+      G.missed[c.target] = (G.missed[c.target] || 0) + 1;
+      btns[i].classList.add('bad');
+      btns[c.options.indexOf(c.target)].classList.add('good');
+      G.state = 'feedback';
+      stopTimer();
+      updateHud(false);
+      showFeedback(picked);
+    }
+  }
+
+  function showFeedback(picked) {
+    var c = G.current;
+    var t = SHAPES[c.target];
+    var html = '<p class="fbTitle">Not quite.</p>';
+    if (picked === 'trap') {
+      html += '<p>That diamond has no <b>Yes</b> and <b>No</b> labels on its exits. The correct one is highlighted in green.</p>' +
+              '<p class="exam">' + esc(EXAM_TIP) + '</p>';
+    } else {
+      html += '<div class="fbRow">' + shapeSVG(c.target) + '<div><p>This is <b>' + esc(t.name) + '</b>.</p>' +
+              '<p class="muted">' + (c.mode === 'A' ? 'You chose ' : 'The shape you picked is ') + esc(SHAPES[picked].name) + '.</p></div></div>' +
+              '<p>' + esc(t.tip) + '</p>';
+      if (c.target === 'decision') html += '<p class="exam">' + esc(EXAM_TIP) + '</p>';
+    }
+    $('fbBody').innerHTML = html;
+    $('prompt').hidden = true;
+    $('fb').hidden = false;
+    try { $('fbNext').focus({ preventScroll: true }); } catch (e) { $('fbNext').focus(); }
+  }
+
+  function continueGame() {
+    if (G.state !== 'feedback') return;
+    nextQuestion();
+    startTimer();
+  }
+
+  function endGame() {
+    stopGame();
+    G.state = 'over';
+    var prev = getBest();
+    var isNew = G.score > prev;
+    if (isNew) store.set(KEY_BEST, String(G.score));
+    $('endScore').textContent = String(G.score);
+    $('newBest').hidden = !(isNew && G.score > 0);
+    $('endBest').textContent = String(Math.max(prev, G.score));
+    $('endAcc').textContent = G.answered ? Math.round(G.score / G.answered * 100) + '%' : '–';
+    $('endStreak').textContent = String(G.bestStreak);
+
+    var missedIds = Object.keys(G.missed).sort(function (a, b) { return G.missed[b] - G.missed[a]; });
+    var rev = $('revise');
+    if (!G.answered) {
+      rev.innerHTML = '<p class="muted" style="text-align:center">You didn’t answer any questions. Give it another go!</p>';
+    } else if (!missedIds.length) {
+      rev.innerHTML = '<p style="text-align:center;font-weight:700">No mistakes. Brilliant!</p>';
+    } else {
+      rev.innerHTML = '<h3>Shapes to revise</h3><div class="chips">' + missedIds.map(function (id) {
+        return '<span class="chip">' + shapeSVG(id) + esc(SHAPES[id].name) + '</span>';
+      }).join('') + '</div>';
+    }
+    show('scrEnd');
+  }
+
+  /* ---------- Wiring ---------- */
+  function init() {
+    buildThemes();
+    $('strip').innerHTML = ORDER.map(function (id) { return shapeSVG(id); }).join('');
+    refreshBest();
+    $('startBtn').addEventListener('click', startGame);
+    $('tutBtn').addEventListener('click', openTutorial);
+    $('endTutBtn').addEventListener('click', openTutorial);
+    $('againBtn').addEventListener('click', startGame);
+    $('tutPrev').addEventListener('click', tutPrev);
+    $('tutNext').addEventListener('click', tutNext);
+    $('fbNext').addEventListener('click', continueGame);
+    $('menuBtn').addEventListener('click', function () { stopGame(); show('scrStart'); });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      if (!$('scrGame').hidden && G.state === 'question' && /^[1-4]$/.test(e.key)) {
+        e.preventDefault();
+        answer(parseInt(e.key, 10) - 1);
+      } else if (!$('scrTut').hidden) {
+        if (e.key === 'ArrowRight') tutNext();
+        else if (e.key === 'ArrowLeft') tutPrev();
+      }
+    });
+
+    document.addEventListener('visibilitychange', function () {
+      if (G.state !== 'question' && G.state !== 'flash') return;
+      if (document.hidden) {
+        if (G.timerId) { stopTimer(); G.hiddenPaused = true; }
+      } else if (G.hiddenPaused) {
+        G.hiddenPaused = false;
+        startTimer();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
