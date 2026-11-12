@@ -52,8 +52,9 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .slot .shape{width:100%;max-width:250px;height:auto}
 .pname{font-size:1.7rem;font-weight:800;text-align:center;padding:10px}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.opt{position:relative;min-height:72px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:1.02rem;padding:10px 8px;display:flex;align-items:center;justify-content:center}
+.opt{position:relative;min-height:72px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:1.3rem;line-height:1.25;padding:10px 8px;display:flex;align-items:center;justify-content:center}
 .opt-shape{min-height:100px;padding:6px}
+.opt-name{min-height:80px}
 .opt-shape .shape{width:100%;max-width:150px;height:auto}
 .opt.good{border-color:var(--good);background:var(--goodBg);box-shadow:0 0 0 2px var(--good) inset}
 .opt.bad{border-color:var(--bad);background:var(--badBg);box-shadow:0 0 0 2px var(--bad) inset}
@@ -95,7 +96,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .pop{animation:pop .3s ease-out}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.pop{animation:none}.tbar div{transition:none}}
-@media (max-width:360px){.app{padding:8px 10px 14px}.opt{font-size:.95rem}.pname{font-size:1.45rem}}
+@media (max-width:360px){.app{padding:8px 10px 14px}.opt{font-size:1.12rem}.pname{font-size:1.45rem}}
 </style>
 </head>
 <body>
