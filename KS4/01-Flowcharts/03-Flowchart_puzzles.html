@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en-GB" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flowchart Puzzles</title>
+<style>
+:root,[data-theme="day"]{--bg:#ffffff;--card:#f3f5f6;--ink:#111111;--muted:#4b5157;--line:#c5ccd2;--accent:#2b7a80;--accentInk:#ffffff;--good:#1d7a35;--goodBg:#e2f3e5;--bad:#b3261e;--badBg:#fce8e6;--aBg:#e4eefb;--aInk:#0c4a8a;--focus:#1a5fb4;--bw:2px;
+--start-f:#EAF3DE;--start-s:#3B6D11;--stop-f:#FCEBEB;--stop-s:#A32D2D;--proc-f:#E6F1FB;--proc-s:#185FA5;--io-f:#EEEDFE;--io-s:#534AB7;--dec-f:#FAEEDA;--dec-s:#854F0B;--sub-f:#E1F5EE;--sub-s:#0F6E56;--shape-ink:#111111}
+[data-theme="night"]{--bg:#121417;--card:#1d2126;--ink:#eef1f4;--muted:#aab2ba;--line:#3b434b;--accent:#4db6bc;--accentInk:#071314;--good:#63d483;--goodBg:#163522;--bad:#ff8a80;--badBg:#3f1d1b;--aBg:#18304d;--aInk:#a9cdf6;--focus:#8ab4f8;
+--start-f:#27500A;--start-s:#97C459;--stop-f:#791F1F;--stop-s:#F09595;--proc-f:#0C447C;--proc-s:#85B7EB;--io-f:#3C3489;--io-s:#AFA9EC;--dec-f:#633806;--dec-s:#EF9F27;--sub-f:#085041;--sub-s:#5DCAA5;--shape-ink:#f4f6f8}
+[data-theme="send"]{--bg:#f7f0d6;--card:#ede3bf;--ink:#222222;--muted:#4f4836;--line:#c4b68c;--accent:#2b6d71;--accentInk:#fffaea;--good:#1d6a2e;--goodBg:#d9e9c4;--bad:#9e2b1f;--badBg:#f1d3c4;--aBg:#d8e2e6;--aInk:#1d4466;--focus:#1d4466}
+[data-theme="blue"]{--bg:#dde9f4;--card:#cbdbeb;--ink:#15202b;--muted:#3c4a58;--line:#9fb5ca;--accent:#245f8c;--accentInk:#ffffff;--good:#1d6a2e;--goodBg:#d3ead1;--bad:#a12a1f;--badBg:#f1d4cf;--aBg:#bfd4ea;--aInk:#103b63;--focus:#103b63}
+[data-theme="contrast"]{--bg:#000000;--card:#000000;--ink:#ffff00;--muted:#ffffff;--line:#ffff00;--accent:#ffff00;--accentInk:#000000;--good:#00ff66;--goodBg:#003a17;--bad:#ff6b6b;--badBg:#3d0000;--aBg:#000000;--aInk:#00e5ff;--focus:#00e5ff;--bw:3px;
+--start-f:#000;--start-s:#00ff66;--stop-f:#000;--stop-s:#ff6b6b;--proc-f:#000;--proc-s:#00e5ff;--io-f:#000;--io-s:#ff9cff;--dec-f:#000;--dec-s:#ffcc00;--sub-f:#000;--sub-s:#00ffcc;--shape-ink:#ffffff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{line-height:1.45}
+[hidden]{display:none!important}
+.app{max-width:940px;margin:0 auto;padding:10px 14px 18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.top h1{font-size:1.15rem;margin:0;font-weight:700}
+.tools{display:flex;gap:6px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{min-height:48px;padding:10px 18px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:1rem}
+.btn.small{min-height:40px;padding:6px 12px;font-size:.9rem;border-radius:10px}
+.btn.primary{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+.btn:focus-visible,.piece:focus-visible,.swatch:focus-visible,.pbtn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 12px;padding:10px;border:var(--bw) solid var(--line);border-radius:12px;background:var(--card)}
+.swatch{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border-radius:10px;border:var(--bw) solid transparent;background:transparent;color:var(--ink);text-align:left;font-size:.92rem}
+.swatch[aria-pressed="true"]{border-color:var(--accent);font-weight:700}
+.dot{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #888;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.lead{margin:0 0 14px;font-size:1.02rem}
+.plist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.pbtn{width:100%;display:flex;align-items:center;gap:12px;min-height:62px;padding:8px 12px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);text-align:left}
+.num{flex:none;width:36px;height:36px;border-radius:50%;border:var(--bw) solid var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--ink)}
+.pbtn.done .num{background:var(--good);border-color:var(--good);color:var(--bg)}
+.ptxt{flex:1;min-width:0}
+.ptitle{display:block;font-weight:700}
+.ptag{display:block;font-size:.85rem;color:var(--muted)}
+.pdone{flex:none;font-size:.8rem;font-weight:700;color:var(--good)}
+.meta{color:var(--muted);font-weight:600;font-size:.9rem;margin:0}
+.ptitle-h{font-size:1.35rem;margin:2px 0 4px}
+.intro{margin:0 0 6px}
+.how{margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.play{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:760px){.play{grid-template-columns:minmax(0,1fr) 270px;align-items:start}}
+.boardWrap{position:relative;border:var(--bw) solid var(--line);border-radius:12px;background:var(--bg);padding:8px 4px}
+svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select:none;user-select:none}
+.eg polyline{fill:none;stroke:var(--muted);stroke-width:2;stroke-linejoin:round}
+.eg .ah{fill:var(--muted)}
+.elab{fill:var(--ink);font:700 12px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.slot{cursor:pointer;outline:none}
+.slot .hit{fill:transparent;stroke:none}
+.slot .ring{fill:none;stroke:none}
+.slot:focus-visible .ring{stroke:var(--focus);stroke-width:3}
+.empty{fill:var(--card);stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 4}
+.etext{fill:var(--muted);font:600 12px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.slot.target .empty{stroke:var(--accent);stroke-width:2.5}
+.slot.active .empty,.slot.active .sh{stroke:var(--accent);stroke-width:3}
+.slot.over .empty,.slot.over .sh{stroke:var(--accent);stroke-width:4}
+.sh{stroke-width:2}
+.sh-start{fill:var(--start-f);stroke:var(--start-s)}
+.sh-stop{fill:var(--stop-f);stroke:var(--stop-s)}
+.sh-process{fill:var(--proc-f);stroke:var(--proc-s)}
+.sh-io{fill:var(--io-f);stroke:var(--io-s)}
+.sh-decision{fill:var(--dec-f);stroke:var(--dec-s)}
+.sh-sub{fill:var(--sub-f);stroke:var(--sub-s)}
+.stext{fill:var(--shape-ink);font-weight:600;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.bank h3{font-size:1rem;margin:0 0 4px}
+.bank .bhint{font-size:.85rem;color:var(--muted);margin:0 0 8px;min-height:1.2em}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+@media (min-width:760px){.bgrid{grid-template-columns:1fr}}
+.piece,svg.board{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.zoomBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+.zhint{font-size:.85rem;color:var(--muted)}
+.btn[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+#board.zoomed{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+#board.zoomed svg.board{max-width:none}
+.ask{margin-top:10px;padding:12px 14px;border-radius:10px;border:var(--bw) solid var(--bad);background:var(--badBg);color:var(--ink)}
+.ask p{margin:0;font-weight:700}
+.ask .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ask .btn{flex:1 1 140px}
+.piece{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:6px 10px;border-radius:10px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);text-align:left;font-size:.95rem;font-weight:600;line-height:1.25}
+.piece svg{flex:none;width:44px;height:28px}
+.piece span{min-width:0;overflow-wrap:break-word}
+@media (max-width:759px){.bgrid .piece{flex-direction:column;align-items:flex-start;gap:4px;padding:8px 10px}.bgrid .piece svg{width:36px;height:22px}}
+.bgrid>*{min-width:0}
+.piece.sel{border-color:var(--accent);background:var(--aBg);color:var(--aInk);box-shadow:inset 0 0 0 2px var(--accent)}
+.bempty{color:var(--muted);font-size:.9rem;margin:4px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions .btn{flex:1 1 140px}
+.msg{margin-top:10px;padding:10px 14px;border-radius:10px;font-weight:700;border:var(--bw) solid currentColor}
+.msg.info{background:var(--aBg);color:var(--aInk)}
+.msg.warn{background:var(--badBg);color:var(--bad)}
+.msg.ok{background:var(--goodBg);color:var(--good)}
+.msg .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.msg .btn{flex:1 1 140px}
+.pop{position:absolute;z-index:5;max-height:340px;overflow:auto;background:var(--bg);border:var(--bw) solid var(--accent);border-radius:12px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.pop h3{font-size:.98rem;margin:0 0 8px}
+.pop .piece{margin-bottom:6px}
+.pop .btn{width:100%;margin-top:2px}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;padding:8px 12px;border-radius:10px;background:var(--card);color:var(--ink);border:2px solid var(--accent);font-weight:700;max-width:220px;transform:translate(-50%,-120%);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+@media (max-width:360px){.app{padding:8px 10px 14px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1>Flowchart Puzzles</h1>
+    <div class="tools">
+      <button id="menuBtn" class="btn small" type="button" hidden>Menu</button>
+      <button id="themeBtn" class="btn small" type="button" aria-expanded="false" aria-controls="themePanel">Colours</button>
+    </div>
+  </header>
+  <div id="themePanel" class="themes" role="group" aria-label="Colour theme" hidden></div>
+
+  <main>
+    <section id="scrMenu">
+      <p class="lead">Put the shapes into the right boxes to complete each flowchart. The puzzles get harder as you go.</p>
+      <ol id="plist" class="plist"></ol>
+    </section>
+
+    <section id="scrPuzzle" hidden>
+      <p class="meta" id="pMeta"></p>
+      <h2 class="ptitle-h" id="pTitle"></h2>
+      <p class="intro" id="pIntro"></p>
+      <p class="how">Tap an empty box to choose a shape, or tap a shape and then a box. On a tablet or computer you can also drag shapes onto boxes (on a tablet, press and hold a shape first).</p>
+      <div class="play">
+        <div class="boardCol">
+          <div class="zoomBar" id="zoomBar" hidden>
+            <button id="zoomBtn" class="btn small" type="button" aria-pressed="false">Bigger boxes</button>
+            <span class="zhint" id="zoomHint" hidden>Swipe sideways to see the whole flowchart.</span>
+          </div>
+          <div class="boardWrap" id="boardWrap">
+            <div id="board"></div>
+            <div id="pop" class="pop" role="dialog" aria-label="Choose a shape" hidden></div>
+          </div>
+        </div>
+        <div class="bank" id="bank">
+          <h3 id="bankTitle">Shapes to place</h3>
+          <p class="bhint" id="bankHint" aria-live="polite"></p>
+          <div class="bgrid" id="bgrid"></div>
+        </div>
+      </div>
+      <div id="msg" class="msg" role="status" hidden></div>
+      <div class="actions">
+        <button id="checkBtn" class="btn primary" type="button">Check my flowchart</button>
+        <button id="resetBtn" class="btn" type="button">Reset</button>
+      </div>
+      <div id="resetAsk" class="ask" role="group" aria-label="Confirm reset" hidden>
+        <p>Clear all the boxes and start this puzzle again?</p>
+        <div class="row">
+          <button id="resetYes" class="btn" type="button">Yes, clear them</button>
+          <button id="resetNo" class="btn primary" type="button">No, keep them</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <noscript><p>This activity needs JavaScript switched on.</p></noscript>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= Puzzle data =================
+     node: [id, type, column, row, text]   types: start stop process io decision sub
+     edge: {f, t, x: exit side b|r|l|u (default b), k: 'loop'|'rail', l: label, ly: row for loop line}
+     alts: groups of slot swaps that are also accepted                                    */
+  function chain(ids) {
+    var out = [];
+    for (var i = 0; i < ids.length - 1; i++) out.push({ f: ids[i], t: ids[i + 1] });
+    return out;
+  }
+
+  var PUZZLES = [
+    {
+      id: 'adding', title: 'Adding two numbers', tag: 'Sequence',
+      intro: 'Make a flowchart that adds two numbers together and outputs the result.',
+      nodes: [
+        ['a1', 'start', 0, 0, 'Start'],
+        ['a2', 'io', 0, 1, 'Input first number'],
+        ['a3', 'io', 0, 2, 'Input second number'],
+        ['a4', 'process', 0, 3, 'Add numbers together'],
+        ['a5', 'io', 0, 4, 'Display result'],
+        ['a6', 'stop', 0, 5, 'End']
+      ],
+      edges: chain(['a1', 'a2', 'a3', 'a4', 'a5', 'a6']),
+      alts: []
+    },
+    {
+      id: 'pizza', title: 'Make a pizza', tag: 'Selection',
+      intro: 'Make a pizza. Pepperoni and olives are optional toppings.',
+      nodes: [
+        ['p1', 'start', 0, 0, 'Start'],
+        ['p2', 'process', 0, 1, 'Make dough and shape into circle'],
+        ['p3', 'process', 0, 2, 'Add cheese and tomato sauce'],
+        ['p4', 'decision', 0, 3, 'Pepperoni?'],
+        ['p5', 'process', 1, 3, 'Add pepperoni'],
+        ['p6', 'decision', 0, 4, 'Olives?'],
+        ['p7', 'process', 1, 4, 'Add olives'],
+        ['p8', 'process', 0, 5, 'Bake pizza'],
+        ['p9', 'process', 0, 6, 'Slice and enjoy'],
+        ['p10', 'stop', 0, 7, 'End']
+      ],
+      edges: chain(['p1', 'p2', 'p3', 'p4']).concat([
+        { f: 'p4', t: 'p5', x: 'r', l: 'Yes' }, { f: 'p4', t: 'p6', l: 'No' }, { f: 'p5', t: 'p6' },
+        { f: 'p6', t: 'p7', x: 'r', l: 'Yes' }, { f: 'p6', t: 'p8', l: 'No' }, { f: 'p7', t: 'p8' }
+      ]).concat(chain(['p8', 'p9', 'p10'])),
+      alts: [[['p4', 'p6'], ['p5', 'p7']]]
+    },
+    {
+      id: 'tea', title: 'Make a cup of tea', tag: 'Selection',
+      intro: 'Make a cup of tea. Milk and sugar are optional.',
+      nodes: [
+        ['t1', 'start', 0, 0, 'Start'],
+        ['t2', 'process', 0, 1, 'Boil water'],
+        ['t3', 'process', 0, 2, 'Pour water in cup'],
+        ['t4', 'process', 0, 3, 'Add teabag'],
+        ['t5', 'process', 0, 4, 'Wait 2–5 mins'],
+        ['t6', 'process', 0, 5, 'Remove teabag'],
+        ['t7', 'decision', 0, 6, 'Milk?'],
+        ['t8', 'process', 1, 6, 'Add milk'],
+        ['t9', 'decision', 0, 7, 'Sugar?'],
+        ['t10', 'process', 1, 7, 'Add sugar'],
+        ['t11', 'process', 0, 8, 'Stir and enjoy'],
+        ['t12', 'stop', 0, 9, 'End']
+      ],
+      edges: chain(['t1', 't2', 't3', 't4', 't5', 't6', 't7']).concat([
+        { f: 't7', t: 't8', x: 'r', l: 'Yes' }, { f: 't7', t: 't9', l: 'No' }, { f: 't8', t: 't9' },
+        { f: 't9', t: 't10', x: 'r', l: 'Yes' }, { f: 't9', t: 't11', l: 'No' }, { f: 't10', t: 't11' },
+        { f: 't11', t: 't12' }
+      ]),
+      alts: [[['t3', 't4']], [['t7', 't9'], ['t8', 't10']]]
+    },
+    {
+      id: 'chairs', title: 'Musical chairs', tag: 'Loop',
+      intro: 'Keep playing rounds of musical chairs until there is a winner.',
+      nodes: [
+        ['m1', 'start', 0, 0, 'Start'],
+        ['m2', 'process', 0, 1, 'Play music'],
+        ['m3', 'process', 0, 2, 'Stop music'],
+        ['m4', 'process', 0, 3, 'Player without a chair is out'],
+        ['m5', 'process', 0, 4, 'Remove a chair'],
+        ['m6', 'decision', 0, 5, 'Is there a winner?'],
+        ['m7', 'stop', 0, 6, 'End']
+      ],
+      edges: chain(['m1', 'm2', 'm3', 'm4', 'm5', 'm6']).concat([
+        { f: 'm6', t: 'm7', l: 'Yes' }, { f: 'm6', t: 'm2', x: 'l', k: 'loop', l: 'No' }
+      ]),
+      alts: [[['m4', 'm5']]]
+    },
+    {
+      id: 'password', title: 'Password check', tag: 'Validation loop',
+      intro: 'Keep asking for the password until the user types "letmein".',
+      nodes: [
+        ['w1', 'start', 0, 0, 'Start'],
+        ['w2', 'io', 0, 1, 'Input password'],
+        ['w3', 'decision', 0, 2, 'password == "letmein"?'],
+        ['w4', 'io', 1, 2, 'Output\n"Try again"'],
+        ['w5', 'io', 0, 3, 'Output\n"Access granted"'],
+        ['w6', 'stop', 0, 4, 'End']
+      ],
+      edges: chain(['w1', 'w2', 'w3']).concat([
+        { f: 'w3', t: 'w4', x: 'r', l: 'No' }, { f: 'w4', t: 'w2', x: 'u' },
+        { f: 'w3', t: 'w5', l: 'Yes' }, { f: 'w5', t: 'w6' }
+      ]),
+      alts: []
+    },
+    {
+      id: 'grade', title: 'Grade calculator', tag: 'Nested selection',
+      intro: 'Input a test score. Output grade A for 70 or more, B for 50 or more, otherwise C.',
+      nodes: [
+        ['g1', 'start', 0, 0, 'Start'],
+        ['g2', 'io', 0, 1, 'Input score'],
+        ['g3', 'decision', 0, 2, 'score >= 70?'],
+        ['g4', 'io', 1, 2, 'Output\n"Grade A"'],
+        ['g5', 'decision', 0, 3, 'score >= 50?'],
+        ['g6', 'io', 1, 3, 'Output\n"Grade B"'],
+        ['g7', 'io', 0, 4, 'Output\n"Grade C"'],
+        ['g8', 'stop', 0, 5, 'End']
+      ],
+      edges: chain(['g1', 'g2', 'g3']).concat([
+        { f: 'g3', t: 'g4', x: 'r', l: 'Yes' }, { f: 'g3', t: 'g5', l: 'No' },
+        { f: 'g5', t: 'g6', x: 'r', l: 'Yes' }, { f: 'g5', t: 'g7', l: 'No' },
+        { f: 'g7', t: 'g8' }, { f: 'g6', t: 'g8' }, { f: 'g4', t: 'g8', x: 'r', k: 'rail' }
+      ]),
+      alts: []
+    },
+    {
+      id: 'times', title: '5 times table', tag: 'Count-controlled loop',
+      intro: 'Output the 5 times table, from 1 × 5 up to 12 × 5.',
+      nodes: [
+        ['c1', 'start', 0, 0, 'Start'],
+        ['c2', 'process', 0, 1, 'count = 1'],
+        ['c3', 'decision', 0, 2, 'count <= 12?'],
+        ['c4', 'io', 0, 3, 'Output count * 5'],
+        ['c5', 'process', 0, 4, 'count = count + 1'],
+        ['c6', 'stop', 1, 2, 'End']
+      ],
+      edges: chain(['c1', 'c2', 'c3']).concat([
+        { f: 'c3', t: 'c4', l: 'Yes' }, { f: 'c3', t: 'c6', x: 'r', l: 'No' },
+        { f: 'c4', t: 'c5' }, { f: 'c5', t: 'c3', k: 'loop' }
+      ]),
+      alts: []
+    },
+    {
+      id: 'football', title: 'Football score', tag: 'Loop with nested selection',
+      intro: 'Keep track of the score until the game finishes, then output the final score.',
+      nodes: [
+        ['f1', 'start', 0, 0, 'Start'],
+        ['f2', 'process', 0, 1, 'TeamOneScore = 0\nTeamTwoScore = 0'],
+        ['f3', 'decision', 0, 2, 'Has the game finished?'],
+        ['f4', 'io', 1, 2, 'Output\nfinal score'],
+        ['f5', 'stop', 1, 3, 'End'],
+        ['f6', 'decision', 0, 3, 'Has a goal been scored?'],
+        ['f7', 'decision', 0, 4, 'Did team one score?'],
+        ['f8', 'process', 1, 4, 'TeamOneScore = TeamOneScore + 1'],
+        ['f9', 'process', 0, 5, 'TeamTwoScore = TeamTwoScore + 1']
+      ],
+      edges: chain(['f1', 'f2', 'f3']).concat([
+        { f: 'f3', t: 'f4', x: 'r', l: 'Yes' }, { f: 'f4', t: 'f5' },
+        { f: 'f3', t: 'f6', l: 'No' }, { f: 'f6', t: 'f3', x: 'l', k: 'loop', l: 'No' },
+        { f: 'f6', t: 'f7', l: 'Yes' }, { f: 'f7', t: 'f8', x: 'r', l: 'Yes' }, { f: 'f7', t: 'f9', l: 'No' },
+        { f: 'f8', t: 'f3', k: 'loop', ly: 5.62 }, { f: 'f9', t: 'f3', k: 'loop', ly: 5.62 }
+      ]),
+      alts: []
+    },
+    {
+      id: 'average', title: 'Average of numbers', tag: 'Running total',
+      intro: 'Keep inputting numbers until 0 is entered, then output the average of the numbers.',
+      nodes: [
+        ['v1', 'start', 0, 0, 'Start'],
+        ['v2', 'process', 0, 1, 'total = 0\ncount = 0'],
+        ['v3', 'io', 0, 2, 'Input number'],
+        ['v4', 'decision', 0, 3, 'number == 0?'],
+        ['v5', 'process', 1, 3, 'total = total + number'],
+        ['v6', 'process', 1, 4, 'count = count + 1'],
+        ['v7', 'process', 0, 4, 'average = total / count'],
+        ['v8', 'io', 0, 5, 'Output average'],
+        ['v9', 'stop', 0, 6, 'End']
+      ],
+      edges: chain(['v1', 'v2', 'v3', 'v4']).concat([
+        { f: 'v4', t: 'v5', x: 'r', l: 'No' }, { f: 'v5', t: 'v6' }, { f: 'v6', t: 'v3', x: 'r', k: 'rail' },
+        { f: 'v4', t: 'v7', l: 'Yes' }, { f: 'v7', t: 'v8' }, { f: 'v8', t: 'v9' }
+      ]),
+      alts: [[['v5', 'v6']]]
+    },
+    {
+      id: 'login', title: 'Login with 3 attempts', tag: 'Sub program',
+      intro: 'Give the user three attempts to log in. checkLogin() is a sub program that checks the details.',
+      nodes: [
+        ['l1', 'start', 0, 0, 'Start'],
+        ['l2', 'process', 0, 1, 'attempts = 0'],
+        ['l3', 'io', 0, 2, 'Input username and password'],
+        ['l4', 'sub', 0, 3, 'checkLogin()'],
+        ['l5', 'decision', 0, 4, 'Is login valid?'],
+        ['l6', 'io', 1, 4, 'Output\n"Welcome"'],
+        ['l7', 'process', 0, 5, 'attempts = attempts + 1'],
+        ['l8', 'decision', 0, 6, 'attempts == 3?'],
+        ['l9', 'io', 1, 6, 'Output\n"Account locked"'],
+        ['l10', 'stop', 1, 7, 'End']
+      ],
+      edges: chain(['l1', 'l2', 'l3', 'l4', 'l5']).concat([
+        { f: 'l5', t: 'l6', x: 'r', l: 'Yes' }, { f: 'l5', t: 'l7', l: 'No' }, { f: 'l7', t: 'l8' },
+        { f: 'l8', t: 'l9', x: 'r', l: 'Yes' }, { f: 'l8', t: 'l3', x: 'l', k: 'loop', l: 'No' },
+        { f: 'l9', t: 'l10' }, { f: 'l6', t: 'l10', x: 'r', k: 'rail' }
+      ]),
+      alts: []
+    }
+  ];
+
+  /* ================= Geometry ================= */
+  var ZOOM = 1.25;
+  var COLX = [100, 280], W = 140, ROWH = 82, Y0 = 45, RAIL = 14, XR = 364, E = 10;
+  var MAXCH = { start: 16, stop: 16, process: 18, io: 17, sub: 15, decision: 14 };
+  function Y(r) { return Y0 + r * ROWH; }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function oneLine(s) { return s.replace(/\n/g, ' '); }
+  function wrap(text, max) {
+    var out = [];
+    text.split('\n').forEach(function (part) {
+      var line = '';
+      part.split(' ').forEach(function (w) {
+        if (!line) line = w;
+        else if ((line + ' ' + w).length <= max) line += ' ' + w;
+        else { out.push(line); line = w; }
+      });
+      if (line) out.push(line);
+    });
+    return out;
+  }
+
+  function shapeMarkup(type, cx, cy, w, h) {
+    var l = cx - w / 2, r = cx + w / 2, t = cy - h / 2, b = cy + h / 2, cls = 'sh sh-' + type;
+    switch (type) {
+      case 'start':
+      case 'stop':
+        return '<rect class="' + cls + '" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '"/>';
+      case 'io':
+        return '<polygon class="' + cls + '" points="' + [l + 12, t, r, t, r - 12, b, l, b].join(',') + '"/>';
+      case 'decision':
+        return '<polygon class="' + cls + '" points="' + [cx, t, r, cy, cx, b, l, cy].join(',') + '"/>';
+      case 'sub':
+        return '<rect class="' + cls + '" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '"/>' +
+          '<line class="' + cls + '" x1="' + (l + 10) + '" y1="' + t + '" x2="' + (l + 10) + '" y2="' + b + '"/>' +
+          '<line class="' + cls + '" x1="' + (r - 10) + '" y1="' + t + '" x2="' + (r - 10) + '" y2="' + b + '"/>';
+      default:
+        return '<rect class="' + cls + '" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '"/>';
+    }
+  }
+  function textMarkup(text, type, cx, cy) {
+    var lines = wrap(text, MAXCH[type] || 16);
+    var fs = type === 'decision' ? 12 : 12.5;
+    var y0 = cy - (lines.length - 1) * 7.5;
+    return lines.map(function (ln, i) {
+      return '<text class="stext" x="' + cx + '" y="' + (y0 + i * 15) + '" font-size="' + fs + '" text-anchor="middle" dominant-baseline="central">' + esc(ln) + '</text>';
+    }).join('');
+  }
+  function miniIcon(type) {
+    return '<svg viewBox="0 0 44 28" aria-hidden="true" focusable="false">' + shapeMarkup(type, 22, 14, 40, 22).replace(/rx="11"/, 'rx="11"') + '</svg>';
+  }
+
+  /* ================= Build puzzle structures ================= */
+  PUZZLES.forEach(function (P) {
+    P.N = {};
+    P.order = [];
+    P.nodes.forEach(function (n) {
+      var o = { id: n[0], type: n[1], col: n[2], row: n[3], text: n[4] };
+      o.cx = COLX[o.col];
+      o.cy = Y(o.row);
+      o.w = W;
+      o.h = o.type === 'decision' ? 64 : 50;
+      P.N[o.id] = o;
+      P.order.push(o.id);
+    });
+    P.order.sort(function (a, b) { return P.N[a].row - P.N[b].row || P.N[a].col - P.N[b].col; });
+    var sols = [{}];
+    P.order.forEach(function (id) { sols[0][id] = id; });
+    P.alts.forEach(function (group) {
+      var extra = sols.map(function (s) {
+        var c = {};
+        Object.keys(s).forEach(function (k) { c[k] = s[k]; });
+        group.forEach(function (pair) { var tmp = c[pair[0]]; c[pair[0]] = c[pair[1]]; c[pair[1]] = tmp; });
+        return c;
+      });
+      sols = sols.concat(extra);
+    });
+    P.solutions = sols;
+  });
+
+  function route(P, e) {
+    var f = P.N[e.f], t = P.N[e.t], x = e.x || 'b', tTop = t.cy - t.h / 2, s, pts;
+    if (x === 'b') {
+      s = [f.cx, f.cy + f.h / 2];
+      if (e.k === 'loop') {
+        var ly = e.ly != null ? Y(e.ly) : s[1] + 12;
+        pts = [s, [f.cx, ly], [RAIL, ly], [RAIL, tTop - E], [t.cx, tTop - E], [t.cx, tTop]];
+      } else if (f.cx === t.cx) pts = [s, [t.cx, tTop]];
+      else pts = [s, [f.cx, tTop - E], [t.cx, tTop - E], [t.cx, tTop]];
+    } else if (x === 'r') {
+      s = [f.cx + f.w / 2, f.cy];
+      if (e.k === 'rail') pts = [s, [XR, f.cy], [XR, tTop - E], [t.cx, tTop - E], [t.cx, tTop]];
+      else if (Math.abs(t.cy - f.cy) < 1) pts = [s, [t.cx - t.w / 2, t.cy]];
+      else pts = [s, [t.cx, f.cy], [t.cx, tTop]];
+    } else if (x === 'l') {
+      s = [f.cx - f.w / 2, f.cy];
+      pts = [s, [RAIL, f.cy], [RAIL, tTop - E], [t.cx, tTop - E], [t.cx, tTop]];
+    } else {
+      s = [f.cx, f.cy - f.h / 2];
+      pts = [s, [f.cx, tTop - E], [t.cx, tTop - E], [t.cx, tTop]];
+    }
+    return { pts: pts, x: x };
+  }
+  function arrowHead(a, b) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1;
+    var ux = dx / len, uy = dy / len, L = 9, Wd = 5;
+    var bx = b[0] - ux * L, by = b[1] - uy * L;
+    return '<polygon class="ah" points="' + [b[0], b[1], bx - uy * Wd, by + ux * Wd, bx + uy * Wd, by - ux * Wd].map(function (v) { return Math.round(v * 10) / 10; }).join(',') + '"/>';
+  }
+  function boardSize(P) {
+    var maxX = 0, maxY = 0, rail = false;
+    P.order.forEach(function (id) {
+      var n = P.N[id];
+      maxX = Math.max(maxX, n.cx + n.w / 2);
+      maxY = Math.max(maxY, n.cy + n.h / 2);
+    });
+    P.edges.forEach(function (e) {
+      if (e.k === 'rail') rail = true;
+      if (e.ly != null) maxY = Math.max(maxY, Y(e.ly));
+    });
+    return { w: (rail ? XR : maxX) + 10, h: maxY + 14 };
+  }
+
+  /* ================= Storage and themes ================= */
+  var KEY_THEME = 'gcsecs-flowchart-shapes-theme';
+  var KEY_SOLVED = 'gcsecs-flowchart-puzzles-solved';
+  var KEY_ZOOM = 'gcsecs-flowchart-puzzles-zoom';
+  var store = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } }
+  };
+  function getSolved() {
+    try { var v = JSON.parse(store.get(KEY_SOLVED) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+  }
+  function markSolved(id) {
+    var s = getSolved();
+    if (s.indexOf(id) < 0) { s.push(id); store.set(KEY_SOLVED, JSON.stringify(s)); }
+  }
+
+  var THEMES = [
+    { id: 'day', label: 'Day', bg: '#ffffff', ink: '#111111' },
+    { id: 'night', label: 'Night', bg: '#121417', ink: '#eef1f4' },
+    { id: 'send', label: 'Soft lighting', bg: '#f7f0d6', ink: '#222222' },
+    { id: 'blue', label: 'Soft blue', bg: '#dde9f4', ink: '#15202b' },
+    { id: 'contrast', label: 'High contrast', bg: '#000000', ink: '#ffff00' }
+  ];
+
+  function $(id) { return document.getElementById(id); }
+
+  function applyTheme(id) {
+    if (!THEMES.some(function (t) { return t.id === id; })) id = 'day';
+    document.documentElement.setAttribute('data-theme', id);
+    store.set(KEY_THEME, id);
+    var btns = $('themePanel').querySelectorAll('.swatch');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-t') === id ? 'true' : 'false');
+  }
+  function buildThemes() {
+    var panel = $('themePanel');
+    THEMES.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch';
+      b.setAttribute('data-t', t.id);
+      b.innerHTML = '<span class="dot" style="background:' + t.bg + ';color:' + t.ink + '" aria-hidden="true">A</span><span>' + esc(t.label) + '</span>';
+      b.addEventListener('click', function () {
+        applyTheme(t.id);
+        panel.hidden = true;
+        $('themeBtn').setAttribute('aria-expanded', 'false');
+        $('themeBtn').focus();
+        postHeight();
+      });
+      panel.appendChild(b);
+    });
+    $('themeBtn').addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+      postHeight();
+    });
+    applyTheme(store.get(KEY_THEME) || 'day');
+  }
+
+  /* ================= Embedding: tell the parent page our height ================= */
+  var lastH = 0;
+  function postHeight(scrollTop) {
+    if (window.parent === window) return;
+    var h = Math.ceil($('app').getBoundingClientRect().height) + 4;
+    if (h === lastH && !scrollTop) return;
+    lastH = h;
+    try { window.parent.postMessage({ type: 'gcsecs-iframe-height', height: h, scrollTop: !!scrollTop }, '*'); } catch (e) { /* ignore */ }
+  }
+
+  /* ================= Screens ================= */
+  function showScreen(which) {
+    $('scrMenu').hidden = which !== 'menu';
+    $('scrPuzzle').hidden = which !== 'puzzle';
+    $('menuBtn').hidden = which === 'menu';
+    closePop();
+    try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+    setTimeout(function () { postHeight(true); }, 0);
+  }
+
+  function renderMenu() {
+    var solved = getSolved();
+    var list = $('plist');
+    list.innerHTML = '';
+    PUZZLES.forEach(function (P, i) {
+      var done = solved.indexOf(P.id) >= 0;
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pbtn' + (done ? ' done' : '');
+      b.innerHTML = '<span class="num">' + (i + 1) + '</span><span class="ptxt"><span class="ptitle">' + esc(P.title) + '</span><span class="ptag">' + esc(P.tag) + '</span></span>' + (done ? '<span class="pdone">Solved</span>' : '');
+      b.setAttribute('aria-label', 'Puzzle ' + (i + 1) + ': ' + P.title + ', ' + P.tag + (done ? ', solved' : ''));
+      b.addEventListener('click', function () { openPuzzle(i); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  }
+
+  /* ================= Puzzle state ================= */
+  var S = { idx: 0, P: null, place: {}, bankOrder: [], selected: null, popSlot: null, popScroll: 0, zoom: false };
+
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function openPuzzle(i) {
+    S.idx = i;
+    S.P = PUZZLES[i];
+    $('pMeta').textContent = 'Puzzle ' + (i + 1) + ' of ' + PUZZLES.length + ' · ' + S.P.tag;
+    $('pTitle').textContent = S.P.title;
+    $('pIntro').textContent = S.P.intro;
+    showScreen('puzzle');
+    $('board').scrollLeft = 0;
+    resetPuzzle();
+  }
+  function resetPuzzle() {
+    S.place = {};
+    S.selected = null;
+    S.bankOrder = shuffle(S.P.order.slice());
+    hideMsg();
+    hideAsk();
+    closePop();
+    render();
+  }
+
+  /* ================= Reset confirmation ================= */
+  function askReset() {
+    closePop();
+    if (!Object.keys(S.place).length) { resetPuzzle(); return; }
+    $('resetAsk').hidden = false;
+    postHeight();
+    $('resetNo').focus();
+  }
+  function hideAsk() { $('resetAsk').hidden = true; }
+  function slotOf(pieceId) {
+    for (var k in S.place) if (S.place[k] === pieceId) return k;
+    return null;
+  }
+  function unplaced() {
+    return S.bankOrder.filter(function (id) { return !slotOf(id); });
+  }
+  function placePiece(slotId, pieceId) {
+    var src = slotOf(pieceId), old = S.place[slotId];
+    if (src === slotId) return;
+    S.place[slotId] = pieceId;
+    if (src) { if (old) S.place[src] = old; else delete S.place[src]; }
+    changed();
+  }
+  function emptySlot(slotId) {
+    if (S.place[slotId]) { delete S.place[slotId]; changed(); }
+  }
+  function changed() {
+    S.selected = null;
+    hideMsg();
+    hideAsk();
+    render();
+  }
+
+  /* ================= Rendering ================= */
+  function render() {
+    renderBoard();
+    renderBank();
+    postHeight();
+  }
+
+  function renderBoard() {
+    var P = S.P, size = boardSize(P), focusedId = null;
+    var act = document.activeElement;
+    if (act && act.getAttribute && act.getAttribute('data-slot')) focusedId = act.getAttribute('data-slot');
+
+    var lines = '', labels = '';
+    P.edges.forEach(function (e) {
+      var r = route(P, e), p = r.pts;
+      lines += '<polyline points="' + p.map(function (q) { return q.join(','); }).join(' ') + '"/>' + arrowHead(p[p.length - 2], p[p.length - 1]);
+      if (e.l) {
+        var s = p[0], lx, ly, anchor = 'start';
+        if (r.x === 'r') { lx = s[0] + 5; ly = s[1] - 7; }
+        else if (r.x === 'l') { lx = s[0] - 5; ly = s[1] - 7; anchor = 'end'; }
+        else { lx = s[0] - 6; ly = s[1] + 13; anchor = 'end'; }
+        labels += '<text class="elab" x="' + lx + '" y="' + ly + '" text-anchor="' + anchor + '">' + e.l + '</text>';
+      }
+    });
+
+    var slots = '';
+    P.order.forEach(function (id, i) {
+      var n = P.N[id], pid = S.place[id], inner, label;
+      var l = n.cx - n.w / 2, t = n.cy - n.h / 2;
+      if (pid) {
+        var piece = P.N[pid];
+        inner = shapeMarkup(piece.type, n.cx, n.cy, n.w, n.h) + textMarkup(piece.text, piece.type, n.cx, n.cy);
+        label = 'Box ' + (i + 1) + ' of ' + P.order.length + ': ' + oneLine(piece.text) + '. Activate to change.';
+      } else {
+        inner = '<rect class="empty" x="' + l + '" y="' + t + '" width="' + n.w + '" height="' + n.h + '" rx="8"/>' +
+          '<text class="etext" x="' + n.cx + '" y="' + n.cy + '" text-anchor="middle" dominant-baseline="central">Tap to fill</text>';
+        label = 'Box ' + (i + 1) + ' of ' + P.order.length + ': empty. Activate to choose a shape.';
+      }
+      var cls = 'slot' + (S.selected ? ' target' : '') + (S.popSlot === id ? ' active' : '');
+      slots += '<g class="' + cls + '" data-slot="' + id + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner +
+        '<rect class="ring" x="' + (l - 4) + '" y="' + (t - 4) + '" width="' + (n.w + 8) + '" height="' + (n.h + 8) + '" rx="10"/>' +
+        '<rect class="hit" x="' + (l - 4) + '" y="' + (t - 4) + '" width="' + (n.w + 8) + '" height="' + (n.h + 8) + '"/></g>';
+    });
+
+    /* Bigger boxes: offered only when the flowchart has to shrink to fit the screen */
+    var boardEl = $('board');
+    var avail = boardEl.clientWidth;
+    var need = avail > 0 && avail < size.w * 0.95;
+    var zoomed = need && S.zoom;
+    $('zoomBar').hidden = !need;
+    $('zoomHint').hidden = !zoomed;
+    $('zoomBtn').setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+    $('zoomBtn').textContent = zoomed ? 'Fit to screen' : 'Bigger boxes';
+    boardEl.classList.toggle('zoomed', zoomed);
+    var keepLeft = boardEl.scrollLeft;
+    var sizeStyle = zoomed ? 'width:' + Math.round(size.w * ZOOM) + 'px' : 'max-width:' + Math.round(size.w * 1.3) + 'px';
+
+    boardEl.innerHTML = '<svg class="board" viewBox="0 0 ' + size.w + ' ' + size.h + '" style="' + sizeStyle + '" role="group" aria-label="Flowchart with ' + P.order.length + ' boxes">' +
+      '<g class="eg">' + lines + '</g>' + labels + slots + '</svg>';
+    if (zoomed) boardEl.scrollLeft = keepLeft;
+
+    if (focusedId) {
+      var el = $('board').querySelector('[data-slot="' + focusedId + '"]');
+      if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    }
+  }
+
+  function pieceButton(id, extraClass) {
+    var n = S.P.N[id];
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'piece' + (extraClass ? ' ' + extraClass : '');
+    b.setAttribute('data-piece', id);
+    b.innerHTML = miniIcon(n.type) + '<span>' + esc(oneLine(n.text)) + '</span>';
+    return b;
+  }
+
+  function renderBank() {
+    var left = unplaced(), grid = $('bgrid');
+    grid.innerHTML = '';
+    $('bankTitle').textContent = left.length ? 'Shapes to place (' + left.length + ' left)' : 'Shapes to place';
+    if (!left.length) {
+      grid.innerHTML = '<p class="bempty">All shapes placed. Press “Check my flowchart”.</p>';
+    }
+    left.forEach(function (id) {
+      var b = pieceButton(id, S.selected === id ? 'sel' : '');
+      b.setAttribute('aria-pressed', S.selected === id ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        if (dragSuppress) return;
+        S.selected = S.selected === id ? null : id;
+        closePop();
+        render();
+        var again = $('bgrid').querySelector('[data-piece="' + id + '"]');
+        if (again) again.focus();
+      });
+      grid.appendChild(b);
+    });
+    $('bankHint').textContent = S.selected ? 'Now tap a box in the flowchart to put this shape there.' : '';
+  }
+
+  /* ================= Picker popover ================= */
+  function openPop(slotId) {
+    S.popSlot = slotId;
+    renderBoard();
+    S.popScroll = $('board').scrollLeft;
+    var pop = $('pop'), wrapEl = $('boardWrap');
+    var cur = S.place[slotId], left = unplaced();
+    pop.innerHTML = '<h3>' + (cur ? 'Change this box' : 'Choose a shape for this box') + '</h3>';
+    if (!left.length && !cur) pop.innerHTML += '<p class="bempty">No shapes left.</p>';
+    left.forEach(function (id) {
+      var b = pieceButton(id);
+      b.addEventListener('click', function () { var s = S.popSlot; closePop(true); placePiece(s, id); refocus(s); });
+      pop.appendChild(b);
+    });
+    if (cur) {
+      var em = document.createElement('button');
+      em.type = 'button';
+      em.className = 'btn';
+      em.textContent = 'Empty this box';
+      em.addEventListener('click', function () { var s = S.popSlot; closePop(true); emptySlot(s); refocus(s); });
+      pop.appendChild(em);
+    }
+    var cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'btn';
+    cancel.textContent = 'Cancel';
+    cancel.addEventListener('click', function () { var s = S.popSlot; closePop(); refocus(s); });
+    pop.appendChild(cancel);
+
+    pop.hidden = false;
+    var slotEl = $('board').querySelector('[data-slot="' + slotId + '"]');
+    var wr = wrapEl.getBoundingClientRect(), sr = slotEl.getBoundingClientRect();
+    var popW = Math.min(300, wr.width - 12);
+    pop.style.width = popW + 'px';
+    var popH = pop.offsetHeight;
+    var left0 = sr.left - wr.left + sr.width / 2 - popW / 2;
+    left0 = Math.max(6, Math.min(left0, wr.width - popW - 6));
+    var below = sr.bottom - wr.top + 6, above = sr.top - wr.top - popH - 6, top;
+    if (below + popH <= wr.height - 4) top = below;
+    else if (above >= 4) top = above;
+    else top = Math.max(4, wr.height - popH - 4);
+    pop.style.left = left0 + 'px';
+    pop.style.top = top + 'px';
+    var first = pop.querySelector('button');
+    if (first) try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+  }
+  function closePop(silent) {
+    var pop = $('pop');
+    if (pop.hidden && !S.popSlot) return;
+    pop.hidden = true;
+    pop.innerHTML = '';
+    var had = S.popSlot;
+    S.popSlot = null;
+    if (had && !silent && S.P) renderBoard();
+  }
+  function refocus(slotId) {
+    var el = $('board').querySelector('[data-slot="' + slotId + '"]');
+    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+  }
+
+  function activateSlot(slotId) {
+    if (S.selected) { var p = S.selected; placePiece(slotId, p); return; }
+    if (S.popSlot === slotId) { closePop(); return; }
+    openPop(slotId);
+  }
+
+  /* ================= Checking ================= */
+  function showMsg(kind, html) {
+    var m = $('msg');
+    m.className = 'msg ' + kind;
+    m.innerHTML = html;
+    m.hidden = false;
+    postHeight();
+  }
+  function hideMsg() { $('msg').hidden = true; $('msg').innerHTML = ''; }
+
+  function check() {
+    closePop();
+    hideAsk();
+    var P = S.P, total = P.order.length, filled = Object.keys(S.place).length;
+    if (filled < total) {
+      var left = total - filled;
+      showMsg('info', 'Fill every box before checking. ' + left + (left === 1 ? ' box is' : ' boxes are') + ' still empty.');
+      return;
+    }
+    var best = 0;
+    P.solutions.forEach(function (sol) {
+      var c = 0;
+      P.order.forEach(function (id) { if (S.place[id] === sol[id]) c++; });
+      if (c > best) best = c;
+    });
+    if (best === total) {
+      markSolved(P.id);
+      var last = S.idx === PUZZLES.length - 1;
+      showMsg('ok', 'All ' + total + ' of ' + total + ' correct. Puzzle complete!' +
+        '<div class="row">' + (last ? '' : '<button type="button" class="btn primary" id="nextBtn">Next puzzle</button>') +
+        '<button type="button" class="btn" id="toMenuBtn">Back to menu</button></div>');
+      if (!last) $('nextBtn').addEventListener('click', function () { openPuzzle(S.idx + 1); });
+      $('toMenuBtn').addEventListener('click', goMenu);
+    } else {
+      showMsg('warn', best + ' of ' + total + ' correct. Keep going!');
+    }
+  }
+  function goMenu() { S.P = null; closePop(); renderMenu(); showScreen('menu'); }
+
+  /* ================= Drag and drop =================
+     Mouse and pen: drag straight away.
+     Touch (tablet layout only): press and hold a shape, then drag. A normal swipe still scrolls. */
+  var drag = null, dragSuppress = false, LONG_PRESS = 350;
+  function tabletLayout() { return !window.matchMedia || window.matchMedia('(min-width: 760px)').matches; }
+  function slotEl(id) { return $('board').querySelector('[data-slot="' + id + '"]'); }
+
+  function beginDrag() {
+    drag.on = true;
+    closePop(true);
+    var g = document.createElement('div');
+    g.className = 'ghost';
+    g.textContent = oneLine(S.P.N[drag.id].text);
+    document.body.appendChild(g);
+    drag.ghost = g;
+    if (drag.kind === 'touch' && navigator.vibrate) { try { navigator.vibrate(12); } catch (e) { /* ignore */ } }
+  }
+  function moveDrag(x, y) {
+    drag.ghost.style.left = x + 'px';
+    drag.ghost.style.top = y + 'px';
+    var t = dropTarget(x, y);
+    var slot = t && t.slot ? t.slot : null;
+    if (slot !== drag.over) {
+      var prev = drag.over && slotEl(drag.over);
+      if (prev) prev.classList.remove('over');
+      var nx = slot && slotEl(slot);
+      if (nx) nx.classList.add('over');
+      drag.over = slot;
+    }
+  }
+  function dropTarget(x, y) {
+    var el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    var s = el.closest ? el.closest('[data-slot]') : null;
+    if (s) return { slot: s.getAttribute('data-slot') };
+    if (el.closest && el.closest('#bank')) return { bank: true };
+    return null;
+  }
+  function finishDrag(x, y) {
+    var d = drag;
+    drag = null;
+    clearTimeout(d.timer);
+    if (d.ghost) d.ghost.remove();
+    dragSuppress = true;
+    setTimeout(function () { dragSuppress = false; }, 400);
+    var t = dropTarget(x, y);
+    if (t && t.slot && t.slot !== d.from) placePiece(t.slot, d.id);
+    else if (t && t.bank && d.from) emptySlot(d.from);
+    else render();
+  }
+  function cancelDrag() {
+    if (!drag) return;
+    clearTimeout(drag.timer);
+    if (drag.ghost) drag.ghost.remove();
+    var was = drag.on;
+    drag = null;
+    if (was) render();
+  }
+
+  /* Mouse and pen */
+  function startPointer(e, pieceId, fromSlot) {
+    if (e.button != null && e.button !== 0) return;
+    drag = { kind: 'pointer', id: pieceId, from: fromSlot, x: e.clientX, y: e.clientY, on: false, pid: e.pointerId, ghost: null, over: null };
+  }
+  function movePointer(e) {
+    if (!drag || drag.kind !== 'pointer' || e.pointerId !== drag.pid) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) {
+      if (dx * dx + dy * dy < 64) return;
+      beginDrag();
+    }
+    e.preventDefault();
+    moveDrag(e.clientX, e.clientY);
+  }
+  function endPointer(e) {
+    if (!drag || drag.kind !== 'pointer' || e.pointerId !== drag.pid) return;
+    if (!drag.on) { drag = null; return; }
+    finishDrag(e.clientX, e.clientY);
+  }
+
+  /* Touch: press and hold */
+  function touchStart(e) {
+    if (drag) cancelDrag();
+    if (e.touches.length !== 1 || !tabletLayout() || !S.P) return;
+    var t = e.target, pid = null, from = null;
+    var b = t.closest ? t.closest('#bgrid [data-piece]') : null;
+    if (b) pid = b.getAttribute('data-piece');
+    else {
+      var s = t.closest ? t.closest('#board [data-slot]') : null;
+      if (s && S.place[s.getAttribute('data-slot')]) { from = s.getAttribute('data-slot'); pid = S.place[from]; }
+    }
+    if (!pid) return;
+    var p = e.touches[0];
+    drag = { kind: 'touch', id: pid, from: from, x: p.clientX, y: p.clientY, lx: p.clientX, ly: p.clientY, on: false, ghost: null, over: null };
+    drag.timer = setTimeout(function () {
+      if (drag && drag.kind === 'touch' && !drag.on) { beginDrag(); moveDrag(drag.lx, drag.ly); }
+    }, LONG_PRESS);
+  }
+  function touchMove(e) {
+    if (!drag || drag.kind !== 'touch') return;
+    var p = e.touches[0];
+    if (!p) return;
+    drag.lx = p.clientX;
+    drag.ly = p.clientY;
+    if (!drag.on) {
+      var dx = p.clientX - drag.x, dy = p.clientY - drag.y;
+      if (dx * dx + dy * dy > 100) { clearTimeout(drag.timer); drag = null; }
+      return;
+    }
+    if (e.cancelable) e.preventDefault();
+    moveDrag(p.clientX, p.clientY);
+  }
+  function touchEnd(e) {
+    if (!drag || drag.kind !== 'touch') return;
+    clearTimeout(drag.timer);
+    if (!drag.on) { drag = null; return; }
+    if (e.cancelable) e.preventDefault();
+    var p = e.changedTouches && e.changedTouches[0];
+    finishDrag(p ? p.clientX : drag.lx, p ? p.clientY : drag.ly);
+  }
+
+  /* ================= Wiring ================= */
+  function init() {
+    S.zoom = store.get(KEY_ZOOM) === '1';
+    buildThemes();
+    renderMenu();
+    $('menuBtn').addEventListener('click', goMenu);
+    $('checkBtn').addEventListener('click', check);
+    $('resetBtn').addEventListener('click', askReset);
+    $('resetYes').addEventListener('click', function () { resetPuzzle(); $('resetBtn').focus(); });
+    $('resetNo').addEventListener('click', function () { hideAsk(); $('resetBtn').focus(); });
+    $('zoomBtn').addEventListener('click', function () {
+      S.zoom = !S.zoom;
+      store.set(KEY_ZOOM, S.zoom ? '1' : '0');
+      closePop(true);
+      renderBoard();
+      postHeight();
+    });
+
+    var board = $('board');
+    board.addEventListener('click', function (e) {
+      if (dragSuppress) return;
+      var s = e.target.closest ? e.target.closest('[data-slot]') : null;
+      if (s) activateSlot(s.getAttribute('data-slot'));
+    });
+    board.addEventListener('keydown', function (e) {
+      var s = e.target.closest ? e.target.closest('[data-slot]') : null;
+      if (!s) return;
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateSlot(s.getAttribute('data-slot')); }
+    });
+    board.addEventListener('scroll', function () {
+      if (S.popSlot && Math.abs(board.scrollLeft - (S.popScroll || 0)) > 30) closePop();
+    });
+    board.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') return;
+      var s = e.target.closest ? e.target.closest('[data-slot]') : null;
+      if (s && S.place[s.getAttribute('data-slot')]) startPointer(e, S.place[s.getAttribute('data-slot')], s.getAttribute('data-slot'));
+    });
+    $('bgrid').addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') return;
+      var b = e.target.closest ? e.target.closest('[data-piece]') : null;
+      if (b) startPointer(e, b.getAttribute('data-piece'), null);
+    });
+    document.addEventListener('pointerdown', function () { dragSuppress = false; }, true);
+    document.addEventListener('pointermove', movePointer, { passive: false });
+    document.addEventListener('pointerup', endPointer);
+    document.addEventListener('pointercancel', function () { if (drag && drag.kind === 'pointer') cancelDrag(); });
+    document.addEventListener('touchstart', touchStart, { passive: true });
+    document.addEventListener('touchmove', touchMove, { passive: false });
+    document.addEventListener('touchend', touchEnd, { passive: false });
+    document.addEventListener('touchcancel', function () { if (drag && drag.kind === 'touch') cancelDrag(); });
+    document.addEventListener('contextmenu', function (e) {
+      if ((drag && drag.kind === 'touch') || (e.target.closest && e.target.closest('.piece, [data-slot]'))) e.preventDefault();
+    });
+
+    document.addEventListener('pointerdown', function (e) {
+      var pop = $('pop');
+      if (pop.hidden) return;
+      if (pop.contains(e.target)) return;
+      var s = e.target.closest ? e.target.closest('[data-slot]') : null;
+      if (s) return;
+      closePop();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (!$('pop').hidden) { var s = S.popSlot; closePop(); refocus(s); }
+        else if (!$('resetAsk').hidden) { hideAsk(); $('resetBtn').focus(); }
+        else if (S.selected) { S.selected = null; render(); }
+      }
+    });
+
+    if (window.ResizeObserver) new ResizeObserver(function () { postHeight(); }).observe($('app'));
+    else setInterval(postHeight, 500);
+    var lastW = window.innerWidth, rT = null;
+    window.addEventListener('resize', function () {
+      postHeight();
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      closePop();
+      clearTimeout(rT);
+      rT = setTimeout(function () { if (S.P && !$('scrPuzzle').hidden && !drag) { renderBoard(); postHeight(); } }, 120);
+    });
+    postHeight(true);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

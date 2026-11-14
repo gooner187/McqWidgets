@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en-GB" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is a Flowchart?</title>
+<style>
+:root,[data-theme="day"]{--bg:#ffffff;--card:#f3f5f6;--ink:#111111;--muted:#4b5157;--line:#c5ccd2;--accent:#2b7a80;--accentInk:#ffffff;--good:#1d7a35;--goodBg:#e2f3e5;--bad:#b3261e;--badBg:#fce8e6;--aBg:#e4eefb;--aInk:#0c4a8a;--focus:#1a5fb4;--bw:2px;
+--start-f:#EAF3DE;--start-s:#3B6D11;--stop-f:#FCEBEB;--stop-s:#A32D2D;--proc-f:#E6F1FB;--proc-s:#185FA5;--io-f:#EEEDFE;--io-s:#534AB7;--dec-f:#FAEEDA;--dec-s:#854F0B;--shape-ink:#111111;--trail:#d9480f;--dot:#d9480f}
+[data-theme="night"]{--bg:#121417;--card:#1d2126;--ink:#eef1f4;--muted:#aab2ba;--line:#3b434b;--accent:#4db6bc;--accentInk:#071314;--good:#63d483;--goodBg:#163522;--bad:#ff8a80;--badBg:#3f1d1b;--aBg:#18304d;--aInk:#a9cdf6;--focus:#8ab4f8;
+--start-f:#27500A;--start-s:#97C459;--stop-f:#791F1F;--stop-s:#F09595;--proc-f:#0C447C;--proc-s:#85B7EB;--io-f:#3C3489;--io-s:#AFA9EC;--dec-f:#633806;--dec-s:#EF9F27;--shape-ink:#f4f6f8;--trail:#ff9a5c;--dot:#ff9a5c}
+[data-theme="send"]{--bg:#f7f0d6;--card:#ede3bf;--ink:#222222;--muted:#4f4836;--line:#c4b68c;--accent:#2b6d71;--accentInk:#fffaea;--good:#1d6a2e;--goodBg:#d9e9c4;--bad:#9e2b1f;--badBg:#f1d3c4;--aBg:#d8e2e6;--aInk:#1d4466;--focus:#1d4466}
+[data-theme="blue"]{--bg:#dde9f4;--card:#cbdbeb;--ink:#15202b;--muted:#3c4a58;--line:#9fb5ca;--accent:#245f8c;--accentInk:#ffffff;--good:#1d6a2e;--goodBg:#d3ead1;--bad:#a12a1f;--badBg:#f1d4cf;--aBg:#bfd4ea;--aInk:#103b63;--focus:#103b63}
+[data-theme="contrast"]{--bg:#000000;--card:#000000;--ink:#ffff00;--muted:#ffffff;--line:#ffff00;--accent:#ffff00;--accentInk:#000000;--good:#00ff66;--goodBg:#003a17;--bad:#ff6b6b;--badBg:#3d0000;--aBg:#000000;--aInk:#00e5ff;--focus:#00e5ff;--bw:3px;
+--start-f:#000;--start-s:#00ff66;--stop-f:#000;--stop-s:#ff6b6b;--proc-f:#000;--proc-s:#00e5ff;--io-f:#000;--io-s:#ff9cff;--dec-f:#000;--dec-s:#ffcc00;--shape-ink:#ffffff;--trail:#ff8c00;--dot:#ff8c00}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{line-height:1.45}
+[hidden]{display:none!important}
+.app{max-width:900px;margin:0 auto;padding:10px 14px 18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.top h1{font-size:1.15rem;margin:0;font-weight:700}
+.tools{display:flex;gap:6px;flex:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{min-height:48px;padding:10px 16px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:1rem}
+.btn.small{min-height:40px;padding:6px 12px;font-size:.9rem;border-radius:10px}
+.btn.primary{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+.btn:focus-visible,.swatch:focus-visible,.chip:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 12px;padding:10px;border:var(--bw) solid var(--line);border-radius:12px;background:var(--card)}
+.swatch{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border-radius:10px;border:var(--bw) solid transparent;background:transparent;color:var(--ink);text-align:left;font-size:.92rem}
+.swatch[aria-pressed="true"]{border-color:var(--accent);font-weight:700}
+.dotsw{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #888;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.fhead{text-align:center;margin:0 0 8px}
+.fhead h2{font-size:1.45rem;margin:0 0 2px}
+.fhead p{margin:0;color:var(--muted)}
+.main{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:760px){.main{grid-template-columns:minmax(0,1fr) 320px;align-items:start}}
+.boardWrap{border:var(--bw) solid var(--line);border-radius:12px;background:var(--bg);padding:8px 4px}
+svg.fc{display:block;width:100%;max-width:490px;height:auto;margin:0 auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.node,.edge{cursor:pointer;outline:none}
+.node,.edge,.yn,.node .main,.node .alt{transition:opacity .55s ease,transform 1s ease}
+.hid{opacity:0!important;pointer-events:none!important}
+.sh{stroke-width:2}
+.sh-start{fill:var(--start-f);stroke:var(--start-s)}
+.sh-stop{fill:var(--stop-f);stroke:var(--stop-s)}
+.sh-process{fill:var(--proc-f);stroke:var(--proc-s)}
+.sh-io{fill:var(--io-f);stroke:var(--io-s)}
+.sh-decision{fill:var(--dec-f);stroke:var(--dec-s)}
+.stext{fill:var(--shape-ink);font:600 12.5px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.eline{fill:none;stroke:var(--muted);stroke-width:2;stroke-linejoin:round}
+.ah{fill:var(--muted)}
+.hitl{fill:none;stroke:transparent;stroke-width:22;pointer-events:stroke}
+.elab{fill:var(--ink);font:700 12.5px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.yn{transform-box:fill-box;transform-origin:center}
+.yn.hot{fill:var(--trail)}
+.yn.flash{animation:ynflash .62s ease-in-out 3}
+@keyframes ynflash{0%,100%{transform:scale(1)}50%{transform:scale(1.75);fill:var(--trail)}}
+.ynw{color:var(--trail);font-weight:800}
+.edge.trail .eline,.edge.sel .eline{stroke:var(--trail);stroke-width:4}
+.edge.trail .ah,.edge.sel .ah{fill:var(--trail)}
+.edge.sel .eline{stroke:var(--accent)}
+.edge.sel .ah{fill:var(--accent)}
+.node:focus-visible .sh,.edge:focus-visible .eline{stroke:var(--focus);stroke-width:4}
+#ringR,#ringD{fill:none;stroke:var(--accent);stroke-width:3.5;pointer-events:none}
+#ringR.gap{stroke-dasharray:7 5}
+#dot{fill:var(--dot);stroke:var(--bg);stroke-width:2.5;pointer-events:none}
+#e-eL{opacity:0;pointer-events:none}
+svg.e-loop #e-eL{opacity:1;pointer-events:auto}
+svg.e-loop #e-e5{opacity:0;pointer-events:none}
+#n-input .alt{opacity:0}
+svg.e-wrongshape #n-input .alt{opacity:1}
+svg.e-wrongshape #n-input .main{opacity:0}
+svg.e-labels .yn{opacity:0}
+svg.e-noend #n-end{opacity:0;pointer-events:none}
+#endgap{fill:transparent;pointer-events:none}
+svg.e-noend #endgap{pointer-events:all;cursor:pointer}
+svg.e-startend #n-start{transform:translateY(406px)}
+svg.e-startend #n-end{transform:translateY(-406px)}
+.panel{display:flex;flex-direction:column;gap:10px}
+.intro{max-width:560px;margin:6px auto 0}
+.intro .card p{font-size:1.05rem}
+.cap{margin:0;text-align:center;font-weight:700}
+.hint{margin:0;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1 1 120px}
+.card{border:var(--bw) solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.chead{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.chead h3{margin:0;font-size:1.1rem}
+.chead svg{flex:none;width:52px;height:32px}
+.tipx{padding:8px 10px;border:var(--bw) solid var(--bad);border-radius:8px;background:var(--badBg);color:var(--ink);font-weight:600}
+.ages{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{min-height:44px;min-width:56px;padding:6px 14px;border-radius:999px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:1rem}
+.chip[aria-pressed="true"]{background:var(--aBg);color:var(--aInk);border-color:var(--accent)}
+.custom{display:flex;gap:8px;align-items:center}
+.custom input{width:84px;min-height:44px;padding:6px 10px;font:inherit;font-size:1rem;border-radius:10px;border:var(--bw) solid var(--line);background:var(--bg);color:var(--ink)}
+.ferr{margin:0;color:var(--bad);font-size:.9rem;font-weight:600}
+.nar{border:var(--bw) solid var(--accent);background:var(--aBg);color:var(--aInk);border-radius:12px;padding:12px 14px}
+.nar.stuck,.nar.loop{border-color:var(--bad);background:var(--badBg);color:var(--ink)}
+.nar.end{border-color:var(--good);background:var(--goodBg);color:var(--ink)}
+.nar p{margin:0}
+.nar .stepn{font-weight:800;display:block;margin-bottom:4px}
+.boxes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.box{border:var(--bw) solid var(--line);border-radius:10px;padding:6px 10px;background:var(--card);min-width:0}
+.box span{display:block;font-size:.8rem;color:var(--muted);font-weight:600}
+.box code{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:.95rem;overflow-wrap:anywhere;white-space:pre-line}
+.msg{border:var(--bw) solid var(--bad);background:var(--badBg);color:var(--ink);border-radius:12px;padding:12px 14px}
+.msg.ok{border-color:var(--good);background:var(--goodBg)}
+.msg p{margin:0 0 6px}
+.msg p:last-child{margin:0}
+.msg .big{font-weight:800}
+@media (prefers-reduced-motion:reduce){.node,.edge,.yn,.node .main,.node .alt{transition:none}.yn.flash{animation:none;fill:var(--trail)}}
+@media (max-width:360px){.app{padding:8px 10px 14px}.btn{padding:10px 12px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1>What is a flowchart?</h1>
+    <div class="tools">
+      <button id="restartBtn" class="btn small" type="button" hidden>Start again</button>
+      <button id="themeBtn" class="btn small" type="button" aria-expanded="false" aria-controls="themePanel">Colours</button>
+    </div>
+  </header>
+  <div id="themePanel" class="themes" role="group" aria-label="Colour theme" hidden></div>
+
+  <div class="fhead">
+    <h2>Can I buy GTA 9?</h2>
+    <p>GTA 9 is rated 18. This flowchart checks if someone is old enough to buy it.</p>
+  </div>
+
+  <section id="scrIntro" class="intro">
+    <div class="card">
+      <p>A flowchart is a diagram that shows the steps of an algorithm in order. Each step goes in a shape, and arrows show which step comes next.</p>
+      <p>Press Begin to watch this flowchart being built, one shape at a time.</p>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button id="beginBtn" class="btn primary" type="button">Begin</button>
+      <button id="skipBtn" class="btn" type="button">Show the whole flowchart</button>
+    </div>
+  </section>
+
+  <div class="main" id="main" hidden>
+    <div class="boardWrap"><div id="board"></div></div>
+
+    <div class="panel">
+      <section id="pBuild" aria-live="polite">
+        <p class="cap" id="buildCap"></p>
+        <div class="row" style="margin-top:10px">
+          <button id="pauseBtn" class="btn" type="button">Pause</button>
+          <button id="allBtn" class="btn primary" type="button">Show it all</button>
+        </div>
+      </section>
+
+      <section id="pExplore" hidden>
+        <p class="hint" id="exHint">Tap any shape or arrow to find out what it does.</p>
+        <div id="card" aria-live="polite"></div>
+        <div class="row" style="margin-top:10px">
+          <button id="runBtn" class="btn primary" type="button">Run it</button>
+          <button id="errBtn" class="btn" type="button">Introduce an error</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="rebuildBtn" class="btn small" type="button">Watch it build again</button>
+        </div>
+      </section>
+
+      <section id="pRun" hidden>
+        <p class="hint" style="font-weight:600;color:var(--ink)">Try an age:</p>
+        <div class="ages" id="ages">
+          <button class="chip" type="button" data-age="15" aria-pressed="false">15</button>
+          <button class="chip" type="button" data-age="18" aria-pressed="false">18</button>
+          <button class="chip" type="button" data-age="21" aria-pressed="false">21</button>
+          <div class="custom">
+            <input id="ageIn" type="text" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="Age" aria-label="Type your own age">
+            <button id="ageGo" class="btn small" type="button">Go</button>
+          </div>
+        </div>
+        <p class="ferr" id="ageErr" hidden></p>
+        <div class="nar" id="nar" aria-live="polite"><p>Pick an age to start. Then watch how to read the flowchart, one step at a time.</p></div>
+        <div class="boxes" id="boxes" hidden>
+          <div class="box"><span>Values so far</span><code id="vals"></code></div>
+          <div class="box"><span>Screen</span><code id="scr"></code></div>
+        </div>
+        <div class="row" id="ctrls" hidden>
+          <button id="backBtn" class="btn" type="button">Back</button>
+          <button id="nextBtn" class="btn primary" type="button">Next</button>
+        </div>
+        <div class="row" id="runDiffRow" hidden>
+          <button id="runDiffBtn" class="btn" type="button">Try a different error</button>
+        </div>
+        <div class="row">
+          <button id="stopBtn" class="btn small" type="button">Stop running</button>
+        </div>
+      </section>
+
+      <section id="pErr" hidden>
+        <div class="msg" id="errMsg" aria-live="polite"></div>
+        <div class="row" style="margin-top:10px">
+          <button id="errRunBtn" class="btn" type="button">Run it to test</button>
+          <button id="showBtn" class="btn" type="button" hidden>Show me</button>
+          <button id="fixBtn" class="btn primary" type="button" hidden>Fix it</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="diffBtn" class="btn small" type="button">Different error</button>
+          <button id="errRestartBtn" class="btn small" type="button">Start again</button>
+        </div>
+      </section>
+    </div>
+  </div>
+  <noscript><p>This activity needs JavaScript switched on.</p></noscript>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= The flowchart ================= */
+  var NODES = {
+    start: { type: 'start', cx: 140, cy: 34, w: 120, h: 36, lines: ['Start'], aria: 'Start' },
+    input: { type: 'io', cx: 140, cy: 98, w: 150, h: 40, lines: ['Input age'], aria: 'Input age' },
+    dec: { type: 'decision', cx: 140, cy: 180, w: 160, h: 84, lines: ['Is age >= 18?'], aria: 'Decision: is age greater than or equal to 18?' },
+    add: { type: 'process', cx: 140, cy: 274, w: 150, h: 44, lines: ['Add GTA 9 to basket'], aria: 'Process: add GTA 9 to basket' },
+    enjoy: { type: 'io', cx: 140, cy: 346, w: 176, h: 48, lines: ['Output', '"Enjoy the game!"'], aria: 'Output: Enjoy the game!' },
+    sorry: { type: 'io', cx: 290, cy: 274, w: 128, h: 62, lines: ['Output', '"Sorry, GTA 9', 'is rated 18"'], aria: 'Output: Sorry, GTA 9 is rated 18' },
+    end: { type: 'stop', cx: 140, cy: 440, w: 120, h: 36, lines: ['End'], aria: 'End' }
+  };
+  var NODE_ORDER = ['start', 'input', 'dec', 'add', 'enjoy', 'sorry', 'end'];
+  var EDGES = {
+    e1: { pts: [[140, 52], [140, 78]], head: true, aria: 'Arrow from Start to Input age' },
+    e2: { pts: [[140, 118], [140, 138]], head: true, aria: 'Arrow from Input age to the decision' },
+    e3: { pts: [[140, 222], [140, 252]], head: true, lab: 'Yes', lx: 147, ly: 241, aria: 'Arrow labelled Yes, from the decision to Add GTA 9 to basket' },
+    e4: { pts: [[220, 180], [290, 180], [290, 243]], head: true, lab: 'No', lx: 228, ly: 172, aria: 'Arrow labelled No, from the decision to the Sorry output' },
+    e5: { pts: [[140, 296], [140, 322]], head: true, aria: 'Arrow from Add GTA 9 to basket to the Enjoy the game output' },
+    e6a: { pts: [[140, 370], [140, 398]], head: false, aria: 'Arrow from the Enjoy the game output towards End' },
+    e7: { pts: [[290, 305], [290, 398], [140, 398]], head: false, aria: 'Arrow from the Sorry output, joining the route to End' },
+    e6b: { pts: [[140, 398], [140, 422]], head: true, aria: 'Arrow into End' },
+    eL: { pts: [[65, 274], [24, 274], [24, 180], [60, 180]], head: true, aria: 'Arrow from Add GTA 9 to basket back up to the decision' }
+  };
+  var EDGE_ORDER = ['e1', 'e2', 'e3', 'e4', 'e5', 'e6a', 'e7', 'e6b', 'eL'];
+  var VBW = 364, VBH = 470;
+
+  var BUILD = [
+    { els: ['n-start'], cap: 'Terminal: Start' },
+    { els: ['e-e1', 'n-input'], cap: 'Input/Output: Input age' },
+    { els: ['e-e2', 'n-dec'], cap: 'Decision: Is age >= 18?' },
+    { els: ['e-e3', 'n-add'], cap: 'Process: Add GTA 9 to basket' },
+    { els: ['e-e5', 'n-enjoy'], cap: 'Input/Output: Output a message' },
+    { els: ['e-e4', 'n-sorry'], cap: 'Input/Output: Output a message' },
+    { els: ['e-e6a', 'e-e7', 'e-e6b', 'n-end'], cap: 'Terminal: End' }
+  ];
+
+  var EXAM_TIP = 'Exam tip: always label the exits of a decision Yes and No. Leaving them off can lose you marks.';
+  var INFO = {
+    start: { icon: 'start', name: 'Terminal – Start/End', what: 'Shows where the flowchart begins. Always find Start first and read from there.', here: 'The algorithm begins when someone wants to buy GTA 9.' },
+    input: { icon: 'io', name: 'Input/Output', what: 'Data coming into or going out of the algorithm. This one is an input: data coming in.', here: 'The user types their age. It’s stored as age so the decision can use it.' },
+    dec: { icon: 'decision', name: 'Decision', what: 'A question with a Yes or No answer. The flowchart takes a different path depending on the answer.', here: 'Checks if age >= 18. The >= sign means “greater than or equal to”, so someone who is exactly 18 gets Yes.', tip: true },
+    add: { icon: 'process', name: 'Process', what: 'A job the algorithm does, such as a calculation or storing a value.', here: 'Adds GTA 9 to the basket. You only get here if the answer to the decision is Yes.' },
+    enjoy: { icon: 'io', name: 'Input/Output', what: 'Data coming into or going out of the algorithm. This one is an output: a message shown on the screen.', here: 'Shows “Enjoy the game!” to customers who are old enough.' },
+    sorry: { icon: 'io', name: 'Input/Output', what: 'Data coming into or going out of the algorithm. This one is an output: a message shown on the screen.', here: 'Shows “Sorry, GTA 9 is rated 18” to customers who are too young.' },
+    end: { icon: 'stop', name: 'Terminal – Start/End', what: 'Shows where the flowchart stops. When you reach End, the algorithm has finished.', here: 'Both routes, Yes and No, finish here.' }
+  };
+  var FLOW_WHAT = 'Arrows join the shapes and show the order of the steps. Always follow the arrowheads.';
+  var FLOW_HERE = {
+    e3: { here: 'This arrow is labelled Yes. Follow it when the answer to the decision is Yes.', tip: true },
+    e4: { here: 'This arrow is labelled No. Follow it when the answer to the decision is No.', tip: true },
+    e6a: { here: 'This arrow joins another one. Both routes meet and carry on to End.' },
+    e7: { here: 'This arrow joins another one. Both routes meet and carry on to End.' }
+  };
+
+  var ERRORS = {
+    labels: {
+      targets: ['dec', 'e3', 'e4'],
+      explain: 'The decision’s exits have no Yes or No labels. Without them, nobody can tell which arrow to follow. In the exam, unlabelled decisions can lose you marks.'
+    },
+    wrongshape: {
+      targets: ['input'],
+      explain: '“Input age” is drawn as a rectangle, which is the Process symbol. Inputs and outputs must use the Input/Output parallelogram.'
+    },
+    noend: {
+      targets: ['e6a', 'e6b', 'e7', 'endgap'],
+      explain: 'The End terminal is missing, so the last arrow leads nowhere and the algorithm never properly finishes. Every flowchart needs a Start and an End.'
+    },
+    loop: {
+      targets: ['eL', 'add'],
+      explain: 'The arrow out of “Add GTA 9 to basket” goes back up to the decision instead of down to the output. Age never changes, so it loops forever, adding the game to the basket again and again.'
+    },
+    startend: {
+      targets: ['start', 'end'],
+      explain: 'Start and End have swapped places. You always begin reading at Start, but here no arrow leads out of Start, so the algorithm can’t run.'
+    }
+  };
+  var ERROR_IDS = ['labels', 'wrongshape', 'noend', 'loop', 'startend'];
+
+  /* ================= Helpers ================= */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  }
+  var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function shapeMarkup(type, cx, cy, w, h, cls) {
+    var l = cx - w / 2, r = cx + w / 2, t = cy - h / 2, b = cy + h / 2, c = 'sh sh-' + type + (cls ? ' ' + cls : '');
+    switch (type) {
+      case 'start':
+      case 'stop':
+        return '<rect class="' + c + '" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '"/>';
+      case 'io':
+        return '<polygon class="' + c + '" points="' + [l + 12, t, r, t, r - 12, b, l, b].join(',') + '"/>';
+      case 'decision':
+        return '<polygon class="' + c + '" points="' + [cx, t, r, cy, cx, b, l, cy].join(',') + '"/>';
+      case 'flow':
+        return '<line class="eline" x1="' + l + '" y1="' + cy + '" x2="' + (r - 9) + '" y2="' + cy + '"/><polygon class="ah" points="' + [r, cy, r - 10, cy - 6, r - 10, cy + 6].join(',') + '"/>';
+      default:
+        return '<rect class="' + c + '" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '"/>';
+    }
+  }
+  function textMarkup(lines, cx, cy) {
+    var y0 = cy - (lines.length - 1) * 7;
+    return lines.map(function (ln, i) {
+      return '<text class="stext" x="' + cx + '" y="' + (y0 + i * 14) + '" text-anchor="middle" dominant-baseline="central">' + esc(ln) + '</text>';
+    }).join('');
+  }
+  function headMarkup(a, b) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / len, uy = dy / len, L = 10, W = 6;
+    var bx = b[0] - ux * L, by = b[1] - uy * L;
+    return '<polygon class="ah" points="' + [b[0], b[1], bx - uy * W, by + ux * W, bx + uy * W, by - ux * W].map(function (v) { return Math.round(v * 10) / 10; }).join(',') + '"/>';
+  }
+  function linePts(pts, head) {
+    var p = pts.slice();
+    if (head) {
+      var a = p[p.length - 2], b = p[p.length - 1], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1;
+      p[p.length - 1] = [b[0] - dx / len * 8, b[1] - dy / len * 8];
+    }
+    return p.map(function (q) { return q.join(','); }).join(' ');
+  }
+  function miniIcon(type) {
+    return '<svg viewBox="0 0 52 32" aria-hidden="true" focusable="false">' + shapeMarkup(type, 26, 16, 48, type === 'decision' ? 30 : 24) + '</svg>';
+  }
+
+  /* ================= Drawing ================= */
+  function buildSVG() {
+    var s = '';
+    EDGE_ORDER.forEach(function (id) {
+      var e = EDGES[id];
+      var pts = e.pts.map(function (q) { return q.join(','); }).join(' ');
+      s += '<g class="edge" id="e-' + id + '" data-el="' + id + '" tabindex="0" role="button" aria-label="' + esc(e.aria) + '">' +
+        '<polyline class="hitl" points="' + pts + '"/>' +
+        '<polyline class="eline" points="' + linePts(e.pts, e.head) + '"/>' +
+        (e.head ? headMarkup(e.pts[e.pts.length - 2], e.pts[e.pts.length - 1]) : '') +
+        (e.lab ? '<text class="elab yn" x="' + e.lx + '" y="' + e.ly + '">' + e.lab + '</text>' : '') + '</g>';
+    });
+    NODE_ORDER.forEach(function (id) {
+      var n = NODES[id], inner;
+      if (id === 'input') {
+        inner = shapeMarkup('io', n.cx, n.cy, n.w, n.h, 'main') + shapeMarkup('process', n.cx, n.cy, n.w - 14, n.h, 'alt');
+      } else inner = shapeMarkup(n.type, n.cx, n.cy, n.w, n.h);
+      s += '<g class="node" id="n-' + id + '" data-el="' + id + '" tabindex="0" role="button" aria-label="' + esc(n.aria) + '">' + inner + textMarkup(n.lines, n.cx, n.cy) + '</g>';
+    });
+    var E = NODES.end;
+    s += '<rect id="endgap" data-el="endgap" x="' + (E.cx - E.w / 2 - 6) + '" y="' + (E.cy - E.h / 2 - 6) + '" width="' + (E.w + 12) + '" height="' + (E.h + 12) + '"/>';
+    s += '<rect id="ringR" hidden/><polygon id="ringD" hidden/><circle id="dot" r="8" hidden/>';
+    $('board').innerHTML = '<svg class="fc" id="fc" viewBox="0 0 ' + VBW + ' ' + VBH + '" role="group" aria-label="Flowchart: Can I buy GTA 9?">' + s + '</svg>';
+  }
+
+  /* ================= State ================= */
+  var S = {
+    mode: 'intro', buildIdx: 0, buildTimer: null, buildPaused: false,
+    sel: null, err: null, errQueue: [], found: false, wrong: 0, busy: false,
+    age: null, steps: [], cur: 0, anim: null, dotAt: null, runFrom: 'explore', fixedNote: false
+  };
+
+  function nodePos(id) {
+    var n = id === 'endgap' ? NODES.end : NODES[id];
+    if (S.err === 'startend') {
+      if (id === 'start') n = { type: 'start', cx: NODES.end.cx, cy: NODES.end.cy, w: NODES.start.w, h: NODES.start.h };
+      else if (id === 'end') n = { type: 'stop', cx: NODES.start.cx, cy: NODES.start.cy, w: NODES.end.w, h: NODES.end.h };
+    }
+    return n;
+  }
+
+  /* ================= Overlay: ring, trail, dot ================= */
+  function clearOverlay() {
+    $('ringR').setAttribute('hidden', '');
+    $('ringD').setAttribute('hidden', '');
+    $('dot').setAttribute('hidden', '');
+    $('ringR').classList.remove('gap');
+    EDGE_ORDER.forEach(function (id) { var g = $('e-' + id); g.classList.remove('trail'); g.classList.remove('sel'); });
+    var labs = $('fc').querySelectorAll('.yn');
+    for (var i = 0; i < labs.length; i++) { labs[i].classList.remove('flash'); labs[i].classList.remove('hot'); }
+  }
+  /* Make a Yes/No label pulse (and stay highlighted if hot) */
+  function flashLabel(edgeId, hot) {
+    var t = $('e-' + edgeId).querySelector('.yn');
+    if (!t) return;
+    t.classList.remove('flash');
+    void t.getBoundingClientRect();
+    t.classList.add('flash');
+    if (hot) t.classList.add('hot');
+  }
+  function ringOn(id) {
+    if (EDGES[id]) { $('e-' + id).classList.add('sel'); return; }
+    var n = nodePos(id), pad = 7;
+    if (n.type === 'decision') {
+      var w = n.w / 2 + pad + 4, h = n.h / 2 + pad;
+      var d = $('ringD');
+      d.setAttribute('points', [n.cx, n.cy - h, n.cx + w, n.cy, n.cx, n.cy + h, n.cx - w, n.cy].join(','));
+      d.removeAttribute('hidden');
+    } else {
+      var r = $('ringR');
+      r.setAttribute('x', n.cx - n.w / 2 - pad);
+      r.setAttribute('y', n.cy - n.h / 2 - pad);
+      r.setAttribute('width', n.w + pad * 2);
+      r.setAttribute('height', n.h + pad * 2);
+      r.setAttribute('rx', n.type === 'start' || n.type === 'stop' ? (n.h / 2 + pad) : 8);
+      r.classList.toggle('gap', id === 'endgap');
+      r.removeAttribute('hidden');
+    }
+  }
+  function placeDot(p) {
+    var d = $('dot');
+    d.setAttribute('cx', p[0]);
+    d.setAttribute('cy', p[1]);
+    d.removeAttribute('hidden');
+    S.dotAt = p;
+  }
+
+  /* ================= Panels ================= */
+  var PANELS = ['pBuild', 'pExplore', 'pRun', 'pErr'];
+  function showPanel(id) { PANELS.forEach(function (p) { $(p).hidden = p !== id; }); postHeight(); }
+
+  /* ================= Build-up ================= */
+  function allEls() {
+    return NODE_ORDER.map(function (id) { return 'n-' + id; }).concat(EDGE_ORDER.filter(function (id) { return id !== 'eL'; }).map(function (id) { return 'e-' + id; }));
+  }
+  function startBuild() {
+    stopRun();
+    clearTimeout(S.buildTimer);
+    S.mode = 'build';
+    S.sel = null;
+    S.buildIdx = 0;
+    S.buildPaused = false;
+    clearOverlay();
+    allEls().forEach(function (id) { $(id).classList.add('hid'); });
+    $('pauseBtn').textContent = 'Pause';
+    showPanel('pBuild');
+    buildStep();
+  }
+  function buildStep() {
+    if (S.mode !== 'build') return;
+    if (S.buildIdx >= BUILD.length) { finishBuild(); return; }
+    var b = BUILD[S.buildIdx], els = b.els.slice();
+    var shape = els.pop();
+    els.forEach(function (id) { $(id).classList.remove('hid'); });
+    if (els.indexOf('e-e3') >= 0) flashLabel('e3');
+    if (els.indexOf('e-e4') >= 0) flashLabel('e4');
+    setTimeout(function () { if (S.mode === 'build') $(shape).classList.remove('hid'); }, reduced || !els.length ? 0 : 350);
+    $('buildCap').textContent = 'Shape ' + (S.buildIdx + 1) + ' of ' + BUILD.length + ': ' + b.cap;
+    S.buildIdx++;
+    if (!S.buildPaused) S.buildTimer = setTimeout(buildStep, 1700);
+  }
+  function toggleBuildPause() {
+    if (S.buildPaused) {
+      S.buildPaused = false;
+      $('pauseBtn').textContent = 'Pause';
+      buildStep();
+    } else {
+      S.buildPaused = true;
+      clearTimeout(S.buildTimer);
+      $('pauseBtn').textContent = 'Carry on';
+    }
+  }
+  function finishBuild() {
+    clearTimeout(S.buildTimer);
+    allEls().forEach(function (id) { $(id).classList.remove('hid'); });
+    toExplore();
+  }
+
+  /* ================= Explore ================= */
+  function toExplore(note) {
+    stopRun();
+    S.mode = 'explore';
+    clearOverlay();
+    if (S.sel) ringOn(S.sel);
+    $('exHint').textContent = note || 'Tap any shape or arrow to find out what it does.';
+    if (!S.sel) $('card').innerHTML = '';
+    showPanel('pExplore');
+  }
+  function select(id) {
+    if (id === 'endgap' || id === 'eL') return;
+    S.sel = id;
+    clearOverlay();
+    ringOn(id);
+    var html;
+    if (EDGES[id]) {
+      var f = FLOW_HERE[id] || { here: 'Follow this arrow to get from one step to the next.' };
+      html = '<div class="card"><div class="chead">' + miniIcon('flow') + '<h3>Logical flow</h3></div><p>' + FLOW_WHAT + '</p><p><b>In this flowchart:</b> ' + f.here + '</p>' +
+        (f.tip ? '<p class="tipx">' + esc(EXAM_TIP) + '</p>' : '') + '</div>';
+    } else {
+      var I = INFO[id];
+      html = '<div class="card"><div class="chead">' + miniIcon(I.icon) + '<h3>' + esc(I.name) + '</h3></div><p>' + esc(I.what) + '</p><p><b>In this flowchart:</b> ' + esc(I.here) + '</p>' +
+        (I.tip ? '<p class="tipx">' + esc(EXAM_TIP) + '</p>' : '') + '</div>';
+    }
+    $('card').innerHTML = html;
+    if (id === 'e3' || id === 'e4') flashLabel(id);
+    $('exHint').textContent = 'Tap another shape or arrow, or try the buttons below.';
+    postHeight();
+  }
+
+  /* ================= Run it ================= */
+  function buildSteps(age, err) {
+    var st = [], vals = {}, screen = '';
+    function push(node, via, text, kind) {
+      st.push({ node: node, via: via, text: text, kind: kind || 'ok', age: vals.age, basket: vals.basket, screen: screen });
+    }
+    var yes = age >= 18;
+    if (err === 'startend') {
+      push('start', [], 'Every flowchart begins at Start, so find it first. Here, Start is at the bottom, and no arrow leads out of it. There’s nowhere to go, so the algorithm can’t run.', 'stuck');
+      return st;
+    }
+    push('start', [], 'Every flowchart begins at Start, so find it first. Then follow the arrow coming out of it.');
+    vals.age = age;
+    push('input', ['e1'], 'Follow the arrow to the next shape. It’s an input: the user types their age. They type ' + age + ', so now age = ' + age + '.');
+    var answer = 'Is ' + age + ' >= 18? ' + (yes ? 'Yes' : 'No') +
+      (age === 18 ? '. The >= sign means “greater than or equal to”, and 18 is equal to 18.' : (yes ? ', ' + age + ' is more than 18.' : ', ' + age + ' is less than 18.'));
+    if (err === 'labels') {
+      push('dec', ['e2'], 'Follow the arrow to the decision. Read the question and answer it: ' + answer + ' But neither exit is labelled Yes or No, so there’s no way to tell which arrow to follow. The algorithm is stuck.', 'stuck');
+      return st;
+    }
+    push('dec', ['e2'], 'Follow the arrow to the decision. Read the question and answer it using the values so far. ' + answer + ' So follow the arrow labelled ' + (yes ? 'Yes' : 'No') + '.');
+    var endVia;
+    if (yes) {
+      vals.basket = 'GTA 9';
+      push('add', ['e3'], 'Follow the arrow labelled Yes. This process does a job: it adds GTA 9 to the basket.');
+      if (err === 'loop') {
+        for (var k = 2; k <= 3; k++) {
+          push('dec', ['eL'], 'Follow the arrow out of the process. It leads back up to the decision! ' + answer + ' So follow the arrow labelled Yes again.');
+          vals.basket = k + ' copies of GTA 9';
+          push('add', ['e3'], 'Follow the arrow labelled Yes. The process adds another copy of GTA 9 to the basket.');
+        }
+        push('dec', ['eL'], 'Back to the decision again. Age never changes, so the answer is always Yes. This would keep adding GTA 9 to the basket forever: an infinite loop. The algorithm never reaches End.', 'loop');
+        return st;
+      }
+      screen = 'Enjoy the game!';
+      push('enjoy', ['e5'], 'Follow the arrow down. This output shows a message on the screen: “Enjoy the game!”');
+      endVia = ['e6a', 'e6b'];
+    } else {
+      screen = 'Sorry, GTA 9 is rated 18';
+      push('sorry', ['e4'], 'Follow the arrow labelled No. This output shows a message on the screen: “Sorry, GTA 9 is rated 18”.');
+      endVia = ['e7', 'e6b'];
+    }
+    if (err === 'noend') {
+      push('endgap', endVia, 'Follow the arrow to the end… but it doesn’t lead to anything! There’s no End terminal, so the algorithm never properly finishes.', 'stuck');
+      return st;
+    }
+    var t = 'Follow the arrow to End. You’ve reached End, so the algorithm has finished.';
+    var kind = 'end';
+    if (err === 'loop') { t += ' This route worked, but errors can hide on routes you didn’t test. Try an age of 18 or over.'; kind = 'ok'; }
+    if (err === 'wrongshape') { t += ' The route worked, but a flowchart is also wrong if a shape is the wrong type. Look closely at each shape.'; kind = 'ok'; }
+    push('end', endVia, t, kind);
+    return st;
+  }
+
+  function arrivalPoint(step) {
+    if (step.via.length) { var e = EDGES[step.via[step.via.length - 1]]; return e.pts[e.pts.length - 1]; }
+    var n = nodePos(step.node);
+    return [n.cx, n.cy - n.h / 2];
+  }
+
+  function openRun() {
+    clearTimeout(S.buildTimer);
+    S.runFrom = S.mode === 'error' ? 'error' : 'explore';
+    S.mode = 'run';
+    S.age = null;
+    S.steps = [];
+    clearOverlay();
+    var chips = $('ages').querySelectorAll('.chip');
+    for (var i = 0; i < chips.length; i++) chips[i].setAttribute('aria-pressed', 'false');
+    $('ageIn').value = '';
+    $('ageErr').hidden = true;
+    $('nar').className = 'nar';
+    $('nar').innerHTML = '<p>Pick an age to start. Then watch how to read the flowchart, one step at a time.</p>';
+    $('boxes').hidden = true;
+    $('ctrls').hidden = true;
+    $('runDiffRow').hidden = true;
+    showPanel('pRun');
+    var first = $('ages').querySelector('.chip');
+    if (first) first.focus();
+  }
+  function chooseAge(age) {
+    cancelAnim();
+    S.age = age;
+    var chips = $('ages').querySelectorAll('.chip');
+    for (var i = 0; i < chips.length; i++) chips[i].setAttribute('aria-pressed', String(chips[i].getAttribute('data-age')) === String(age) ? 'true' : 'false');
+    S.steps = buildSteps(age, S.err);
+    S.cur = 0;
+    $('boxes').hidden = false;
+    $('ctrls').hidden = false;
+    renderStep(false);
+  }
+  function customAge() {
+    var raw = $('ageIn').value.trim();
+    var ok = /^\d{1,3}$/.test(raw) && +raw <= 120;
+    if (!ok) {
+      $('ageErr').textContent = 'Enter a whole number from 0 to 120.';
+      $('ageErr').hidden = false;
+      postHeight();
+      return;
+    }
+    $('ageErr').hidden = true;
+    chooseAge(parseInt(raw, 10));
+  }
+
+  function renderStep(animate) {
+    var st = S.steps[S.cur], last = S.cur === S.steps.length - 1;
+    clearOverlay();
+    var trail = {};
+    for (var i = 0; i <= S.cur; i++) S.steps[i].via.forEach(function (id) { trail[id] = 1; });
+    Object.keys(trail).forEach(function (id) { $('e-' + id).classList.add('trail'); });
+    ringOn(st.node);
+    var target = arrivalPoint(st);
+    if (animate && !reduced && st.via.length && S.dotAt) {
+      var pts = [S.dotAt];
+      st.via.forEach(function (id) { EDGES[id].pts.forEach(function (p) { pts.push(p); }); });
+      animateDot(pts);
+    } else placeDot(target);
+
+    var nar = $('nar');
+    nar.className = 'nar' + (st.kind === 'stuck' || st.kind === 'loop' ? ' stuck' : (st.kind === 'end' ? ' end' : ''));
+    var extra = (last && S.runFrom === 'error') ? ' Press Done, then tap the part you think is wrong. Or try a different error.' : '';
+    $('runDiffRow').hidden = !(last && S.runFrom === 'error' && S.err);
+    nar.innerHTML = '<p><span class="stepn">Step ' + (S.cur + 1) + ' of ' + S.steps.length + '</span>' +
+      esc(st.text).replace(/labelled (Yes|No)/g, 'labelled <b class="ynw">$1</b>') + esc(extra) + '</p>';
+
+    /* Yes/No: pulse the label of the exit about to be taken, and again while following it */
+    var take = null;
+    if (st.node === 'dec' && st.kind === 'ok' && S.err !== 'labels') take = S.age >= 18 ? 'e3' : 'e4';
+    else if (st.via.indexOf('e3') >= 0) take = 'e3';
+    else if (st.via.indexOf('e4') >= 0) take = 'e4';
+    if (take) flashLabel(take, true);
+    var v = [];
+    if (st.age != null) v.push('age = ' + st.age);
+    if (st.basket) v.push('basket = ' + st.basket);
+    $('vals').textContent = v.length ? v.join('\n') : 'none yet';
+    $('scr').textContent = st.screen ? st.screen : '(nothing yet)';
+    $('backBtn').hidden = S.cur === 0;
+    $('nextBtn').textContent = last ? 'Done' : 'Next';
+    postHeight();
+  }
+  function goNext() {
+    if (!S.steps.length) return;
+    if (S.anim) { finishAnim(); }
+    if (S.cur >= S.steps.length - 1) { stopRunPanel(); return; }
+    S.cur++;
+    renderStep(true);
+  }
+  function goBack() {
+    if (S.cur === 0) return;
+    cancelAnim();
+    S.cur--;
+    renderStep(false);
+  }
+  function animateDot(pts) {
+    cancelAnim();
+    var segs = [], total = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var dx = pts[i][0] - pts[i - 1][0], dy = pts[i][1] - pts[i - 1][1], l = Math.sqrt(dx * dx + dy * dy);
+      segs.push(l);
+      total += l;
+    }
+    var dur = Math.max(450, Math.min(1300, total * 5));
+    var t0 = null, end = pts[pts.length - 1];
+    $('dot').removeAttribute('hidden');
+    function frame(ts) {
+      if (!S.anim) return;
+      if (t0 === null) t0 = ts;
+      var f = Math.min(1, (ts - t0) / dur), d = f * total, k = 0;
+      while (k < segs.length - 1 && d > segs[k]) { d -= segs[k]; k++; }
+      var a = pts[k], b = pts[k + 1], u = segs[k] ? Math.min(1, d / segs[k]) : 1;
+      var p = [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
+      $('dot').setAttribute('cx', p[0]);
+      $('dot').setAttribute('cy', p[1]);
+      if (f < 1) S.anim.raf = requestAnimationFrame(frame);
+      else { S.anim = null; placeDot(end); }
+    }
+    S.anim = { end: end, raf: requestAnimationFrame(frame) };
+  }
+  function finishAnim() { if (!S.anim) return; cancelAnimationFrame(S.anim.raf); var e = S.anim.end; S.anim = null; placeDot(e); }
+  function cancelAnim() { if (!S.anim) return; cancelAnimationFrame(S.anim.raf); S.anim = null; }
+
+  function stopRun() { cancelAnim(); S.dotAt = null; }
+  function stopRunPanel() {
+    stopRun();
+    clearOverlay();
+    if (S.runFrom === 'error' && S.err) { S.mode = 'error'; showErrorPanel(); }
+    else toExplore();
+  }
+
+  /* ================= Errors ================= */
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  /* Next error from a shuffled queue: all five appear before any repeat, never the same twice in a row */
+  function nextErrorId(avoid) {
+    if (!S.errQueue.length) {
+      S.errQueue = shuffle(ERROR_IDS.slice());
+      if (S.errQueue[0] === avoid) { var t = S.errQueue[0]; S.errQueue[0] = S.errQueue[1]; S.errQueue[1] = t; }
+    }
+    return S.errQueue.shift();
+  }
+  function differentError() {
+    var old = S.err;
+    stopRun();
+    if (old) $('fc').classList.remove('e-' + old);
+    S.err = null;
+    introduceError(old);
+    $('diffBtn').focus();
+  }
+  function introduceError(avoid) {
+    var id = nextErrorId(avoid);
+    S.err = id;
+    S.found = false;
+    S.wrong = 0;
+    S.sel = null;
+    S.mode = 'error';
+    clearOverlay();
+    S.busy = true;
+    requestAnimationFrame(function () { $('fc').classList.add('e-' + id); });
+    setTimeout(function () { S.busy = false; }, reduced ? 0 : 1000);
+    showErrorPanel(true);
+  }
+  function showErrorPanel(fresh) {
+    var m = $('errMsg');
+    clearOverlay();
+    if (S.found) {
+      ringTargets();
+      m.className = 'msg ok';
+    } else {
+      m.className = 'msg';
+      if (fresh) m.innerHTML = '<p class="big">Something is now wrong with this flowchart.</p><p>Tap the shape or arrow you think is wrong. Tip: press “Run it to test” to see what happens when the flowchart runs.</p>';
+    }
+    $('showBtn').hidden = S.found || S.wrong < 2;
+    $('fixBtn').hidden = !S.found;
+    $('errRunBtn').hidden = false;
+    showPanel('pErr');
+  }
+  function ringTargets() {
+    var t = ERRORS[S.err].targets;
+    if (S.err === 'noend') ringOn('endgap');
+    else if (S.err === 'loop') ringOn('eL');
+    else if (S.err === 'labels') { ringOn('dec'); ringOn('e3'); ringOn('e4'); }
+    else if (S.err === 'startend') { ringOn('start'); }
+    else ringOn(t[0]);
+  }
+  function guess(id) {
+    if (S.busy || S.found) return;
+    var m = $('errMsg');
+    if (ERRORS[S.err].targets.indexOf(id) >= 0) {
+      S.found = true;
+      m.innerHTML = '<p class="big">You found it!</p><p>' + esc(ERRORS[S.err].explain) + '</p>';
+      showErrorPanel();
+      $('fixBtn').focus();
+    } else {
+      S.wrong++;
+      clearOverlay();
+      ringOn(id);
+      m.className = 'msg';
+      m.innerHTML = '<p class="big">Not that one.</p><p>That part is fine. Try again, or press “Run it to test” to see what goes wrong.</p>';
+      $('showBtn').hidden = S.wrong < 2;
+      postHeight();
+    }
+  }
+  function showMe() {
+    S.found = true;
+    $('errMsg').innerHTML = '<p class="big">Here it is.</p><p>' + esc(ERRORS[S.err].explain) + '</p>';
+    showErrorPanel();
+    $('fixBtn').focus();
+  }
+  function fixIt() {
+    var id = S.err;
+    $('fc').classList.remove('e-' + id);
+    S.err = null;
+    S.found = false;
+    S.sel = null;
+    toExplore('Fixed. The flowchart makes sense again. Try another error, or tap a shape or arrow.');
+    $('errBtn').focus();
+  }
+
+  /* ================= Start again: back to the Begin screen ================= */
+  function resetAll() {
+    clearTimeout(S.buildTimer);
+    stopRun();
+    if (S.err) $('fc').classList.remove('e-' + S.err);
+    S.err = null;
+    S.found = false;
+    S.wrong = 0;
+    S.sel = null;
+    S.busy = false;
+    S.steps = [];
+    S.age = null;
+    S.mode = 'intro';
+    clearOverlay();
+    allEls().forEach(function (id) { $(id).classList.remove('hid'); });
+    $('card').innerHTML = '';
+    $('themePanel').hidden = true;
+    $('themeBtn').setAttribute('aria-expanded', 'false');
+    $('main').hidden = true;
+    $('scrIntro').hidden = false;
+    $('restartBtn').hidden = true;
+    $('beginBtn').focus();
+    postHeight(true);
+  }
+
+  /* ================= Activation ================= */
+  function activate(id) {
+    if (S.mode === 'explore') select(id);
+    else if (S.mode === 'error') guess(id);
+  }
+
+  /* ================= Themes ================= */
+  var KEY_THEME = 'gcsecs-flowchart-shapes-theme';
+  var store = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } }
+  };
+  var THEMES = [
+    { id: 'day', label: 'Day', bg: '#ffffff', ink: '#111111' },
+    { id: 'night', label: 'Night', bg: '#121417', ink: '#eef1f4' },
+    { id: 'send', label: 'Soft lighting', bg: '#f7f0d6', ink: '#222222' },
+    { id: 'blue', label: 'Soft blue', bg: '#dde9f4', ink: '#15202b' },
+    { id: 'contrast', label: 'High contrast', bg: '#000000', ink: '#ffff00' }
+  ];
+  function applyTheme(id) {
+    if (!THEMES.some(function (t) { return t.id === id; })) id = 'day';
+    document.documentElement.setAttribute('data-theme', id);
+    store.set(KEY_THEME, id);
+    var btns = $('themePanel').querySelectorAll('.swatch');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-t') === id ? 'true' : 'false');
+  }
+  function buildThemes() {
+    var panel = $('themePanel');
+    THEMES.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch';
+      b.setAttribute('data-t', t.id);
+      b.innerHTML = '<span class="dotsw" style="background:' + t.bg + ';color:' + t.ink + '" aria-hidden="true">A</span><span>' + esc(t.label) + '</span>';
+      b.addEventListener('click', function () {
+        applyTheme(t.id);
+        panel.hidden = true;
+        $('themeBtn').setAttribute('aria-expanded', 'false');
+        $('themeBtn').focus();
+      });
+      panel.appendChild(b);
+    });
+    $('themeBtn').addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    applyTheme(store.get(KEY_THEME) || 'day');
+  }
+
+  /* ================= Embedding: tell the parent page our height ================= */
+  var lastH = 0;
+  function postHeight(scrollTop) {
+    if (window.parent === window) return;
+    var h = Math.ceil($('app').getBoundingClientRect().height) + 4;
+    if (h === lastH && !scrollTop) return;
+    lastH = h;
+    try { window.parent.postMessage({ type: 'gcsecs-iframe-height', height: h, scrollTop: !!scrollTop }, '*'); } catch (e) { /* ignore */ }
+  }
+
+  /* ================= Wiring ================= */
+  function init() {
+    buildThemes();
+    buildSVG();
+    var fc = $('fc');
+    fc.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('[data-el]') : null;
+      if (t) activate(t.getAttribute('data-el'));
+    });
+    fc.addEventListener('keydown', function (e) {
+      var t = e.target.closest ? e.target.closest('[data-el]') : null;
+      if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); activate(t.getAttribute('data-el')); }
+    });
+    $('pauseBtn').addEventListener('click', toggleBuildPause);
+    $('allBtn').addEventListener('click', finishBuild);
+    $('rebuildBtn').addEventListener('click', startBuild);
+    $('runBtn').addEventListener('click', openRun);
+    $('errBtn').addEventListener('click', function () { introduceError(null); });
+    $('errRunBtn').addEventListener('click', openRun);
+    $('showBtn').addEventListener('click', showMe);
+    $('fixBtn').addEventListener('click', fixIt);
+    $('stopBtn').addEventListener('click', stopRunPanel);
+    $('nextBtn').addEventListener('click', goNext);
+    $('backBtn').addEventListener('click', goBack);
+    $('ages').addEventListener('click', function (e) {
+      var c = e.target.closest ? e.target.closest('.chip') : null;
+      if (c) { $('ageErr').hidden = true; chooseAge(parseInt(c.getAttribute('data-age'), 10)); }
+    });
+    $('ageGo').addEventListener('click', customAge);
+    $('ageIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); customAge(); } });
+    $('ageIn').addEventListener('input', function () { $('ageErr').hidden = true; });
+    document.addEventListener('keydown', function (e) {
+      if (S.mode !== 'run' || !S.steps.length) return;
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input') return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); goBack(); }
+    });
+    if (window.ResizeObserver) new ResizeObserver(function () { postHeight(); }).observe($('app'));
+    else setInterval(postHeight, 500);
+    window.addEventListener('resize', function () { postHeight(); });
+    $('restartBtn').addEventListener('click', resetAll);
+    $('errRestartBtn').addEventListener('click', resetAll);
+    $('diffBtn').addEventListener('click', differentError);
+    $('runDiffBtn').addEventListener('click', differentError);
+    $('beginBtn').addEventListener('click', function () {
+      $('scrIntro').hidden = true;
+      $('main').hidden = false;
+      $('restartBtn').hidden = false;
+      startBuild();
+      $('pauseBtn').focus();
+      postHeight(true);
+    });
+    $('skipBtn').addEventListener('click', function () {
+      $('scrIntro').hidden = true;
+      $('main').hidden = false;
+      $('restartBtn').hidden = false;
+      toExplore();
+      $('runBtn').focus();
+      postHeight(true);
+    });
+    postHeight(true);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
