@@ -100,7 +100,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
   <header class="top">
     <h1>Flowchart Shape Snap</h1>
     <div class="tools">
@@ -334,6 +334,16 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     applyTheme(store.get(KEY_THEME) || 'day');
   }
 
+  /* ---------- Embedding: tell the parent page our height ---------- */
+  var lastH = 0;
+  function postHeight(scrollTop) {
+    if (window.parent === window) return;
+    var h = Math.ceil($('app').getBoundingClientRect().height) + 4;
+    if (h === lastH && !scrollTop) return;
+    lastH = h;
+    try { window.parent.postMessage({ type: 'gcsecs-iframe-height', height: h, scrollTop: !!scrollTop }, '*'); } catch (e) { /* ignore */ }
+  }
+
   /* ---------- Screens ---------- */
   var SCREENS = ['scrStart', 'scrTut', 'scrGame', 'scrEnd'];
   function show(id) {
@@ -341,6 +351,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     $('menuBtn').hidden = id === 'scrStart';
     if (id === 'scrStart') refreshBest();
     try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+    setTimeout(function () { postHeight(true); }, 0);
   }
   function getBest() { return parseInt(store.get(KEY_BEST) || '0', 10) || 0; }
   function refreshBest() { var b = getBest(); $('bestScore').textContent = b > 0 ? String(b) : '–'; }
@@ -373,6 +384,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     var dots = '';
     for (var i = 0; i < TUT_TOTAL; i++) dots += '<span class="' + (i === tutIdx ? 'on' : '') + '"></span>';
     $('dots').innerHTML = dots;
+    setTimeout(function () { postHeight(true); }, 0);
   }
   function openTutorial() { tutIdx = 0; stopGame(); show('scrTut'); renderTut(); }
   function tutPrev() { if (tutIdx === 0) { show('scrStart'); return; } tutIdx--; renderTut(); }
@@ -631,6 +643,11 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
         else if (e.key === 'ArrowLeft') tutPrev();
       }
     });
+
+    if (window.ResizeObserver) new ResizeObserver(function () { postHeight(); }).observe($('app'));
+    else setInterval(postHeight, 500);
+    window.addEventListener('resize', function () { postHeight(); });
+    postHeight(true);
 
     document.addEventListener('visibilitychange', function () {
       if (G.state !== 'question' && G.state !== 'flash') return;
