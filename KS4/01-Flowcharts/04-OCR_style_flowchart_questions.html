@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="en-GB" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OCR Style Flowchart Questions</title>
+<style>
+:root,[data-theme="day"]{--bg:#ffffff;--card:#f3f5f6;--ink:#111111;--muted:#4b5157;--line:#c5ccd2;--accent:#2b7a80;--accentInk:#ffffff;--good:#1d7a35;--goodBg:#e2f3e5;--bad:#b3261e;--badBg:#fce8e6;--aBg:#e4eefb;--aInk:#0c4a8a;--focus:#1a5fb4;--bw:2px;--tint:#eef5f6}
+[data-theme="night"]{--bg:#121417;--card:#1d2126;--ink:#eef1f4;--muted:#aab2ba;--line:#3b434b;--accent:#4db6bc;--accentInk:#071314;--good:#63d483;--goodBg:#163522;--bad:#ff8a80;--badBg:#3f1d1b;--aBg:#18304d;--aInk:#a9cdf6;--focus:#8ab4f8;--tint:#1b2a30}
+[data-theme="send"]{--bg:#f7f0d6;--card:#ede3bf;--ink:#222222;--muted:#4f4836;--line:#c4b68c;--accent:#2b6d71;--accentInk:#fffaea;--good:#1d6a2e;--goodBg:#d9e9c4;--bad:#9e2b1f;--badBg:#f1d3c4;--aBg:#d8e2e6;--aInk:#1d4466;--focus:#1d4466;--tint:#e9e6cf}
+[data-theme="blue"]{--bg:#dde9f4;--card:#cbdbeb;--ink:#15202b;--muted:#3c4a58;--line:#9fb5ca;--accent:#245f8c;--accentInk:#ffffff;--good:#1d6a2e;--goodBg:#d3ead1;--bad:#a12a1f;--badBg:#f1d4cf;--aBg:#bfd4ea;--aInk:#103b63;--focus:#103b63;--tint:#cfe0ef}
+[data-theme="contrast"]{--bg:#000000;--card:#000000;--ink:#ffff00;--muted:#ffffff;--line:#ffff00;--accent:#ffff00;--accentInk:#000000;--good:#00ff66;--goodBg:#003a17;--bad:#ff6b6b;--badBg:#3d0000;--aBg:#000000;--aInk:#00e5ff;--focus:#00e5ff;--bw:3px;--tint:#000000}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{line-height:1.45}
+[hidden]{display:none!important}
+.app{max-width:980px;margin:0 auto;padding:10px 14px 18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.top h1{font-size:1.15rem;margin:0;font-weight:700}
+.tools{display:flex;gap:6px;flex:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{min-height:48px;padding:10px 18px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:1rem}
+.btn.small{min-height:40px;padding:6px 12px;font-size:.9rem;border-radius:10px}
+.btn.primary{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+.btn[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.btn:focus-visible,.tile:focus-visible,.swatch:focus-visible,.qbtn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 12px;padding:10px;border:var(--bw) solid var(--line);border-radius:12px;background:var(--card)}
+.swatch{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border-radius:10px;border:var(--bw) solid transparent;background:transparent;color:var(--ink);text-align:left;font-size:.92rem}
+.swatch[aria-pressed="true"]{border-color:var(--accent);font-weight:700}
+.dotsw{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #888;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.lead{margin:0 0 14px;font-size:1.02rem}
+.qlist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.qbtn{width:100%;display:flex;align-items:center;gap:12px;min-height:62px;padding:8px 12px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);text-align:left}
+.num{flex:none;width:36px;height:36px;border-radius:50%;border:var(--bw) solid var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800}
+.qbtn.done .num{background:var(--good);border-color:var(--good);color:var(--bg)}
+.qtxt{flex:1;min-width:0}
+.qtitle{display:block;font-weight:700}
+.qtag{display:block;font-size:.85rem;color:var(--muted)}
+.qdone{flex:none;font-size:.8rem;font-weight:700;color:var(--good)}
+.meta{color:var(--muted);font-weight:600;font-size:.9rem;margin:0}
+.qtext{border:var(--bw) solid var(--line);border-radius:12px;padding:12px 14px;margin:6px 0 12px;background:var(--bg)}
+.qtext p{margin:0 0 10px}
+.qtext p:last-child{margin-bottom:0}
+.qtext table{border-collapse:collapse;width:100%;margin:0 0 10px;font-size:.95rem}
+.qtext td{border:1px solid var(--ink);padding:6px 10px;vertical-align:top}
+.qtext .marks{text-align:right;font-weight:700;color:var(--muted)}
+.qtext .part{font-weight:700}
+.play{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:760px){.play{grid-template-columns:minmax(0,1fr) 300px;align-items:start}}
+.zoomBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+.zhint{font-size:.85rem;color:var(--muted)}
+.boardWrap{position:relative;border:var(--bw) solid var(--line);border-radius:12px;background:var(--bg);padding:8px 4px}
+#board.zoomed{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#board.zoomed svg.board{max-width:none}
+.ln{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.ah{fill:var(--ink)}
+.sh{fill:var(--bg);stroke:var(--ink);stroke-width:1.8}
+.placed .sh{fill:var(--tint)}
+.stext{fill:var(--ink);font:500 12px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.glab{fill:var(--ink);font:600 12px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.slot,.lslot{cursor:pointer;outline:none}
+.slot .hit,.lslot .hit{fill:transparent;stroke:none}
+.empty{fill:var(--card);stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 4}
+.etext{fill:var(--muted);font:600 11px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.slot .ring,.lslot .ring{fill:none;stroke:none}
+.slot:focus-visible .ring,.lslot:focus-visible .ring{stroke:var(--focus);stroke-width:3}
+.slot.active .empty,.slot.active .sh,.slot.over .empty,.slot.over .sh{stroke:var(--accent);stroke-width:3}
+.slot.target .empty{stroke:var(--accent);stroke-width:2.5}
+.lbox{fill:var(--card);stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
+.lslot.filled .lbox{fill:var(--aBg);stroke-dasharray:none}
+.lslot.target .lbox,.lslot.active .lbox,.lslot.over .lbox{stroke-width:3}
+.ltext{fill:var(--aInk);font:800 12px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.lslot:not(.filled) .ltext{fill:var(--accent)}
+.bank h3{font-size:1rem;margin:0 0 4px}
+.bank .bhint{font-size:.85rem;color:var(--muted);margin:0 0 8px;min-height:1.2em}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (min-width:760px){.tgrid{grid-template-columns:1fr 1fr}}
+.tile{display:flex;align-items:center;justify-content:center;width:100%;min-height:58px;padding:4px;border-radius:10px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.tile svg{width:100%;max-width:150px;height:auto;pointer-events:none}
+.tile.sel{border-color:var(--accent);background:var(--aBg);box-shadow:inset 0 0 0 2px var(--accent)}
+.ltiles{display:flex;gap:8px;margin-top:8px}
+.ltile{flex:1;min-height:48px;font-weight:800;font-size:1.05rem;color:var(--aInk);background:var(--aBg);border-color:var(--accent)}
+.ltile.sel{box-shadow:inset 0 0 0 3px var(--accent)}
+.bempty{color:var(--muted);font-size:.9rem;margin:4px 0}
+.sub{font-size:.95rem;margin:12px 0 0;font-weight:700}
+.pop{position:absolute;z-index:5;max-height:360px;overflow:auto;background:var(--bg);border:var(--bw) solid var(--accent);border-radius:12px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.pop h3{font-size:.98rem;margin:0 0 8px}
+.pop .tile{margin-bottom:6px}
+.pop .row2{display:flex;gap:8px;margin-bottom:6px}
+.pop .row2 .btn{flex:1}
+.pop > .btn{width:100%;margin-top:2px}
+.msg{margin-top:10px;padding:10px 14px;border-radius:10px;font-weight:700;border:var(--bw) solid currentColor}
+.msg.info{background:var(--aBg);color:var(--aInk)}
+.msg.warn{background:var(--badBg);color:var(--bad)}
+.msg.ok{background:var(--goodBg);color:var(--good)}
+.msg .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.msg .btn{flex:1 1 140px}
+.wcount{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.wc{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:var(--bw) solid var(--good);background:var(--goodBg);color:var(--ink);font-weight:700}
+.wc b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.wc.bad{border-color:var(--bad);background:var(--badBg)}
+.wc.bump{animation:wcbump .5s ease-out}
+@keyframes wcbump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+.wbest{font-size:.9rem;color:var(--muted);font-weight:600}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions .btn{flex:1 1 140px}
+.ask{margin-top:10px;padding:12px 14px;border-radius:10px;border:var(--bw) solid var(--bad);background:var(--badBg);color:var(--ink)}
+.ask p{margin:0;font-weight:700}
+.ask .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ask .btn{flex:1 1 140px}
+.play.solo{grid-template-columns:minmax(0,1fr)}
+.play.solo .boardWrap{max-width:620px;margin:0 auto}
+.tplan{margin-top:12px}
+.tplan .qtext{margin:0 0 10px}
+.tp{border-collapse:collapse;width:100%;max-width:620px;font-size:1rem}
+.tp th,.tp td{border:1px solid var(--ink);padding:6px 8px;text-align:center;vertical-align:middle}
+.tp th{font-weight:700}
+.tp td.ans{padding:4px;width:42%}
+.tp input{width:100%;min-height:44px;padding:6px 8px;font:inherit;font-size:1.05rem;font-weight:700;text-align:center;border-radius:8px;border:var(--bw) solid var(--accent);background:var(--aBg);color:var(--ink)}
+.tp input:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+.tp input::placeholder{color:var(--muted);font-weight:500}
+.tp.trace{table-layout:fixed}
+.tp.trace td.ans{width:auto}
+.tp.trace td{height:52px;padding:4px}
+.tp.trace input{min-width:0;padding:6px 4px}
+.gapl{fill:none;stroke:var(--muted);stroke-width:1.8;stroke-dasharray:5 4}
+.agap{cursor:pointer;outline:none}
+.agap .ghit{fill:none;stroke:transparent;stroke-width:22;pointer-events:stroke}
+.agap .gh{fill:var(--card);stroke:var(--accent);stroke-width:1.6}
+.agap .gq{fill:var(--accent);font:800 13px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.agap .ghc{fill:transparent;stroke:none}
+.agap.set .gh,.agap.set .gq{display:none}
+.agap .uarr{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+.agap .uah{fill:var(--accent)}
+.agap .gring{fill:none;stroke:none;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;opacity:.45}
+.agap:focus-visible .gring,.agap.active .gring,.agap.over .gring{stroke:var(--focus)}
+.agap.target .gh{stroke-width:3}
+.agap.target .gapl{stroke:var(--accent)}
+.atile{flex-direction:column;gap:2px;min-height:58px;font-weight:800;font-size:1rem;color:var(--ink)}
+.atile svg{width:64px;height:20px}
+.aopt{display:block;width:100%;text-align:left;margin-bottom:6px;font-weight:600;line-height:1.3}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;padding:8px 12px;border-radius:10px;background:var(--card);color:var(--ink);border:2px solid var(--accent);font-weight:700;max-width:220px;transform:translate(-50%,-120%);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){.wc.bump{animation:none}}
+@media (max-width:360px){.app{padding:8px 10px 14px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1>OCR style flowchart questions</h1>
+    <div class="tools">
+      <button id="menuBtn" class="btn small" type="button" hidden>Menu</button>
+      <button id="themeBtn" class="btn small" type="button" aria-expanded="false" aria-controls="themePanel">Colours</button>
+    </div>
+  </header>
+  <div id="themePanel" class="themes" role="group" aria-label="Colour theme" hidden></div>
+
+  <main>
+    <section id="scrMenu">
+      <p class="lead">Exam-style flowchart questions. Complete each flowchart using the symbols you are given, and add the Yes/No labels.</p>
+      <ol id="qlist" class="qlist"></ol>
+    </section>
+
+    <section id="scrQ" hidden>
+      <p class="meta" id="qMeta"></p>
+      <div class="qtext" id="qText"></div>
+      <div class="play" id="play">
+        <div>
+          <div class="zoomBar" id="zoomBar" hidden>
+            <button id="zoomBtn" class="btn small" type="button" aria-pressed="false">Bigger boxes</button>
+            <span class="zhint" id="zoomHint" hidden>Swipe sideways to see the whole flowchart.</span>
+          </div>
+          <div class="boardWrap" id="boardWrap">
+            <div id="board"></div>
+            <div id="pop" class="pop" role="dialog" aria-label="Choose" hidden></div>
+          </div>
+        </div>
+        <div class="bank" id="bank">
+          <h3 id="bankTitle">Symbols</h3>
+          <p class="bhint" id="bankHint" aria-live="polite"></p>
+          <div class="tgrid" id="tgrid"></div>
+          <p class="sub">Yes/No labels (use as many as you need)</p>
+          <div class="ltiles" id="ltiles">
+            <button type="button" class="btn tile ltile" data-label="Yes" aria-pressed="false">Yes</button>
+            <button type="button" class="btn tile ltile" data-label="No" aria-pressed="false">No</button>
+          </div>
+          <div id="arrowSec" hidden>
+            <p class="sub">Arrows (use as many as you need)</p>
+            <div class="ltiles" id="atiles">
+              <button type="button" class="btn tile atile" data-arrow="1" aria-pressed="false" aria-label="Arrow"><svg viewBox="0 0 64 20" aria-hidden="true" focusable="false"><line x1="4" y1="10" x2="50" y2="10" stroke="currentColor" stroke-width="2.6"/><polygon points="60,10 47,3.5 47,16.5" fill="currentColor"/></svg><span>Arrow</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tplan" class="tplan" hidden>
+        <div class="qtext" id="tpText"></div>
+        <table class="tp" id="tpTable">
+          <thead><tr id="tpHead"></tr></thead>
+          <tbody id="tpBody"></tbody>
+        </table>
+      </div>
+      <div id="msg" class="msg" role="status" hidden></div>
+      <div class="wcount">
+        <span class="wc" id="wc">Wrong checks: <b id="wcN">0</b></span>
+        <span class="wbest" id="wcBest"></span>
+      </div>
+      <div class="actions">
+        <button id="checkBtn" class="btn primary" type="button">Check my answer</button>
+        <button id="resetBtn" class="btn" type="button">Reset</button>
+      </div>
+      <div id="resetAsk" class="ask" role="group" aria-label="Confirm reset" hidden>
+        <p>Clear your answer and start this question again?</p>
+        <div class="row">
+          <button id="resetYes" class="btn" type="button">Yes, clear it</button>
+          <button id="resetNo" class="btn primary" type="button">No, keep it</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <noscript><p>This activity needs JavaScript switched on.</p></noscript>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+     QUESTIONS
+     To change the order, move whole { ... } blocks up or down this list.
+     Progress is saved by each question's id, so reordering is safe.
+
+     nodes:   given shapes (given: true) and empty answer boxes (given: false)
+              type: start | stop | process | io | decision; x, y = centre
+     pieces:  the symbols students are given, each used once
+     lslots:  Yes/No label boxes on decision exits (x, y = centre)
+     edges:   arrows; head: true draws an arrowhead; lab = a printed label
+     agaps:   dashed arrow gaps students fill (Arrow tile, then choose a direction)
+     answers: every correct answer (boxes, labels, arrows); the best match is marked
+     kind 'trace': tcols + trows; a cell is printed text or { a: number } to type in
+     ===================================================================== */
+  var QUESTIONS = [
+    {
+      id: 'sale-price',
+      kind: 'testplan',
+      title: 'Sale price test plan',
+      marks: 3,
+      text: '<p><span class="part">(b)</span> The following flowchart shows an algorithm to calculate the price of an item during a sale period.</p>',
+      text2: '<p><span class="part">(i)</span> Complete the following test plan for the algorithm.</p><p class="marks">[3 marks]</p>',
+      vb: [470, 540],
+      nodes: [
+        { id: 'start', type: 'start', x: 130, y: 30, w: 140, h: 40, text: 'Start', given: true },
+        { id: 'in', type: 'io', x: 130, y: 100, w: 170, h: 50, text: 'Input Price\nfrom user', given: true },
+        { id: 'd200', type: 'decision', x: 130, y: 200, w: 170, h: 110, text: 'Price\ngreater\nthan 200?', given: true },
+        { id: 'd100', type: 'decision', x: 330, y: 200, w: 170, h: 110, text: 'Price\ngreater\nthan 100?', given: true },
+        { id: 'r40', type: 'process', x: 130, y: 312, w: 160, h: 44, text: 'Reduce Price by 40', given: true },
+        { id: 'r20', type: 'process', x: 330, y: 312, w: 160, h: 44, text: 'Reduce Price by 20', given: true },
+        { id: 'out', type: 'io', x: 130, y: 430, w: 170, h: 50, text: 'Output Price\nto user', given: true },
+        { id: 'end', type: 'stop', x: 130, y: 505, w: 140, h: 40, text: 'End', given: true }
+      ],
+      edges: [
+        { pts: [[130, 50], [130, 75]], head: true },
+        { pts: [[130, 125], [130, 145]], head: true },
+        { pts: [[215, 200], [245, 200]], head: true, lab: 'No', lx: 216, ly: 190 },
+        { pts: [[130, 255], [130, 290]], head: true, lab: 'Yes', lx: 137, ly: 277 },
+        { pts: [[330, 255], [330, 290]], head: true, lab: 'Yes', lx: 337, ly: 277 },
+        { pts: [[415, 200], [455, 200], [455, 370], [130, 370]], head: true, lab: 'No', lx: 418, ly: 190 },
+        { pts: [[330, 334], [330, 370]], head: true },
+        { pts: [[130, 334], [130, 405]], head: true },
+        { pts: [[130, 455], [130, 485]], head: true }
+      ],
+      cols: ['Price input', 'Test type', 'Expected price output'],
+      rows: [
+        { input: '50', type: 'Normal', answer: 50 },
+        { input: '100', type: 'Boundary', answer: 100 },
+        { input: '150', type: 'Normal', answer: 130 },
+        { input: '200', type: 'Boundary', answer: 180 },
+        { input: '250', type: 'Normal', answer: 210 }
+      ]
+    },
+    {
+      id: 'vouchers',
+      title: 'Money off vouchers',
+      marks: 6,
+      text:
+        '<p>Margaret is making some special offers to customers.</p>' +
+        '<p><span class="part">(a)</span> Customers can get a money off voucher for their favourite item.</p>' +
+        '<ul style="margin:0 0 10px;padding-left:22px">' +
+        '<li>Customers whose favourite item is ice cream get a money off voucher for ice cream.</li>' +
+        '<li>Customers whose favourite item is cookies get a money off voucher for cookies.</li>' +
+        '<li>Customers who do not choose either get a money off voucher for drinks.</li></ul>' +
+        '<p>The parallelogram shape represents input or output.</p>' +
+        '<p>Complete the flowchart to show this process. You will not need all of the symbols.</p>' +
+        '<p class="marks">[6 marks]</p>',
+      vb: [525, 545],
+      nodes: [
+        { id: 'start', type: 'start', x: 130, y: 30, w: 120, h: 36, text: 'Start', given: true },
+        { id: 'IN', type: 'io', x: 130, y: 110, w: 170, h: 60 },
+        { id: 'd1', type: 'decision', x: 130, y: 225, w: 170, h: 100, text: 'Choice ==\nice cream?', given: true },
+        { id: 'ice', type: 'io', x: 345, y: 225, w: 150, h: 56, text: 'Print ice\ncream voucher', given: true },
+        { id: 'D2', type: 'decision', x: 130, y: 370, w: 170, h: 100 },
+        { id: 'cookie', type: 'io', x: 345, y: 370, w: 150, h: 56, text: 'Print cookie\nvoucher', given: true },
+        { id: 'DR', type: 'io', x: 130, y: 500, w: 170, h: 56 },
+        { id: 'EN', type: 'stop', x: 450, y: 500, w: 120, h: 40 }
+      ],
+      pieces: [
+        { id: 'input', type: 'io', text: 'Choose ice cream\nor cookies' },
+        { id: 'dcookies', type: 'decision', text: 'Choice ==\ncookies?' },
+        { id: 'drink', type: 'io', text: 'Print drink\nvoucher' },
+        { id: 'end', type: 'stop', text: 'End' },
+        { id: 'ddrinks', type: 'decision', text: 'Choice ==\ndrinks?' },
+        { id: 'start2', type: 'start', text: 'Start' }
+      ],
+      lslots: [
+        { id: 'L2r', x: 245, y: 354 },
+        { id: 'L2d', x: 152, y: 446 }
+      ],
+      edges: [
+        { pts: [[130, 48], [130, 80]], head: true },
+        { pts: [[130, 140], [130, 175]], head: true },
+        { pts: [[215, 225], [276, 225]], head: true, lab: 'Yes', lx: 224, ly: 215 },
+        { pts: [[130, 275], [130, 320]], head: true, lab: 'No', lx: 137, ly: 297 },
+        { pts: [[215, 370], [276, 370]], head: true },
+        { pts: [[130, 420], [130, 472]], head: true },
+        { pts: [[414, 225], [450, 225], [450, 480]], head: true },
+        { pts: [[414, 370], [450, 370]], head: true },
+        { pts: [[209, 500], [390, 500]], head: true }
+      ],
+      answers: [
+        { boxes: { IN: 'input', D2: 'dcookies', DR: 'drink', EN: 'end' }, labels: { L2r: 'Yes', L2d: 'No' } }
+      ]
+    },
+    {
+      id: 'letter-sorting',
+      title: 'Letter sorting machine',
+      marks: 6,
+      text:
+        '<p>P-Cubed uses automatic sorting machines.</p>' +
+        '<p><span class="part">(a)</span> Letters are unloaded onto an automatic sorting machine. The machine weighs each letter. Letters are sent along different paths based on their weight. After 1000 letters are sorted, a bell is sounded to alert an operator to load more letters.</p>' +
+        '<table><tr><td>1 to 100 grams</td><td>Green path</td></tr><tr><td>101 to 750 grams</td><td>Yellow path</td></tr><tr><td>751 grams or more</td><td>Red path to larger sorting machines</td></tr></table>' +
+        '<p>Complete the flowchart to implement the letter sorting algorithm by using the symbols provided. Use all the symbols. Use each symbol only once. Use as many arrows and Yes/No labels as required.</p>' +
+        '<p>The <b>weight</b> symbol in the flowchart is an input.</p>' +
+        '<p class="marks">[6 marks]</p>',
+      vb: [495, 655],
+      nodes: [
+        { id: 'start', type: 'start', x: 75, y: 25, w: 110, h: 30, text: 'Start', given: true },
+        { id: 'count0', type: 'process', x: 75, y: 80, w: 120, h: 34, text: 'count = 0', given: true },
+        { id: 'weight', type: 'io', x: 75, y: 148, w: 130, h: 40, text: 'weight', given: true },
+        { id: 'D1', type: 'decision', x: 75, y: 228, w: 130, h: 70 },
+        { id: 'D2', type: 'decision', x: 235, y: 228, w: 130, h: 70 },
+        { id: 'A', type: 'io', x: 75, y: 324, w: 130, h: 46 },
+        { id: 'B', type: 'io', x: 235, y: 324, w: 130, h: 46 },
+        { id: 'C', type: 'io', x: 385, y: 304, w: 130, h: 46 },
+        { id: 'P', type: 'process', x: 385, y: 412, w: 140, h: 40 },
+        { id: 'dEnd', type: 'decision', x: 385, y: 494, w: 140, h: 66, text: 'count =\n1000?', given: true },
+        { id: 'bell', type: 'process', x: 385, y: 574, w: 120, h: 34, text: 'Sound Bell', given: true },
+        { id: 'end', type: 'stop', x: 385, y: 630, w: 110, h: 30, text: 'End', given: true }
+      ],
+      pieces: [
+        { id: 'red', type: 'io', text: 'Open red path' },
+        { id: 'inc', type: 'process', text: 'count = count + 1' },
+        { id: 'yellow', type: 'io', text: 'Open yellow\npath' },
+        { id: 'd100', type: 'decision', text: 'weight <=\n100 grams?' },
+        { id: 'green', type: 'io', text: 'Open green\npath' },
+        { id: 'd750', type: 'decision', text: 'weight <=\n750 grams?' }
+      ],
+      lslots: [
+        { id: 'L1r', x: 155, y: 213 },
+        { id: 'L1d', x: 99, y: 282 },
+        { id: 'L2r', x: 342, y: 213 },
+        { id: 'L2d', x: 259, y: 282 }
+      ],
+      edges: [
+        { pts: [[75, 40], [75, 63]], head: true },
+        { pts: [[75, 97], [75, 128]], head: true },
+        { pts: [[75, 168], [75, 193]], head: true },
+        { pts: [[140, 228], [170, 228]], head: true },
+        { pts: [[75, 263], [75, 301]], head: true },
+        { pts: [[300, 228], [385, 228], [385, 281]], head: true },
+        { pts: [[235, 263], [235, 301]], head: true },
+        { pts: [[75, 347], [75, 366], [385, 366]] },
+        { pts: [[235, 347], [235, 366]] },
+        { pts: [[385, 327], [385, 392]], head: true },
+        { pts: [[385, 432], [385, 461]], head: true },
+        { pts: [[455, 494], [485, 494], [485, 112], [75, 112]], head: true, lab: 'No', lx: 461, ly: 486 },
+        { pts: [[385, 527], [385, 557]], head: true, lab: 'Yes', lx: 392, ly: 546 },
+        { pts: [[385, 591], [385, 615]], head: true }
+      ],
+      answers: [
+        { boxes: { D1: 'd100', D2: 'd750', A: 'green', B: 'yellow', C: 'red', P: 'inc' }, labels: { L1r: 'No', L1d: 'Yes', L2r: 'No', L2d: 'Yes' } },
+        { boxes: { D1: 'd100', D2: 'd750', A: 'green', B: 'red', C: 'yellow', P: 'inc' }, labels: { L1r: 'No', L1d: 'Yes', L2r: 'Yes', L2d: 'No' } },
+        { boxes: { D1: 'd750', D2: 'd100', A: 'red', B: 'green', C: 'yellow', P: 'inc' }, labels: { L1r: 'Yes', L1d: 'No', L2r: 'No', L2d: 'Yes' } },
+        { boxes: { D1: 'd750', D2: 'd100', A: 'red', B: 'yellow', C: 'green', P: 'inc' }, labels: { L1r: 'Yes', L1d: 'No', L2r: 'Yes', L2d: 'No' } }
+      ]
+    },
+    {
+      id: 'theme-park',
+      title: 'Theme park ride',
+      marks: 4,
+      text:
+        '<p>A theme park ride checks the height of each visitor.</p>' +
+        '<ul style="margin:0 0 10px;padding-left:22px">' +
+        '<li>Visitors who are 120 cm or taller are shown the message “Enjoy the ride”.</li>' +
+        '<li>Visitors who are under 120 cm are shown the message “Too short”.</li></ul>' +
+        '<p>Complete the flowchart using the symbols provided. Use each symbol once. Add Yes/No labels as required.</p>' +
+        '<p class="marks">[4 marks]</p>',
+      vb: [380, 380],
+      nodes: [
+        { id: 'start', type: 'start', x: 100, y: 25, w: 110, h: 30, text: 'Start', given: true },
+        { id: 'IN', type: 'io', x: 100, y: 90, w: 160, h: 44 },
+        { id: 'D', type: 'decision', x: 100, y: 180, w: 150, h: 76 },
+        { id: 'OUT1', type: 'io', x: 290, y: 180, w: 150, h: 44 },
+        { id: 'OUT2', type: 'io', x: 100, y: 270, w: 160, h: 44 },
+        { id: 'end', type: 'stop', x: 100, y: 350, w: 110, h: 30, text: 'End', given: true }
+      ],
+      pieces: [
+        { id: 'enjoy', type: 'io', text: 'Output\n“Enjoy the ride”' },
+        { id: 'in', type: 'io', text: 'Input height' },
+        { id: 'short', type: 'io', text: 'Output\n“Too short”' },
+        { id: 'dec', type: 'decision', text: 'height\n>= 120?' }
+      ],
+      lslots: [
+        { id: 'Lr', x: 198, y: 164 },
+        { id: 'Ld', x: 122, y: 233 }
+      ],
+      edges: [
+        { pts: [[100, 40], [100, 68]], head: true },
+        { pts: [[100, 112], [100, 142]], head: true },
+        { pts: [[175, 180], [221, 180]], head: true },
+        { pts: [[100, 218], [100, 248]], head: true },
+        { pts: [[100, 292], [100, 335]], head: true },
+        { pts: [[290, 202], [290, 350], [155, 350]], head: true }
+      ],
+      answers: [
+        { boxes: { IN: 'in', D: 'dec', OUT1: 'enjoy', OUT2: 'short' }, labels: { Lr: 'Yes', Ld: 'No' } },
+        { boxes: { IN: 'in', D: 'dec', OUT1: 'short', OUT2: 'enjoy' }, labels: { Lr: 'No', Ld: 'Yes' } }
+      ]
+    },
+    {
+      id: 'trace-total',
+      kind: 'trace',
+      title: 'Adding up numbers (trace table)',
+      marks: 4,
+      text: '<p>The flowchart shows an algorithm that adds up numbers entered by the user.</p>',
+      text2: '<p>The user enters the numbers <b>5</b>, <b>2</b> and <b>8</b>.</p><p>Complete the trace table for the algorithm. The first row has been done for you.</p><p class="marks">[4 marks]</p>',
+      vb: [390, 445],
+      nodes: [
+        { id: 'start', type: 'start', x: 120, y: 25, w: 110, h: 30, text: 'Start', given: true },
+        { id: 't0', type: 'process', x: 120, y: 75, w: 120, h: 32, text: 'total = 0', given: true },
+        { id: 'c1', type: 'process', x: 120, y: 125, w: 120, h: 32, text: 'count = 1', given: true },
+        { id: 'd', type: 'decision', x: 120, y: 195, w: 140, h: 66, text: 'count <= 3?', given: true },
+        { id: 'in', type: 'io', x: 120, y: 270, w: 140, h: 40, text: 'Input number', given: true },
+        { id: 'add', type: 'process', x: 120, y: 330, w: 150, h: 44, text: 'total =\ntotal + number', given: true },
+        { id: 'inc', type: 'process', x: 120, y: 390, w: 150, h: 44, text: 'count =\ncount + 1', given: true },
+        { id: 'out', type: 'io', x: 310, y: 195, w: 130, h: 40, text: 'Output total', given: true },
+        { id: 'end', type: 'stop', x: 310, y: 265, w: 110, h: 30, text: 'End', given: true }
+      ],
+      edges: [
+        { pts: [[120, 40], [120, 59]], head: true },
+        { pts: [[120, 91], [120, 109]], head: true },
+        { pts: [[120, 141], [120, 162]], head: true },
+        { pts: [[120, 228], [120, 250]], head: true, lab: 'Yes', lx: 127, ly: 242 },
+        { pts: [[120, 290], [120, 308]], head: true },
+        { pts: [[120, 352], [120, 368]], head: true },
+        { pts: [[120, 412], [120, 430], [20, 430], [20, 150], [120, 150]], head: true },
+        { pts: [[190, 195], [251, 195]], head: true, lab: 'No', lx: 198, ly: 186 },
+        { pts: [[310, 215], [310, 250]], head: true }
+      ],
+      tcols: ['count', 'number', 'total', 'Output'],
+      trows: [
+        ['1', '', '0', ''],
+        ['1', '5', { a: 5 }, ''],
+        ['2', '2', { a: 7 }, ''],
+        ['3', '8', { a: 15 }, ''],
+        [{ a: 4 }, '', '', { a: 15 }]
+      ]
+    },
+    {
+      id: 'greenhouse',
+      title: 'Greenhouse temperature',
+      marks: 8,
+      text:
+        '<p>A greenhouse uses a computer to control its temperature. The computer checks the temperature once an hour for 24 hours.</p>' +
+        '<ul style="margin:0 0 10px;padding-left:22px">' +
+        '<li>If the temperature is below 15 °C, the heater is turned on.</li>' +
+        '<li>If the temperature is above 25 °C, a window is opened.</li>' +
+        '<li>Otherwise, nothing happens.</li>' +
+        '<li>After 24 readings, the message “Day complete” is output.</li></ul>' +
+        '<p>Complete the flowchart using the symbols provided. You will not need all of the symbols. Add the missing arrows and Yes/No labels.</p>' +
+        '<p class="marks">[8 marks]</p>',
+      vb: [505, 680],
+      nodes: [
+        { id: 'start', type: 'start', x: 85, y: 25, w: 110, h: 30, text: 'Start', given: true },
+        { id: 'cnt0', type: 'process', x: 85, y: 78, w: 120, h: 34, text: 'count = 0', given: true },
+        { id: 'inT', type: 'io', x: 85, y: 145, w: 140, h: 46, text: 'Input\ntemperature', given: true },
+        { id: 'DA', type: 'decision', x: 85, y: 228, w: 130, h: 72 },
+        { id: 'DB', type: 'decision', x: 245, y: 228, w: 130, h: 72 },
+        { id: 'HA', type: 'process', x: 85, y: 322, w: 130, h: 40 },
+        { id: 'WB', type: 'process', x: 245, y: 322, w: 130, h: 40 },
+        { id: 'inc', type: 'process', x: 395, y: 410, w: 140, h: 44, text: 'count =\ncount + 1', given: true },
+        { id: 'dEnd', type: 'decision', x: 395, y: 495, w: 140, h: 66, text: 'count = 24?', given: true },
+        { id: 'out', type: 'io', x: 395, y: 580, w: 150, h: 46, text: 'Output\n“Day complete”', given: true },
+        { id: 'end', type: 'stop', x: 395, y: 650, w: 110, h: 30, text: 'End', given: true }
+      ],
+      pieces: [
+        { id: 'heater', type: 'process', text: 'Turn heater on' },
+        { id: 'd20', type: 'decision', text: 'temperature\n= 20?' },
+        { id: 'dA', type: 'decision', text: 'temperature\n< 15?' },
+        { id: 'window', type: 'process', text: 'Open window' },
+        { id: 'off', type: 'process', text: 'Turn heater off' },
+        { id: 'dB', type: 'decision', text: 'temperature\n> 25?' }
+      ],
+      lslots: [
+        { id: 'LAr', x: 165, y: 212 },
+        { id: 'LAd', x: 108, y: 283 },
+        { id: 'LBr', x: 340, y: 212 },
+        { id: 'LBd', x: 268, y: 283 }
+      ],
+      edges: [
+        { pts: [[85, 40], [85, 61]], head: true },
+        { pts: [[85, 95], [85, 122]], head: true },
+        { pts: [[85, 168], [85, 192]], head: true },
+        { pts: [[150, 228], [180, 228]], head: true },
+        { pts: [[85, 264], [85, 302]], head: true },
+        { pts: [[245, 264], [245, 302]], head: true },
+        { pts: [[85, 342], [85, 366], [395, 366]] },
+        { pts: [[395, 366], [395, 388]], head: true },
+        { pts: [[395, 432], [395, 462]], head: true },
+        { pts: [[395, 528], [395, 557]], head: true, lab: 'Yes', lx: 402, ly: 546 },
+        { pts: [[395, 603], [395, 635]], head: true },
+        { pts: [[465, 495], [465, 495]], lab: 'No', lx: 469, ly: 487 }
+      ],
+      /* Arrow gaps: pts run from node a to node b ('fwd'); hx, hy = the ? handle */
+      agaps: [
+        { id: 'g1', a: 'dEnd', b: 'inT', pts: [[465, 495], [490, 495], [490, 108], [85, 108]], hx: 490, hy: 300 },
+        { id: 'g2', a: 'DB', b: 'inc', pts: [[310, 228], [395, 228], [395, 366]], hx: 395, hy: 298 },
+        { id: 'g3', a: 'WB', b: 'inc', pts: [[245, 342], [245, 366]], hx: 245, hy: 354 }
+      ],
+      answers: [
+        { boxes: { DA: 'dA', DB: 'dB', HA: 'heater', WB: 'window' }, labels: { LAr: 'No', LAd: 'Yes', LBr: 'No', LBd: 'Yes' }, arrows: { g1: 'fwd', g2: 'fwd', g3: 'fwd' } },
+        { boxes: { DA: 'dB', DB: 'dA', HA: 'window', WB: 'heater' }, labels: { LAr: 'No', LAd: 'Yes', LBr: 'No', LBd: 'Yes' }, arrows: { g1: 'fwd', g2: 'fwd', g3: 'fwd' } }
+      ]
+    }
+  ];
+
+  /* ================= Prepare ================= */
+  QUESTIONS.forEach(function (Q) {
+    Q.kind = Q.kind || 'complete';
+    Q.pieces = Q.pieces || [];
+    Q.lslots = Q.lslots || [];
+    Q.answers = Q.answers || [];
+    Q.N = {};
+    Q.slots = [];
+    Q.nodes.forEach(function (n) { Q.N[n.id] = n; if (!n.given) Q.slots.push(n.id); });
+    Q.slots.sort(function (a, b) { return Q.N[a].y - Q.N[b].y || Q.N[a].x - Q.N[b].x; });
+    Q.P = {};
+    Q.pieces.forEach(function (p) { Q.P[p.id] = p; });
+    Q.L = {};
+    Q.lslots.forEach(function (l) { Q.L[l.id] = l; });
+    Q.agaps = Q.agaps || [];
+    Q.G = {};
+    Q.agaps.forEach(function (g) { Q.G[g.id] = g; });
+    /* Table questions: a cell is a printed string or { a: number } for a box to type in */
+    if (Q.kind === 'testplan') {
+      Q.tcols = Q.cols;
+      Q.trows = Q.rows.map(function (r) { return [r.input, r.type, { a: r.answer, name: r.input }]; });
+    }
+    Q.cells = [];
+    (Q.trows || []).forEach(function (row, r) {
+      row.forEach(function (c, ci) {
+        if (c && typeof c === 'object') Q.cells.push({ r: r, c: ci, a: c.a, name: c.name || (Q.tcols[ci] + ' in row ' + (r + 1)) });
+      });
+    });
+    Q.isTable = Q.kind === 'testplan' || Q.kind === 'trace';
+    Q.total = Q.isTable ? Q.cells.length : Q.slots.length + Q.lslots.length + Q.agaps.length;
+  });
+
+  /* ================= Helpers ================= */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function oneLine(s) { return String(s).replace(/\n/g, ' '); }
+  var ZOOM = 1.25, LW = 32, LH = 18;
+
+  function shapeMarkup(type, cx, cy, w, h) {
+    var l = cx - w / 2, r = cx + w / 2, t = cy - h / 2, b = cy + h / 2;
+    switch (type) {
+      case 'start':
+      case 'stop':
+        return '<rect class="sh" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '"/>';
+      case 'io':
+        return '<polygon class="sh" points="' + [l + 12, t, r, t, r - 12, b, l, b].join(',') + '"/>';
+      case 'decision':
+        return '<polygon class="sh" points="' + [cx, t, r, cy, cx, b, l, cy].join(',') + '"/>';
+      default:
+        return '<rect class="sh" x="' + l + '" y="' + t + '" width="' + w + '" height="' + h + '"/>';
+    }
+  }
+  function textMarkup(text, cx, cy, cls) {
+    var lines = String(text).split('\n');
+    var y0 = cy - (lines.length - 1) * 7.5;
+    return lines.map(function (ln, i) {
+      return '<text class="' + (cls || 'stext') + '" x="' + cx + '" y="' + (y0 + i * 15) + '" text-anchor="middle" dominant-baseline="central">' + esc(ln) + '</text>';
+    }).join('');
+  }
+  function headMarkup(a, b) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / len, uy = dy / len, L = 9, W = 5;
+    var bx = b[0] - ux * L, by = b[1] - uy * L;
+    return '<polygon class="ah" points="' + [b[0], b[1], bx - uy * W, by + ux * W, bx + uy * W, by - ux * W].map(function (v) { return Math.round(v * 10) / 10; }).join(',') + '"/>';
+  }
+  function linePts(pts, head) {
+    var p = pts.slice();
+    if (head) {
+      var a = p[p.length - 2], b = p[p.length - 1], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1;
+      p[p.length - 1] = [b[0] - dx / len * 7, b[1] - dy / len * 7];
+    }
+    return p.map(function (q) { return q.join(','); }).join(' ');
+  }
+  function tileSVG(piece) {
+    var h = piece.type === 'decision' ? 60 : 44;
+    return '<svg viewBox="0 0 150 ' + (h + 4) + '" aria-hidden="true" focusable="false">' + shapeMarkup(piece.type, 75, h / 2 + 2, 144, h) + textMarkup(piece.text, 75, h / 2 + 2) + '</svg>';
+  }
+
+  /* ================= Storage and themes ================= */
+  var store = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } }
+  };
+  var KEY_THEME = 'gcsecs-flowchart-shapes-theme';
+  var KEY_SOLVED = 'gcsecs-ocr-flowchart-solved';
+  var KEY_BEST = 'gcsecs-ocr-flowchart-best';
+  var KEY_ZOOM = 'gcsecs-ocr-flowchart-zoom';
+  function getSolved() { try { var v = JSON.parse(store.get(KEY_SOLVED) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function markSolved(id) { var s = getSolved(); if (s.indexOf(id) < 0) { s.push(id); store.set(KEY_SOLVED, JSON.stringify(s)); } }
+  function getBests() { try { var v = JSON.parse(store.get(KEY_BEST) || '{}'); return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; } catch (e) { return {}; } }
+  function saveBest(id, n) {
+    var b = getBests(), prev = typeof b[id] === 'number' ? b[id] : null;
+    if (prev === null || n < prev) { b[id] = n; store.set(KEY_BEST, JSON.stringify(b)); }
+    return prev;
+  }
+  function plural(n) { return n + ' wrong check' + (n === 1 ? '' : 's'); }
+
+  var THEMES = [
+    { id: 'day', label: 'Day', bg: '#ffffff', ink: '#111111' },
+    { id: 'night', label: 'Night', bg: '#121417', ink: '#eef1f4' },
+    { id: 'send', label: 'Soft lighting', bg: '#f7f0d6', ink: '#222222' },
+    { id: 'blue', label: 'Soft blue', bg: '#dde9f4', ink: '#15202b' },
+    { id: 'contrast', label: 'High contrast', bg: '#000000', ink: '#ffff00' }
+  ];
+  function applyTheme(id) {
+    if (!THEMES.some(function (t) { return t.id === id; })) id = 'day';
+    document.documentElement.setAttribute('data-theme', id);
+    store.set(KEY_THEME, id);
+    var btns = $('themePanel').querySelectorAll('.swatch');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-t') === id ? 'true' : 'false');
+  }
+  function buildThemes() {
+    var panel = $('themePanel');
+    THEMES.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch';
+      b.setAttribute('data-t', t.id);
+      b.innerHTML = '<span class="dotsw" style="background:' + t.bg + ';color:' + t.ink + '" aria-hidden="true">A</span><span>' + esc(t.label) + '</span>';
+      b.addEventListener('click', function () {
+        applyTheme(t.id);
+        panel.hidden = true;
+        $('themeBtn').setAttribute('aria-expanded', 'false');
+        $('themeBtn').focus();
+        postHeight();
+      });
+      panel.appendChild(b);
+    });
+    $('themeBtn').addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+      postHeight();
+    });
+    applyTheme(store.get(KEY_THEME) || 'day');
+  }
+
+  /* ================= Embedding: tell the parent page our height ================= */
+  var lastH = 0;
+  function postHeight(scrollTop) {
+    if (window.parent === window) return;
+    var h = Math.ceil($('app').getBoundingClientRect().height) + 4;
+    if (h === lastH && !scrollTop) return;
+    lastH = h;
+    try { window.parent.postMessage({ type: 'gcsecs-iframe-height', height: h, scrollTop: !!scrollTop }, '*'); } catch (e) { /* ignore */ }
+  }
+
+  /* ================= State ================= */
+  var S = { idx: 0, Q: null, boxes: {}, labels: {}, arrows: {}, bankOrder: [], sel: null, pop: null, popScroll: 0, zoom: true, wrongChecks: 0, lastWrong: null };
+
+  /* ================= Screens ================= */
+  function showScreen(which) {
+    $('scrMenu').hidden = which !== 'menu';
+    $('scrQ').hidden = which !== 'q';
+    $('menuBtn').hidden = which === 'menu';
+    closePop(true);
+    try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+    setTimeout(function () { postHeight(true); }, 0);
+  }
+  function renderMenu() {
+    var solved = getSolved(), bests = getBests(), list = $('qlist');
+    list.innerHTML = '';
+    QUESTIONS.forEach(function (Q, i) {
+      var done = solved.indexOf(Q.id) >= 0;
+      var best = typeof bests[Q.id] === 'number' ? bests[Q.id] : null;
+      var bestTxt = best === null ? '' : (best === 0 ? 'no wrong checks' : 'best: ' + plural(best));
+      var status = done ? (best === 0 ? 'Perfect' : 'Solved') : '';
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'qbtn' + (done ? ' done' : '');
+      b.innerHTML = '<span class="num">' + (i + 1) + '</span><span class="qtxt"><span class="qtitle">' + esc(Q.title) + '</span><span class="qtag">' + Q.marks + ' marks' + (bestTxt ? ' · ' + esc(bestTxt) : '') + '</span></span>' + (status ? '<span class="qdone">' + status + '</span>' : '');
+      b.setAttribute('aria-label', 'Question ' + (i + 1) + ': ' + Q.title + ', ' + Q.marks + ' marks' + (status ? ', ' + status.toLowerCase() : '') + (bestTxt ? ', ' + bestTxt : ''));
+      b.addEventListener('click', function () { openQuestion(i); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  }
+  function goMenu() { S.Q = null; closePop(true); renderMenu(); showScreen('menu'); }
+
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function openQuestion(i) {
+    S.idx = i;
+    S.Q = QUESTIONS[i];
+    $('qMeta').textContent = 'Question ' + (i + 1) + ' of ' + QUESTIONS.length + ' · ' + S.Q.marks + ' marks';
+    $('qText').innerHTML = S.Q.text;
+    var tp = S.Q.isTable;
+    $('bank').hidden = tp;
+    $('tplan').hidden = !tp;
+    $('play').classList.toggle('solo', tp);
+    $('arrowSec').hidden = !S.Q.agaps.length;
+    if (tp) buildTable();
+    showScreen('q');
+    $('board').scrollLeft = 0;
+    S.wrongChecks = 0;
+    S.lastWrong = null;
+    updateCounter(false);
+    resetQuestion();
+  }
+  /* ================= Test plan questions ================= */
+  function buildTable() {
+    var Q = S.Q, k = 0, plan = Q.kind === 'testplan';
+    $('tpText').innerHTML = Q.text2 || '';
+    $('tpTable').className = 'tp' + (plan ? '' : ' trace');
+    $('tpHead').innerHTML = Q.tcols.map(function (c) { return '<th scope="col">' + esc(c) + '</th>'; }).join('');
+    $('tpBody').innerHTML = Q.trows.map(function (row, r) {
+      return '<tr>' + row.map(function (c, ci) {
+        if (!c || typeof c !== 'object') return '<td>' + esc(c || '') + '</td>';
+        var aria = plan ? Q.tcols[ci] + ' for ' + Q.tcols[0].toLowerCase() + ' ' + c.name : Q.tcols[ci] + ', row ' + (r + 1);
+        return '<td class="ans"><input type="text" inputmode="decimal" autocomplete="off" maxlength="12" data-row="' + (k++) + '" placeholder="' + (plan ? 'Type here' : '') + '" aria-label="' + esc(aria) + '"></td>';
+      }).join('') + '</tr>';
+    }).join('');
+  }
+  function tpInputs() { return $('tpBody').querySelectorAll('input[data-row]'); }
+  /* Accepts 130, £130, 130.00, " 130 " */
+  function parseAnswer(s) {
+    var t = String(s).replace(/\s+/g, '').replace(/^£/, '');
+    if (!/^-?\d+(\.\d+)?$/.test(t)) return null;
+    return parseFloat(t);
+  }
+
+  function resetQuestion() {
+    if (S.Q.isTable) {
+      var ins = tpInputs();
+      for (var k = 0; k < ins.length; k++) ins[k].value = '';
+    }
+    S.boxes = {};
+    S.labels = {};
+    S.arrows = {};
+    S.sel = null;
+    S.bankOrder = S.Q.pieces.map(function (p) { return p.id; });
+    hideMsg();
+    hideAsk();
+    closePop(true);
+    render();
+  }
+
+  /* ================= Placing ================= */
+  function boxOf(pieceId) { for (var k in S.boxes) if (S.boxes[k] === pieceId) return k; return null; }
+  function unplaced() { return S.bankOrder.filter(function (id) { return !boxOf(id); }); }
+  function placePiece(slotId, pieceId) {
+    var src = boxOf(pieceId), old = S.boxes[slotId];
+    if (src === slotId) { changed(); return; }
+    S.boxes[slotId] = pieceId;
+    if (src) { if (old) S.boxes[src] = old; else delete S.boxes[src]; }
+    changed();
+  }
+  function emptyBox(slotId) { if (S.boxes[slotId]) { delete S.boxes[slotId]; } changed(); }
+  function setLabel(lid, val) { if (val) S.labels[lid] = val; else delete S.labels[lid]; changed(); }
+  function changed() { S.sel = null; hideMsg(); hideAsk(); render(); }
+
+  /* ================= Rendering ================= */
+  function render() { renderBoard(); renderBank(); postHeight(); }
+
+  /* Names used in the arrow chooser and screen reader labels */
+  function nodeName(id) {
+    var nd = S.Q.N[id];
+    if (nd.given) return '“' + oneLine(nd.text) + '”';
+    var pid = S.boxes[id];
+    return pid ? '“' + oneLine(S.Q.P[pid].text) + '”' : 'the empty box';
+  }
+  function arrowEnds(g, dir) { return dir === 'back' ? [nodeName(g.b), nodeName(g.a)] : [nodeName(g.a), nodeName(g.b)]; }
+  function setArrow(gid, dir) { if (dir) S.arrows[gid] = dir; else delete S.arrows[gid]; changed(); }
+  function attrFor(kind) { return kind === 'box' ? 'data-slot' : (kind === 'label' ? 'data-lslot' : 'data-agap'); }
+
+  function renderBoard() {
+    var Q = S.Q, vw = Q.vb[0], vh = Q.vb[1], focused = null;
+    var act = document.activeElement;
+    if (act && act.getAttribute) ['data-slot', 'data-lslot', 'data-agap'].forEach(function (a) { if (!focused && act.getAttribute(a)) focused = [a, act.getAttribute(a)]; });
+
+    var s = '';
+    Q.edges.forEach(function (e) {
+      s += '<polyline class="ln" points="' + linePts(e.pts, e.head) + '"/>' + (e.head ? headMarkup(e.pts[e.pts.length - 2], e.pts[e.pts.length - 1]) : '');
+      if (e.lab) s += '<text class="glab" x="' + e.lx + '" y="' + e.ly + '">' + e.lab + '</text>';
+    });
+    Q.agaps.forEach(function (g) {
+      var dir = S.arrows[g.id], pts = dir === 'back' ? g.pts.slice().reverse() : g.pts, all = pts.map(function (q) { return q.join(','); }).join(' ');
+      var cls = 'agap' + (dir ? ' set' : '') + (S.sel && S.sel.kind === 'arrow' && !dir ? ' target' : '') + (S.pop && S.pop.kind === 'arrow' && S.pop.id === g.id ? ' active' : '');
+      var label = dir ? 'Arrow from ' + arrowEnds(g, dir).join(' to ') + '. Activate to change.' : 'Missing arrow between ' + nodeName(g.a) + ' and ' + nodeName(g.b) + '. Activate to add it.';
+      s += '<g class="' + cls + '" data-agap="' + g.id + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' +
+        '<polyline class="gring" points="' + all + '"/>' +
+        (dir ? '<polyline class="uarr" points="' + linePts(pts, true) + '"/>' + headMarkup(pts[pts.length - 2], pts[pts.length - 1]).replace('class="ah"', 'class="uah"')
+             : '<polyline class="gapl" points="' + all + '"/>') +
+        '<polyline class="ghit" points="' + all + '"/>' +
+        '<circle class="ghc" cx="' + g.hx + '" cy="' + g.hy + '" r="16"/>' +
+        '<circle class="gh" cx="' + g.hx + '" cy="' + g.hy + '" r="11"/>' +
+        '<text class="gq" x="' + g.hx + '" y="' + g.hy + '" text-anchor="middle" dominant-baseline="central">?</text></g>';
+    });
+    var n = 0;
+    Q.nodes.forEach(function (nd) {
+      if (nd.given) { s += '<g>' + shapeMarkup(nd.type, nd.x, nd.y, nd.w, nd.h) + textMarkup(nd.text, nd.x, nd.y) + '</g>'; return; }
+      n++;
+      var pid = S.boxes[nd.id], inner, label, l = nd.x - nd.w / 2, t = nd.y - nd.h / 2;
+      if (pid) {
+        var p = Q.P[pid];
+        inner = shapeMarkup(p.type, nd.x, nd.y, nd.w, nd.h) + textMarkup(p.text, nd.x, nd.y);
+        label = 'Answer box: ' + oneLine(p.text) + '. Activate to change.';
+      } else {
+        inner = '<rect class="empty" x="' + l + '" y="' + t + '" width="' + nd.w + '" height="' + nd.h + '" rx="8"/><text class="etext" x="' + nd.x + '" y="' + nd.y + '" text-anchor="middle" dominant-baseline="central">Tap to fill</text>';
+        label = 'Empty answer box. Activate to choose a symbol.';
+      }
+      var cls = 'slot' + (pid ? ' placed' : '') + (S.sel && S.sel.kind === 'piece' ? ' target' : '') + (S.pop && S.pop.kind === 'box' && S.pop.id === nd.id ? ' active' : '');
+      s += '<g class="' + cls + '" data-slot="' + nd.id + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner +
+        '<rect class="ring" x="' + (l - 4) + '" y="' + (t - 4) + '" width="' + (nd.w + 8) + '" height="' + (nd.h + 8) + '" rx="10"/>' +
+        '<rect class="hit" x="' + (l - 4) + '" y="' + (t - 4) + '" width="' + (nd.w + 8) + '" height="' + (nd.h + 8) + '"/></g>';
+    });
+    Q.lslots.forEach(function (ls) {
+      var v = S.labels[ls.id], l = ls.x - LW / 2, t = ls.y - LH / 2;
+      var cls = 'lslot' + (v ? ' filled' : '') + (S.sel && S.sel.kind === 'label' ? ' target' : '') + (S.pop && S.pop.kind === 'label' && S.pop.id === ls.id ? ' active' : '');
+      s += '<g class="' + cls + '" data-lslot="' + ls.id + '" tabindex="0" role="button" aria-label="' + (v ? 'Label: ' + v + '. Activate to change.' : 'Empty Yes/No label. Activate to choose.') + '">' +
+        '<rect class="lbox" x="' + l + '" y="' + t + '" width="' + LW + '" height="' + LH + '" rx="4"/>' +
+        '<text class="ltext" x="' + ls.x + '" y="' + ls.y + '" text-anchor="middle" dominant-baseline="central">' + (v || '?') + '</text>' +
+        '<rect class="ring" x="' + (l - 3) + '" y="' + (t - 3) + '" width="' + (LW + 6) + '" height="' + (LH + 6) + '" rx="6"/>' +
+        '<rect class="hit" x="' + (l - 8) + '" y="' + (t - 8) + '" width="' + (LW + 16) + '" height="' + (LH + 16) + '"/></g>';
+    });
+
+    var boardEl = $('board'), avail = boardEl.clientWidth;
+    var need = avail > 0 && avail < vw * 0.95, zoomed = need && S.zoom;
+    $('zoomBar').hidden = !need;
+    $('zoomHint').hidden = !zoomed;
+    $('zoomBtn').setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+    $('zoomBtn').textContent = zoomed ? 'Fit to screen' : 'Bigger boxes';
+    boardEl.classList.toggle('zoomed', zoomed);
+    var keepLeft = boardEl.scrollLeft;
+    var sizeStyle = zoomed ? 'width:' + Math.round(vw * ZOOM) + 'px' : 'max-width:' + Math.round(vw * 1.25) + 'px';
+    var aria = Q.isTable ? 'Flowchart for this question' : 'Answer flowchart with ' + Q.slots.length + ' boxes' + (Q.agaps.length ? ', ' + Q.lslots.length + ' labels and ' + Q.agaps.length + ' arrows' : ' and ' + Q.lslots.length + ' labels') + ' to complete';
+    boardEl.innerHTML = '<svg class="board" viewBox="0 0 ' + vw + ' ' + vh + '" style="' + sizeStyle + '" role="' + (Q.isTable ? 'img' : 'group') + '" aria-label="' + aria + '">' + s + '</svg>';
+    if (zoomed) boardEl.scrollLeft = keepLeft;
+    if (focused) {
+      var el = boardEl.querySelector('[' + focused[0] + '="' + focused[1] + '"]');
+      if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    }
+  }
+
+  function pieceTile(id, extra) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tile' + (extra ? ' ' + extra : '');
+    b.setAttribute('data-piece', id);
+    b.setAttribute('aria-label', oneLine(S.Q.P[id].text));
+    b.innerHTML = tileSVG(S.Q.P[id]);
+    return b;
+  }
+  function renderBank() {
+    var left = unplaced(), grid = $('tgrid');
+    grid.innerHTML = '';
+    $('bankTitle').textContent = left.length ? 'Symbols (' + left.length + ' left)' : 'Symbols';
+    if (!left.length) grid.innerHTML = '<p class="bempty">All symbols used. Check the Yes/No labels, then press “Check my answer”.</p>';
+    left.forEach(function (id) {
+      var on = S.sel && S.sel.kind === 'piece' && S.sel.id === id;
+      var b = pieceTile(id, on ? 'sel' : '');
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        if (dragSuppress) return;
+        S.sel = on ? null : { kind: 'piece', id: id };
+        closePop(true);
+        render();
+        var again = $('tgrid').querySelector('[data-piece="' + id + '"]');
+        if (again) again.focus();
+      });
+      grid.appendChild(b);
+    });
+    var lt = $('ltiles').querySelectorAll('.ltile');
+    for (var i = 0; i < lt.length; i++) {
+      var on2 = S.sel && S.sel.kind === 'label' && S.sel.val === lt[i].getAttribute('data-label');
+      lt[i].classList.toggle('sel', !!on2);
+      lt[i].setAttribute('aria-pressed', on2 ? 'true' : 'false');
+    }
+    var at = $('atiles').querySelector('[data-arrow]'), on3 = !!(S.sel && S.sel.kind === 'arrow');
+    at.classList.toggle('sel', on3);
+    at.setAttribute('aria-pressed', on3 ? 'true' : 'false');
+    $('bankHint').textContent = !S.sel ? '' : (S.sel.kind === 'piece' ? 'Now tap an answer box in the flowchart.' : (S.sel.kind === 'label' ? 'Now tap a small label box on a decision exit.' : 'Now tap a dashed gap in the flowchart.'));
+  }
+
+  /* ================= Pop-up chooser ================= */
+  function openPop(kind, id) {
+    S.pop = { kind: kind, id: id };
+    renderBoard();
+    S.popScroll = $('board').scrollLeft;
+    var pop = $('pop'), wrapEl = $('boardWrap'), anchor;
+    pop.innerHTML = '';
+    if (kind === 'box') {
+      var cur = S.boxes[id], left = unplaced();
+      pop.insertAdjacentHTML('beforeend', '<h3>' + (cur ? 'Change this box' : 'Choose a symbol for this box') + '</h3>');
+      if (!left.length && !cur) pop.insertAdjacentHTML('beforeend', '<p class="bempty">No symbols left.</p>');
+      left.forEach(function (pid) {
+        var b = pieceTile(pid);
+        b.addEventListener('click', function () { var s = S.pop.id; closePop(true); placePiece(s, pid); refocus('data-slot', s); });
+        pop.appendChild(b);
+      });
+      if (cur) pop.appendChild(popBtn('Empty this box', function () { var s = S.pop.id; closePop(true); emptyBox(s); refocus('data-slot', s); }));
+      anchor = $('board').querySelector('[data-slot="' + id + '"]');
+    } else if (kind === 'arrow') {
+      var g = S.Q.G[id], curA = S.arrows[id];
+      pop.insertAdjacentHTML('beforeend', '<h3>Which way does this arrow point?</h3>');
+      ['fwd', 'back'].forEach(function (dir) {
+        var ends = arrowEnds(g, dir);
+        var b = popBtn('From ' + ends[0] + ' to ' + ends[1], function () { var s = S.pop.id; closePop(true); setArrow(s, dir); refocus('data-agap', s); });
+        b.className = 'btn aopt' + (curA === dir ? ' sel' : '');
+        b.setAttribute('data-dir', dir);
+        if (curA === dir) b.setAttribute('aria-current', 'true');
+        pop.appendChild(b);
+      });
+      if (curA) pop.appendChild(popBtn('Remove this arrow', function () { var s = S.pop.id; closePop(true); setArrow(s, null); refocus('data-agap', s); }));
+      anchor = $('board').querySelector('[data-agap="' + id + '"] .ghc');
+    } else {
+      var curL = S.labels[id];
+      pop.insertAdjacentHTML('beforeend', '<h3>Choose a label</h3>');
+      var row = document.createElement('div');
+      row.className = 'row2';
+      ['Yes', 'No'].forEach(function (v) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn tile ltile';
+        b.textContent = v;
+        b.addEventListener('click', function () { var s = S.pop.id; closePop(true); setLabel(s, v); refocus('data-lslot', s); });
+        row.appendChild(b);
+      });
+      pop.appendChild(row);
+      if (curL) pop.appendChild(popBtn('Clear this label', function () { var s = S.pop.id; closePop(true); setLabel(s, null); refocus('data-lslot', s); }));
+      anchor = $('board').querySelector('[data-lslot="' + id + '"]');
+    }
+    pop.appendChild(popBtn('Cancel', function () { var p = S.pop; closePop(); refocus(attrFor(p.kind), p.id); }));
+    pop.hidden = false;
+    var wr = wrapEl.getBoundingClientRect(), sr = anchor.getBoundingClientRect();
+    var popW = Math.min(kind === 'label' ? 240 : 300, wr.width - 12);
+    pop.style.width = popW + 'px';
+    var popH = pop.offsetHeight;
+    var x = Math.max(6, Math.min(sr.left - wr.left + sr.width / 2 - popW / 2, wr.width - popW - 6));
+    var below = sr.bottom - wr.top + 6, above = sr.top - wr.top - popH - 6, y;
+    if (below + popH <= wr.height - 4) y = below; else if (above >= 4) y = above; else y = Math.max(4, wr.height - popH - 4);
+    pop.style.left = x + 'px';
+    pop.style.top = y + 'px';
+    var first = pop.querySelector('button');
+    if (first) try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+  }
+  function popBtn(text, fn) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn';
+    b.textContent = text;
+    b.addEventListener('click', fn);
+    return b;
+  }
+  function closePop(silent) {
+    var pop = $('pop');
+    var had = S.pop;
+    pop.hidden = true;
+    pop.innerHTML = '';
+    S.pop = null;
+    if (had && !silent && S.Q) renderBoard();
+  }
+  function refocus(attr, id) {
+    var el = $('board').querySelector('[' + attr + '="' + id + '"]');
+    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+  }
+  function activateBox(id) {
+    if (S.sel && S.sel.kind === 'piece') { placePiece(id, S.sel.id); return; }
+    if (S.pop && S.pop.kind === 'box' && S.pop.id === id) { closePop(); return; }
+    S.sel = null;
+    renderBank();
+    openPop('box', id);
+  }
+  function activateGap(id) {
+    if (S.pop && S.pop.kind === 'arrow' && S.pop.id === id) { closePop(); return; }
+    S.sel = null;
+    renderBank();
+    openPop('arrow', id);
+  }
+  function activateLabel(id) {
+    if (S.sel && S.sel.kind === 'label') { setLabel(id, S.sel.val); return; }
+    if (S.pop && S.pop.kind === 'label' && S.pop.id === id) { closePop(); return; }
+    S.sel = null;
+    renderBank();
+    openPop('label', id);
+  }
+
+  /* ================= Checking ================= */
+  function showMsg(kind, html) { var m = $('msg'); m.className = 'msg ' + kind; m.innerHTML = html; m.hidden = false; postHeight(); }
+  function hideMsg() { $('msg').hidden = true; $('msg').innerHTML = ''; }
+  function updateCounter(bump) {
+    var n = S.wrongChecks || 0, wc = $('wc');
+    $('wcN').textContent = String(n);
+    wc.classList.toggle('bad', n > 0);
+    var best = S.Q ? getBests()[S.Q.id] : null;
+    $('wcBest').textContent = typeof best === 'number' ? 'Your best: ' + (best === 0 ? 'no wrong checks' : plural(best)) : '';
+    if (bump) { wc.classList.remove('bump'); void wc.offsetWidth; wc.classList.add('bump'); }
+  }
+  function check() {
+    closePop(true);
+    hideAsk();
+    var Q = S.Q;
+    if (Q.isTable) { checkTable(); return; }
+    var emptyBoxes = Q.slots.filter(function (id) { return !S.boxes[id]; }).length;
+    var emptyLabels = Q.lslots.filter(function (l) { return !S.labels[l.id]; }).length;
+    var emptyArrows = Q.agaps.filter(function (g) { return !S.arrows[g.id]; }).length;
+    if (emptyBoxes || emptyLabels || emptyArrows) {
+      var parts = [];
+      if (emptyBoxes) parts.push(emptyBoxes + (emptyBoxes === 1 ? ' box' : ' boxes'));
+      if (emptyLabels) parts.push(emptyLabels + (emptyLabels === 1 ? ' Yes/No label' : ' Yes/No labels'));
+      if (emptyArrows) parts.push(emptyArrows + (emptyArrows === 1 ? ' arrow' : ' arrows'));
+      var list = parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
+      showMsg('info', 'Complete the flowchart before checking. Still empty: ' + list + '.');
+      return;
+    }
+    var best = 0;
+    Q.answers.forEach(function (ans) {
+      var c = 0;
+      Q.slots.forEach(function (id) { if (S.boxes[id] === ans.boxes[id]) c++; });
+      Q.lslots.forEach(function (l) { if (S.labels[l.id] === ans.labels[l.id]) c++; });
+      Q.agaps.forEach(function (g) { if (S.arrows[g.id] === (ans.arrows || {})[g.id]) c++; });
+      if (c > best) best = c;
+    });
+    var key = Q.slots.map(function (id) { return S.boxes[id]; }).concat(Q.lslots.map(function (l) { return S.labels[l.id]; }), Q.agaps.map(function (g) { return S.arrows[g.id]; })).join('|');
+    if (best === Q.total) solvedMsg();
+    else wrongMsg(best, key, Q.agaps.length ? ' (boxes, Yes/No labels and arrows)' : ' (boxes and Yes/No labels)');
+  }
+  function checkTable() {
+    var Q = S.Q, ins = tpInputs(), empty = [], bad = [], right = 0, vals = [], plan = Q.kind === 'testplan';
+    for (var i = 0; i < ins.length; i++) {
+      var raw = ins[i].value.trim();
+      if (!raw) { empty.push(Q.cells[i].name); continue; }
+      var v = parseAnswer(raw);
+      if (v === null) { bad.push(Q.cells[i].name); continue; }
+      vals.push(v);
+      if (Math.abs(v - Q.cells[i].a) < 1e-9) right++;
+    }
+    if (empty.length) {
+      if (plan) showMsg('info', 'Complete the test plan before checking. Still empty: the row' + (empty.length === 1 ? ' for ' : 's for ') + empty.join(', ') + '.');
+      else showMsg('info', 'Complete the trace table before checking. Still empty: ' + empty.length + (empty.length === 1 ? ' box.' : ' boxes.'));
+      return;
+    }
+    if (bad.length) {
+      if (plan) showMsg('info', 'Type a number in each answer, for example 75. Check the row' + (bad.length === 1 ? ' for ' : 's for ') + bad.join(', ') + '.');
+      else showMsg('info', 'Type a number in each box of the trace table, for example 12.');
+      return;
+    }
+    if (right === Q.total) solvedMsg();
+    else wrongMsg(right, vals.join('|'), '');
+  }
+  function wrongMsg(best, key, what) {
+    var Q = S.Q;
+    if (key !== S.lastWrong) { S.wrongChecks++; S.lastWrong = key; updateCounter(true); }
+    showMsg('warn', best + ' of ' + Q.total + ' correct' + what + '. Keep going! Wrong checks: ' + S.wrongChecks + '.');
+  }
+  function solvedMsg() {
+    var Q = S.Q;
+    markSolved(Q.id);
+    var n = S.wrongChecks, prev = saveBest(Q.id, n);
+    var score = n === 0 ? ' <b>Perfect: no wrong checks!</b>' : ' Wrong checks: ' + n + '. Can you get it to 0 next time?';
+    if (prev !== null && n < prev) score += ' <b>New best!</b>';
+    updateCounter(false);
+    var last = S.idx === QUESTIONS.length - 1;
+    showMsg('ok', 'All ' + Q.total + ' of ' + Q.total + ' correct. Question complete!' + score +
+      '<div class="row">' + (last ? '' : '<button type="button" class="btn primary" id="nextBtn">Next question</button>') +
+      '<button type="button" class="btn" id="toMenuBtn">Back to menu</button></div>');
+    if (!last) $('nextBtn').addEventListener('click', function () { openQuestion(S.idx + 1); });
+    $('toMenuBtn').addEventListener('click', goMenu);
+  }
+
+  /* ================= Reset ================= */
+  function askReset() {
+    closePop(true);
+    var typed = false, ins = tpInputs();
+    for (var i = 0; i < ins.length; i++) if (ins[i].value.trim()) typed = true;
+    if (!Object.keys(S.boxes).length && !Object.keys(S.labels).length && !Object.keys(S.arrows).length && !(S.Q.isTable && typed)) { resetQuestion(); return; }
+    $('resetAsk').hidden = false;
+    postHeight();
+    $('resetNo').focus();
+  }
+  function hideAsk() { $('resetAsk').hidden = true; }
+
+  /* ================= Drag and drop =================
+     Mouse and pen drag straight away. Touch (tablet layout): press and hold, then drag. */
+  var drag = null, dragSuppress = false, LONG_PRESS = 350;
+  function tabletLayout() { return !window.matchMedia || window.matchMedia('(min-width: 760px)').matches; }
+  function dragLabelText(d) { return d.kind === 'label' ? d.val : (d.kind === 'arrow' ? 'Arrow' : oneLine(S.Q.P[d.id].text)); }
+  function beginDrag() {
+    drag.on = true;
+    closePop(true);
+    var g = document.createElement('div');
+    g.className = 'ghost';
+    g.textContent = dragLabelText(drag);
+    document.body.appendChild(g);
+    drag.ghost = g;
+    if (drag.touch && navigator.vibrate) { try { navigator.vibrate(12); } catch (e) { /* ignore */ } }
+  }
+  function dropTarget(x, y) {
+    var el = document.elementFromPoint(x, y);
+    if (!el || !el.closest) return null;
+    var s = el.closest('[data-slot]');
+    if (s) return { box: s.getAttribute('data-slot'), el: s };
+    var l = el.closest('[data-lslot]');
+    if (l) return { lab: l.getAttribute('data-lslot'), el: l };
+    var g = el.closest('[data-agap]');
+    if (g) return { gap: g.getAttribute('data-agap'), el: g };
+    if (el.closest('#bank')) return { bank: true };
+    return null;
+  }
+  function fits(d, t) { return t && ((t.box && d.kind === 'piece') || (t.lab && d.kind === 'label') || (t.gap && d.kind === 'arrow')); }
+  function moveDrag(x, y) {
+    drag.ghost.style.left = x + 'px';
+    drag.ghost.style.top = y + 'px';
+    var t = dropTarget(x, y), el = fits(drag, t) ? t.el : null;
+    if (el !== drag.over) {
+      if (drag.over) drag.over.classList.remove('over');
+      if (el) el.classList.add('over');
+      drag.over = el;
+    }
+  }
+  function finishDrag(x, y) {
+    var d = drag;
+    drag = null;
+    clearTimeout(d.timer);
+    if (d.ghost) d.ghost.remove();
+    dragSuppress = true;
+    setTimeout(function () { dragSuppress = false; }, 400);
+    var t = dropTarget(x, y);
+    if (d.kind === 'piece' && t && t.box && t.box !== d.from) placePiece(t.box, d.id);
+    else if (d.kind === 'label' && t && t.lab && t.lab !== d.from) {
+      if (d.from) delete S.labels[d.from];
+      setLabel(t.lab, d.val);
+    } else if (d.kind === 'arrow' && t && t.gap && t.gap !== d.from) {
+      if (d.from) delete S.arrows[d.from];
+      changed();
+      openPop('arrow', t.gap);
+    } else if (t && t.bank && d.from) {
+      if (d.kind === 'piece') emptyBox(d.from); else if (d.kind === 'label') setLabel(d.from, null); else setArrow(d.from, null);
+    } else render();
+  }
+  function cancelDrag() {
+    if (!drag) return;
+    clearTimeout(drag.timer);
+    if (drag.ghost) drag.ghost.remove();
+    var was = drag.on;
+    drag = null;
+    if (was) render();
+  }
+  function dragSource(target) {
+    if (!target.closest) return null;
+    var b = target.closest('#tgrid [data-piece]');
+    if (b) return { kind: 'piece', id: b.getAttribute('data-piece'), from: null };
+    var lt = target.closest('#ltiles [data-label]');
+    if (lt) return { kind: 'label', val: lt.getAttribute('data-label'), from: null };
+    if (target.closest('#atiles [data-arrow]')) return { kind: 'arrow', from: null };
+    var ag = target.closest('#board [data-agap]');
+    if (ag && S.arrows[ag.getAttribute('data-agap')]) return { kind: 'arrow', from: ag.getAttribute('data-agap') };
+    var s = target.closest('#board [data-slot]');
+    if (s && S.boxes[s.getAttribute('data-slot')]) return { kind: 'piece', id: S.boxes[s.getAttribute('data-slot')], from: s.getAttribute('data-slot') };
+    var l = target.closest('#board [data-lslot]');
+    if (l && S.labels[l.getAttribute('data-lslot')]) return { kind: 'label', val: S.labels[l.getAttribute('data-lslot')], from: l.getAttribute('data-lslot') };
+    return null;
+  }
+  function pointerDown(e) {
+    if (e.pointerType === 'touch' || (e.button != null && e.button !== 0) || !S.Q) return;
+    var src = dragSource(e.target);
+    if (!src) return;
+    drag = src;
+    drag.x = e.clientX; drag.y = e.clientY; drag.pid = e.pointerId; drag.on = false;
+  }
+  function pointerMove(e) {
+    if (!drag || drag.touch || e.pointerId !== drag.pid) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) { if (dx * dx + dy * dy < 64) return; beginDrag(); }
+    e.preventDefault();
+    moveDrag(e.clientX, e.clientY);
+  }
+  function pointerUp(e) {
+    if (!drag || drag.touch || e.pointerId !== drag.pid) return;
+    if (!drag.on) { drag = null; return; }
+    finishDrag(e.clientX, e.clientY);
+  }
+  function touchStart(e) {
+    if (drag) cancelDrag();
+    if (e.touches.length !== 1 || !tabletLayout() || !S.Q) return;
+    var src = dragSource(e.target);
+    if (!src) return;
+    var p = e.touches[0];
+    drag = src;
+    drag.touch = true; drag.on = false;
+    drag.x = drag.lx = p.clientX; drag.y = drag.ly = p.clientY;
+    drag.timer = setTimeout(function () { if (drag && drag.touch && !drag.on) { beginDrag(); moveDrag(drag.lx, drag.ly); } }, LONG_PRESS);
+  }
+  function touchMove(e) {
+    if (!drag || !drag.touch) return;
+    var p = e.touches[0];
+    if (!p) return;
+    drag.lx = p.clientX; drag.ly = p.clientY;
+    if (!drag.on) {
+      var dx = p.clientX - drag.x, dy = p.clientY - drag.y;
+      if (dx * dx + dy * dy > 100) { clearTimeout(drag.timer); drag = null; }
+      return;
+    }
+    if (e.cancelable) e.preventDefault();
+    moveDrag(p.clientX, p.clientY);
+  }
+  function touchEnd(e) {
+    if (!drag || !drag.touch) return;
+    clearTimeout(drag.timer);
+    if (!drag.on) { drag = null; return; }
+    if (e.cancelable) e.preventDefault();
+    var p = e.changedTouches && e.changedTouches[0];
+    finishDrag(p ? p.clientX : drag.lx, p ? p.clientY : drag.ly);
+  }
+
+  /* ================= Wiring ================= */
+  function init() {
+    var z = store.get(KEY_ZOOM);
+    S.zoom = z === null ? true : z === '1';
+    buildThemes();
+    renderMenu();
+    $('menuBtn').addEventListener('click', goMenu);
+    $('checkBtn').addEventListener('click', check);
+    $('resetBtn').addEventListener('click', askReset);
+    $('resetYes').addEventListener('click', function () { resetQuestion(); $('resetBtn').focus(); });
+    $('resetNo').addEventListener('click', function () { hideAsk(); $('resetBtn').focus(); });
+    $('zoomBtn').addEventListener('click', function () {
+      S.zoom = !S.zoom;
+      store.set(KEY_ZOOM, S.zoom ? '1' : '0');
+      closePop(true);
+      renderBoard();
+      postHeight();
+    });
+    $('tpBody').addEventListener('input', function () { hideMsg(); hideAsk(); });
+    $('tpBody').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' || !e.target.getAttribute('data-row')) return;
+      e.preventDefault();
+      var ins = tpInputs(), i = +e.target.getAttribute('data-row');
+      if (i < ins.length - 1) ins[i + 1].focus(); else check();
+    });
+    $('atiles').addEventListener('click', function (e) {
+      if (dragSuppress) return;
+      var b = e.target.closest ? e.target.closest('[data-arrow]') : null;
+      if (!b) return;
+      S.sel = S.sel && S.sel.kind === 'arrow' ? null : { kind: 'arrow' };
+      closePop(true);
+      render();
+      b.focus();
+    });
+    $('ltiles').addEventListener('click', function (e) {
+      if (dragSuppress) return;
+      var b = e.target.closest ? e.target.closest('[data-label]') : null;
+      if (!b) return;
+      var v = b.getAttribute('data-label');
+      S.sel = S.sel && S.sel.kind === 'label' && S.sel.val === v ? null : { kind: 'label', val: v };
+      closePop(true);
+      render();
+      b.focus();
+    });
+
+    var board = $('board');
+    board.addEventListener('click', function (e) {
+      if (dragSuppress || !e.target.closest) return;
+      var s = e.target.closest('[data-slot]');
+      if (s) { activateBox(s.getAttribute('data-slot')); return; }
+      var l = e.target.closest('[data-lslot]');
+      if (l) { activateLabel(l.getAttribute('data-lslot')); return; }
+      var g = e.target.closest('[data-agap]');
+      if (g) activateGap(g.getAttribute('data-agap'));
+    });
+    board.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var s = e.target.closest ? e.target.closest('[data-slot]') : null;
+      var l = e.target.closest ? e.target.closest('[data-lslot]') : null;
+      var g = e.target.closest ? e.target.closest('[data-agap]') : null;
+      if (s) { e.preventDefault(); activateBox(s.getAttribute('data-slot')); }
+      else if (l) { e.preventDefault(); activateLabel(l.getAttribute('data-lslot')); }
+      else if (g) { e.preventDefault(); activateGap(g.getAttribute('data-agap')); }
+    });
+    board.addEventListener('scroll', function () { if (S.pop && Math.abs(board.scrollLeft - (S.popScroll || 0)) > 30) closePop(); });
+
+    document.addEventListener('pointerdown', function () { dragSuppress = false; }, true);
+    document.addEventListener('pointerdown', pointerDown);
+    document.addEventListener('pointermove', pointerMove, { passive: false });
+    document.addEventListener('pointerup', pointerUp);
+    document.addEventListener('pointercancel', function () { if (drag && !drag.touch) cancelDrag(); });
+    document.addEventListener('touchstart', touchStart, { passive: true });
+    document.addEventListener('touchmove', touchMove, { passive: false });
+    document.addEventListener('touchend', touchEnd, { passive: false });
+    document.addEventListener('touchcancel', function () { if (drag && drag.touch) cancelDrag(); });
+    document.addEventListener('contextmenu', function (e) {
+      if ((drag && drag.touch) || (e.target.closest && e.target.closest('.tile, [data-slot], [data-lslot], [data-agap]'))) e.preventDefault();
+    });
+    document.addEventListener('pointerdown', function (e) {
+      var pop = $('pop');
+      if (pop.hidden || pop.contains(e.target)) return;
+      if (e.target.closest && e.target.closest('[data-slot], [data-lslot], [data-agap]')) return;
+      closePop();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (!$('pop').hidden) { var p = S.pop; closePop(); if (p) refocus(attrFor(p.kind), p.id); }
+      else if (!$('resetAsk').hidden) { hideAsk(); $('resetBtn').focus(); }
+      else if (S.sel) { S.sel = null; render(); }
+    });
+
+    if (window.ResizeObserver) new ResizeObserver(function () { postHeight(); }).observe($('app'));
+    else setInterval(postHeight, 500);
+    var lastW = window.innerWidth, rT = null;
+    window.addEventListener('resize', function () {
+      postHeight();
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      closePop();
+      clearTimeout(rT);
+      rT = setTimeout(function () { if (S.Q && !$('scrQ').hidden && !drag) { renderBoard(); postHeight(); } }, 120);
+    });
+    postHeight(true);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
