@@ -39,6 +39,14 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .ptitle{display:block;font-weight:700}
 .ptag{display:block;font-size:.85rem;color:var(--muted)}
 .pdone{flex:none;font-size:.8rem;font-weight:700;color:var(--good)}
+.wcount{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.wc{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:var(--bw) solid var(--good);background:var(--goodBg);color:var(--ink);font-weight:700}
+.wc b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.wc.bad{border-color:var(--bad);background:var(--badBg)}
+.wc.bump{animation:wcbump .5s ease-out}
+@keyframes wcbump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+.wbest{font-size:.9rem;color:var(--muted);font-weight:600}
+@media (prefers-reduced-motion:reduce){.wc.bump{animation:none}}
 .meta{color:var(--muted);font-weight:600;font-size:.9rem;margin:0}
 .ptitle-h{font-size:1.35rem;margin:2px 0 4px}
 .intro{margin:0 0 6px}
@@ -144,6 +152,10 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
         </div>
       </div>
       <div id="msg" class="msg" role="status" hidden></div>
+      <div class="wcount">
+        <span class="wc" id="wc">Wrong checks: <b id="wcN">0</b></span>
+        <span class="wbest" id="wcBest"></span>
+      </div>
       <div class="actions">
         <button id="checkBtn" class="btn primary" type="button">Check my flowchart</button>
         <button id="resetBtn" class="btn" type="button">Reset</button>
@@ -368,6 +380,79 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
         { f: 'l9', t: 'l10' }, { f: 'l6', t: 'l10', x: 'r', k: 'rail' }
       ]),
       alts: []
+    },
+    {
+      id: 'highest', title: 'Highest score', tag: 'Finding the highest',
+      intro: 'Input 10 test scores, then output the highest one.',
+      nodes: [
+        ['h1', 'start', 0, 0, 'Start'],
+        ['h2', 'process', 0, 1, 'highest = 0\ncount = 0'],
+        ['h3', 'decision', 0, 2, 'count < 10?'],
+        ['h4', 'io', 1, 2, 'Output highest'],
+        ['h5', 'stop', 1, 3, 'End'],
+        ['h6', 'io', 0, 3, 'Input score'],
+        ['h7', 'decision', 0, 4, 'score > highest?'],
+        ['h8', 'process', 1, 4, 'highest = score'],
+        ['h9', 'process', 0, 5, 'count = count + 1']
+      ],
+      edges: chain(['h1', 'h2', 'h3']).concat([
+        { f: 'h3', t: 'h6', l: 'Yes' }, { f: 'h3', t: 'h4', x: 'r', l: 'No' }, { f: 'h4', t: 'h5' },
+        { f: 'h6', t: 'h7' },
+        { f: 'h7', t: 'h8', x: 'r', l: 'Yes' }, { f: 'h7', t: 'h9', l: 'No' }, { f: 'h8', t: 'h9' },
+        { f: 'h9', t: 'h3', k: 'loop' }
+      ]),
+      alts: []
+    },
+    {
+      id: 'vending', title: 'Vending machine', tag: 'Validation and two loops',
+      intro: 'A drink costs £1.50. Keep accepting coins until enough has been paid, then give change.',
+      nodes: [
+        ['d1', 'start', 0, 0, 'Start'],
+        ['d2', 'process', 0, 1, 'total = 0'],
+        ['d3', 'io', 0, 2, 'Input coin'],
+        ['d4', 'decision', 0, 3, 'Is the coin valid?'],
+        ['d5', 'io', 1, 3, 'Output\n"Coin rejected"'],
+        ['d6', 'process', 0, 4, 'total =\ntotal + coin'],
+        ['d7', 'decision', 0, 5, 'total >= 1.50?'],
+        ['d8', 'process', 0, 6, 'change =\ntotal - 1.50'],
+        ['d9', 'io', 0, 7, 'Output change'],
+        ['d10', 'io', 0, 8, 'Output\n"Enjoy your drink"'],
+        ['d11', 'stop', 0, 9, 'End']
+      ],
+      edges: chain(['d1', 'd2', 'd3', 'd4']).concat([
+        { f: 'd4', t: 'd5', x: 'r', l: 'No' }, { f: 'd5', t: 'd3', x: 'u' },
+        { f: 'd4', t: 'd6', l: 'Yes' }, { f: 'd6', t: 'd7' },
+        { f: 'd7', t: 'd3', x: 'l', k: 'loop', l: 'No' }, { f: 'd7', t: 'd8', l: 'Yes' }
+      ]).concat(chain(['d8', 'd9', 'd10', 'd11'])),
+      alts: [[['d9', 'd10']]]
+    },
+    {
+      id: 'guess', title: 'Guess the number', tag: 'Loop with three decisions',
+      intro: 'The computer picks a secret number from 1 to 100. You get 5 tries to guess it, with a hint after each wrong guess.',
+      nodes: [
+        ['n1', 'start', 0, 0, 'Start'],
+        ['n2', 'process', 0, 1, 'secret = random(1,100)'],
+        ['n3', 'process', 0, 2, 'guesses = 0'],
+        ['n4', 'decision', 0, 3, 'guesses < 5?'],
+        ['n5', 'io', 1, 3, 'Output\n"Out of guesses"'],
+        ['n6', 'stop', 1, 4, 'End'],
+        ['n7', 'io', 0, 4, 'Input guess'],
+        ['n8', 'process', 0, 5, 'guesses =\nguesses + 1'],
+        ['n9', 'decision', 0, 6, 'guess == secret?'],
+        ['n10', 'io', 1, 6, 'Output\n"Correct!"'],
+        ['n11', 'decision', 0, 7, 'guess > secret?'],
+        ['n12', 'io', 1, 8, 'Output\n"Too high"'],
+        ['n13', 'io', 0, 8, 'Output\n"Too low"']
+      ],
+      edges: chain(['n1', 'n2', 'n3', 'n4']).concat([
+        { f: 'n4', t: 'n7', l: 'Yes' }, { f: 'n4', t: 'n5', x: 'r', l: 'No' }, { f: 'n5', t: 'n6' },
+        { f: 'n7', t: 'n8' }, { f: 'n8', t: 'n9' },
+        { f: 'n9', t: 'n10', x: 'r', l: 'Yes' }, { f: 'n10', t: 'n6', x: 'r', k: 'rail' },
+        { f: 'n9', t: 'n11', l: 'No' },
+        { f: 'n11', t: 'n12', x: 'r', l: 'Yes' }, { f: 'n11', t: 'n13', l: 'No' },
+        { f: 'n12', t: 'n4', k: 'loop', ly: 8.45 }, { f: 'n13', t: 'n4', k: 'loop', ly: 8.45 }
+      ]),
+      alts: [[['n2', 'n3']], [['n7', 'n8']]]
     }
   ];
 
@@ -513,6 +598,17 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
     var s = getSolved();
     if (s.indexOf(id) < 0) { s.push(id); store.set(KEY_SOLVED, JSON.stringify(s)); }
   }
+  /* Lowest number of wrong checks for each solved puzzle */
+  var KEY_BEST = 'gcsecs-flowchart-puzzles-best';
+  function getBests() {
+    try { var v = JSON.parse(store.get(KEY_BEST) || '{}'); return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; } catch (e) { return {}; }
+  }
+  function saveBest(id, n) {
+    var b = getBests(), prev = typeof b[id] === 'number' ? b[id] : null;
+    if (prev === null || n < prev) { b[id] = n; store.set(KEY_BEST, JSON.stringify(b)); }
+    return prev;
+  }
+  function plural(n) { return n + ' wrong check' + (n === 1 ? '' : 's'); }
 
   var THEMES = [
     { id: 'day', label: 'Day', bg: '#ffffff', ink: '#111111' },
@@ -578,17 +674,20 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
   }
 
   function renderMenu() {
-    var solved = getSolved();
+    var solved = getSolved(), bests = getBests();
     var list = $('plist');
     list.innerHTML = '';
     PUZZLES.forEach(function (P, i) {
       var done = solved.indexOf(P.id) >= 0;
+      var best = typeof bests[P.id] === 'number' ? bests[P.id] : null;
+      var bestTxt = best === null ? '' : (best === 0 ? 'no wrong checks' : 'best: ' + plural(best));
+      var status = done ? (best === 0 ? 'Perfect' : 'Solved') : '';
       var li = document.createElement('li');
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'pbtn' + (done ? ' done' : '');
-      b.innerHTML = '<span class="num">' + (i + 1) + '</span><span class="ptxt"><span class="ptitle">' + esc(P.title) + '</span><span class="ptag">' + esc(P.tag) + '</span></span>' + (done ? '<span class="pdone">Solved</span>' : '');
-      b.setAttribute('aria-label', 'Puzzle ' + (i + 1) + ': ' + P.title + ', ' + P.tag + (done ? ', solved' : ''));
+      b.innerHTML = '<span class="num">' + (i + 1) + '</span><span class="ptxt"><span class="ptitle">' + esc(P.title) + '</span><span class="ptag">' + esc(P.tag) + (bestTxt ? ' · ' + esc(bestTxt) : '') + '</span></span>' + (status ? '<span class="pdone">' + status + '</span>' : '');
+      b.setAttribute('aria-label', 'Puzzle ' + (i + 1) + ': ' + P.title + ', ' + P.tag + (status ? ', ' + status.toLowerCase() : '') + (bestTxt ? ', ' + bestTxt : ''));
       b.addEventListener('click', function () { openPuzzle(i); });
       li.appendChild(b);
       list.appendChild(li);
@@ -596,7 +695,7 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
   }
 
   /* ================= Puzzle state ================= */
-  var S = { idx: 0, P: null, place: {}, bankOrder: [], selected: null, popSlot: null, popScroll: 0, zoom: false };
+  var S = { idx: 0, P: null, place: {}, bankOrder: [], selected: null, popSlot: null, popScroll: 0, zoom: false, wrongChecks: 0 };
 
   function shuffle(a) {
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
@@ -610,7 +709,24 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
     $('pIntro').textContent = S.P.intro;
     showScreen('puzzle');
     $('board').scrollLeft = 0;
+    S.wrongChecks = 0;
+    S.lastWrong = null;
+    updateCounter(false);
     resetPuzzle();
+  }
+
+  /* ================= Wrong checks counter ================= */
+  function updateCounter(bump) {
+    var n = S.wrongChecks || 0, wc = $('wc');
+    $('wcN').textContent = String(n);
+    wc.classList.toggle('bad', n > 0);
+    var best = getBests()[S.P.id];
+    $('wcBest').textContent = typeof best === 'number' ? 'Your best: ' + (best === 0 ? 'no wrong checks' : plural(best)) : '';
+    if (bump) {
+      wc.classList.remove('bump');
+      void wc.offsetWidth;
+      wc.classList.add('bump');
+    }
   }
   function resetPuzzle() {
     S.place = {};
@@ -848,14 +964,21 @@ svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select
     });
     if (best === total) {
       markSolved(P.id);
+      var n = S.wrongChecks, prev = saveBest(P.id, n);
       var last = S.idx === PUZZLES.length - 1;
-      showMsg('ok', 'All ' + total + ' of ' + total + ' correct. Puzzle complete!' +
+      var score = n === 0 ? ' <b>Perfect: no wrong checks!</b>' : ' Wrong checks: ' + n + '. Can you get it to 0 next time?';
+      if (prev !== null && n < prev) score += ' <b>New best!</b>';
+      updateCounter(false);
+      showMsg('ok', 'All ' + total + ' of ' + total + ' correct. Puzzle complete!' + score +
         '<div class="row">' + (last ? '' : '<button type="button" class="btn primary" id="nextBtn">Next puzzle</button>') +
         '<button type="button" class="btn" id="toMenuBtn">Back to menu</button></div>');
       if (!last) $('nextBtn').addEventListener('click', function () { openPuzzle(S.idx + 1); });
       $('toMenuBtn').addEventListener('click', goMenu);
     } else {
-      showMsg('warn', best + ' of ' + total + ' correct. Keep going!');
+      /* Only count it if the flowchart has changed since the last wrong check (no penalty for a double tap) */
+      var key = P.order.map(function (id) { return S.place[id]; }).join('|');
+      if (key !== S.lastWrong) { S.wrongChecks++; S.lastWrong = key; updateCounter(true); }
+      showMsg('warn', best + ' of ' + total + ' correct. Keep going! Wrong checks: ' + S.wrongChecks + '.');
     }
   }
   function goMenu() { S.P = null; closePop(); renderMenu(); showScreen('menu'); }
