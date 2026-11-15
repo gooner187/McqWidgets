@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>J277 - Computational thinking diagram</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  /* Theme tokens. Shares the quizzes' "mcq_theme" setting: "dark" gives
+     the dark board, every other quiz theme gives the light one. */
+  body[data-theme="light"]{
+    --pageBg:#F7F5F1; --text:#1F2421; --secondary:#636A78; --wordmark:#8A8477;
+    --board:#FFFFFF; --boardBorder:#E5E1D8; --iconBg:#FFFFFF; --iconBorder:#E5E1D8; --iconColor:#1F2421;
+    --abs:#C2185B; --dec:#0277BD; --alg:#558B2F; --ct:#3B5BDB;
+    --segFill:0.06; --segFillOn:0.13; --boxFill:#FFFFFF; --centreBg:#FFFFFF; --arrow:#636A78;
+    --mapPaper:#FFFFFF; --mapBorder:#D9D4C7; --river:#CFE8F7;
+  }
+  body[data-theme="dark"]{
+    --pageBg:#1B1D1B; --text:#F2F0EA; --secondary:#A9A79E; --wordmark:#8C897E;
+    --board:#0F1B2D; --boardBorder:#22344F; --iconBg:#262825; --iconBorder:#3A3C37; --iconColor:#F2F0EA;
+    --abs:#F472B6; --dec:#38BDF8; --alg:#A3E635; --ct:#8EA2F5;
+    --segFill:0.07; --segFillOn:0.16; --boxFill:#0F1B2D; --centreBg:#13223A; --arrow:#A9A79E;
+    --mapPaper:#F4F6F8; --mapBorder:#F4F6F8; --river:#CFE8F7;
+  }
+  * { box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ font-family:'DM Sans',system-ui,sans-serif; background:var(--pageBg); color:var(--text); transition:background .15s ease, color .15s ease; }
+  button{ font-family:inherit; }
+  #app{ width:100%; max-width:640px; margin:0 auto; padding-bottom:20px; }
+  .hdr{ display:flex; justify-content:space-between; align-items:center; padding:20px 24px 6px; gap:8px; }
+  .hdr-title{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--wordmark); }
+  .icon-btn{ width:36px; height:36px; border-radius:999px; border:1.5px solid var(--iconBorder); background:var(--iconBg); color:var(--iconColor); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .icon-btn:focus-visible{ outline:3px solid var(--ct); outline-offset:2px; }
+  .hint{ margin:2px 24px 12px; font-size:14px; color:var(--secondary); text-align:center; }
+  .board{ margin:0 16px; background:var(--board); border:1.5px solid var(--boardBorder); border-radius:22px; padding:10px; }
+  svg#ct{ display:block; width:100%; height:auto; overflow:visible; -webkit-tap-highlight-color:transparent; }
+
+  /* ---- segments ---- */
+  .seg{ --c:var(--abs); cursor:pointer; outline:none;
+        transition:transform .35s cubic-bezier(.2,.8,.2,1.2), opacity .3s ease, filter .3s ease; }
+  .seg-dec{ --c:var(--dec); } .seg-alg{ --c:var(--alg); }
+  .seg-shape{ fill:var(--c); fill-opacity:var(--segFill); stroke:var(--c); stroke-width:5; stroke-linejoin:round; transition:fill-opacity .3s ease, stroke-width .3s ease; }
+  .seg-label{ fill:var(--c); font-family:'DM Sans',system-ui,sans-serif; font-size:23px; font-weight:700; letter-spacing:3px; }
+  .pic, .def{ transition:opacity .3s ease, transform .35s ease; transform-box:fill-box; transform-origin:center; }
+  .def{ opacity:0; transform:scale(.9); }
+  .def-line{ fill:var(--text); font-family:'DM Sans',system-ui,sans-serif; }
+
+  .seg.on{ transform:translate(calc(var(--dx) * 12px), calc(var(--dy) * 12px)); filter:drop-shadow(0 0 10px var(--c)); }
+  .seg.on .seg-shape{ fill-opacity:var(--segFillOn); stroke-width:6; }
+  .seg.on .pic{ opacity:0; transform:scale(.8); }
+  .seg.on .def{ opacity:1; transform:scale(1); transition-delay:.08s; }
+  svg[data-active] .seg:not(.on){ opacity:.4; }
+  .seg:focus-visible .seg-shape{ stroke-dasharray:14 7; }
+
+  /* ---- pictures ---- */
+  .sd-line{ fill:none; stroke:var(--dec); stroke-width:2.5; }
+  .sd-top{ fill:var(--dec); stroke:var(--dec); stroke-width:2.5; }
+  .sd-box{ fill:var(--boxFill); stroke:var(--dec); stroke-width:2.5; }
+  .map-paper{ fill:var(--mapPaper); stroke:var(--mapBorder); stroke-width:1.5; }
+  .map-river{ fill:none; stroke:var(--river); stroke-width:9; stroke-linecap:round; }
+  .map-line{ fill:none; stroke-width:7; stroke-linecap:round; stroke-linejoin:round; }
+  .map-tick{ fill:none; stroke-width:4; stroke-linecap:butt; }
+  .map-change{ fill:#FFFFFF; stroke:#1F2421; stroke-width:3; }
+  .bread{ fill:#F3D9A4; stroke:#C68A3E; stroke-width:2.5; stroke-linejoin:round; }
+  .toast{ fill:#C27A3A; stroke:#7A4519; stroke-width:2.5; stroke-linejoin:round; }
+  .butter{ fill:#FFE066; stroke:#E0B500; stroke-width:1.5; stroke-linejoin:round; }
+  .toaster{ fill:#B9C2CC; stroke:#6B7682; stroke-width:2.5; }
+  .toaster-slot{ fill:#4B5560; }
+  .toaster-lever{ fill:#6B7682; }
+  .toaster-light{ fill:#F97316; }
+  .step-num-bg{ fill:var(--alg); }
+  .step-num{ fill:var(--board); font-family:'Space Mono',monospace; font-size:13px; font-weight:700; }
+  .step-arrow{ fill:none; stroke:var(--arrow); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ---- centre ---- */
+  .ct-centre{ cursor:pointer; outline:none; }
+  .ct-grow{ fill:var(--centreBg); stroke:var(--ct); stroke-width:5; transform-box:view-box; transform-origin:320px 320px;
+            transform:scale(.4767); opacity:0; transition:transform .4s cubic-bezier(.2,.8,.2,1.1), opacity .25s ease; }
+  .ct-ring{ fill:var(--centreBg); stroke:var(--ct); stroke-width:5; transition:opacity .25s ease; }
+  .ct-centre:focus-visible .ct-ring{ stroke-dasharray:10 6; }
+  .bulb{ fill:none; stroke:var(--ct); stroke-width:4; stroke-linejoin:round; }
+  .bulb-base{ fill:none; stroke:var(--ct); stroke-width:4; stroke-linecap:round; }
+  .bulb-spark{ fill:none; stroke:var(--ct); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  .ct-small{ fill:var(--text); font-family:'DM Sans',system-ui,sans-serif; font-size:14px; font-weight:700; }
+  .ct-rest{ transition:opacity .2s ease; }
+  .ct-def{ opacity:0; transition:opacity .25s ease; pointer-events:none; }
+  .ct-title{ fill:var(--ct); font-family:'DM Sans',system-ui,sans-serif; font-size:21px; font-weight:700; }
+  .ct-centre.on .ct-grow{ transform:scale(1); opacity:1; }
+  .ct-centre.on .ct-ring, .ct-centre.on .ct-rest{ opacity:0; }
+  .ct-centre.on .ct-def{ opacity:1; transition-delay:.15s; }
+  svg[data-active="ct"] .seg{ opacity:.35; }
+
+  /* gentle entrance */
+  @keyframes popIn{ from{ opacity:0; transform:scale(.85); } to{ opacity:1; transform:scale(1); } }
+  .pic > g{ animation:popIn .5s ease both; transform-box:fill-box; transform-origin:center; }
+  .seg-dec .pic > g{ animation-delay:.12s; } .seg-alg .pic > g{ animation-delay:.24s; }
+
+  /* Phones: the in-diagram text gets small, so the active definition is
+     repeated underneath in normal-sized text. */
+  .panel{ display:none; margin:14px 16px 0; padding:14px 16px; border-radius:14px; background:var(--board); border:1.5px solid var(--boardBorder); min-height:76px; }
+  .panel strong{ display:block; font-size:15px; margin-bottom:3px; color:var(--pc, var(--text)); }
+  .panel span{ font-size:15px; line-height:1.45; }
+  @media (max-width:520px){
+    .panel{ display:block; }
+    .hdr{ padding:16px 18px 6px; }
+    .board{ margin:0 10px; padding:6px; border-radius:18px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .seg, .pic, .def, .ct-grow, .ct-def, .ct-rest, .ct-ring{ transition:none !important; }
+    .pic > g{ animation:none; }
+  }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+</style>
+</head>
+<body data-theme="light">
+<div id="app">
+  <div class="hdr">
+    <span class="hdr-title">J277 - Computational thinking</span>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch light / dark theme" title="Switch theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3 a9 9 0 0 1 0 18 z" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <p class="hint" id="hint">Hover over each part, or the middle, to reveal its definition.</p>
+  <div class="board">
+<svg id="ct" viewBox="0 0 640 640" role="group" aria-label="Computational thinking diagram">
+<defs>
+<path id="lab-abs" d="M74.91 461.50 A283 283 0 0 1 320.00 37.00"/>
+<path id="lab-dec" d="M320.00 37.00 A283 283 0 0 1 565.09 461.50"/>
+<path id="lab-alg" d="M74.91 461.50 A283 283 0 0 0 565.09 461.50"/>
+</defs>
+<g class="seg seg-abs" data-key="abs" tabindex="0" role="button" aria-label="Abstraction: Removing unnecessary detail to focus on the important parts of a problem." style="--dx:-0.866;--dy:-0.500">
+<path class="seg-shape" d="M49.83 467.90 A308 308 0 0 1 313.00 12.08 L313.00 222.25 A98 98 0 0 0 231.85 362.81 Z"/>
+<text class="seg-label" dy="8"><textPath href="#lab-abs" startOffset="50%" text-anchor="middle">ABSTRACTION</textPath></text>
+<g transform="translate(141.5 296.5) scale(0.8)"><g class="pic">
+<g class="pic-tube">
+  <clipPath id="mapClip"><rect x="-92" y="-62" width="184" height="124" rx="10"/></clipPath>
+  <rect class="map-paper" x="-92" y="-62" width="184" height="124" rx="10"/>
+  <path class="map-river" clip-path="url(#mapClip)" d="M-92 26 C-60 10 -40 40 -8 26 S40 4 62 22 S84 30 92 24"/>
+  <path class="map-line" stroke="#E53935" d="M-80 -18 H-24 L6 12 H80"/>
+  <path class="map-line" stroke="#1E88E5" d="M-44 -52 V52"/>
+  <path class="map-line" stroke="#43A047" d="M-80 44 H24 L40 28 V-52"/>
+  <path class="map-tick" stroke="#E53935" d="M-66 -18 V-26 M60 12 V4"/>
+  <path class="map-tick" stroke="#1E88E5" d="M-44 -38 H-36 M-44 16 H-36"/>
+  <path class="map-tick" stroke="#43A047" d="M-12 44 V36 M40 -34 H48"/>
+  <circle class="map-change" cx="-44" cy="-18" r="7"/>
+  <circle class="map-change" cx="40" cy="12" r="7"/>
+  <circle class="map-change" cx="-44" cy="44" r="7"/>
+</g></g></g>
+<g transform="translate(207.3 162.1) scale(0.85)"><g class="def"><text class="def-line" x="0" y="-52" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">Removing</text><text class="def-line" x="0" y="-26" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">unnecessary</text><text class="def-line" x="0" y="0" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">detail to focus</text><text class="def-line" x="0" y="26" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">on the important</text><text class="def-line" x="0" y="52" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">parts of a problem</text></g></g>
+</g>
+<g class="seg seg-dec" data-key="dec" tabindex="0" role="button" aria-label="Decomposition: Breaking a problem down into smaller, easier-to-solve problems." style="--dx:0.866;--dy:-0.500">
+<path class="seg-shape" d="M327.00 12.08 A308 308 0 0 1 590.17 467.90 L408.15 362.81 A98 98 0 0 0 327.00 222.25 Z"/>
+<text class="seg-label" dy="8"><textPath href="#lab-dec" startOffset="50%" text-anchor="middle">DECOMPOSITION</textPath></text>
+<g transform="translate(439.4 167.1) scale(1.05)"><g class="pic">
+<g class="pic-struct">
+  <path class="sd-line" d="M0 -26 V-14 M-62 -14 H62 M-62 -14 V-4 M0 -14 V-4 M62 -14 V-4 M0 18 V28 M-30 28 H30 M-30 28 V38 M30 28 V38"/>
+  <rect class="sd-top" x="-34" y="-52" width="68" height="26" rx="4"/>
+  <rect class="sd-box" x="-84" y="-4" width="44" height="22" rx="4"/>
+  <rect class="sd-box" x="-22" y="-4" width="44" height="22" rx="4"/>
+  <rect class="sd-box" x="40" y="-4" width="44" height="22" rx="4"/>
+  <rect class="sd-box" x="-50" y="38" width="40" height="20" rx="4"/>
+  <rect class="sd-box" x="10" y="38" width="40" height="20" rx="4"/>
+</g></g></g>
+<g transform="translate(451.2 191.0) scale(0.85)"><g class="def"><text class="def-line" x="0" y="-52" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">Breaking a</text><text class="def-line" x="0" y="-26" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">problem down</text><text class="def-line" x="0" y="0" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">into smaller,</text><text class="def-line" x="0" y="26" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">easier-to-solve</text><text class="def-line" x="0" y="52" font-size="21" font-weight="600" text-anchor="middle" dominant-baseline="central">problems</text></g></g>
+</g>
+<g class="seg seg-alg" data-key="alg" tabindex="0" role="button" aria-label="Algorithm: Steps to complete a task." style="--dx:0.000;--dy:1.000">
+<path class="seg-shape" d="M583.17 480.02 A308 308 0 0 1 56.83 480.02 L238.85 374.94 A98 98 0 0 0 401.15 374.94 Z"/>
+<text class="seg-label" dy="8"><textPath href="#lab-alg" startOffset="50%" text-anchor="middle">ALGORITHM</textPath></text>
+<g transform="translate(320.0 484.0) scale(1.15)"><g class="pic"><g class="pic-toast"><path class="step-arrow" d="M-83 0 H-65 M-70 -5 L-65 0 L-70 5"/><path class="step-arrow" d="M-9 0 H9 M4 -5 L9 0 L4 5"/><path class="step-arrow" d="M65 0 H83 M78 -5 L83 0 L78 5"/><g transform="translate(-111 0)"><circle class="step-num-bg" cx="0" cy="-40" r="11"/><text class="step-num" x="0" y="-40" text-anchor="middle" dominant-baseline="central">1</text><path class="bread" d="M-17 22 V-4 C-24 -6 -24 -22 -10 -22 C-4 -28 4 -28 10 -22 C24 -22 24 -6 17 -4 V22 Z"/></g><g transform="translate(-37 0)"><circle class="step-num-bg" cx="0" cy="-40" r="11"/><text class="step-num" x="0" y="-40" text-anchor="middle" dominant-baseline="central">2</text><path class="bread" d="M-12 -6 V-16 C-12 -22 -2 -22 0 -18 C2 -22 12 -22 12 -16 V-6 Z"/><rect class="toaster" x="-24" y="-8" width="48" height="32" rx="9"/><rect class="toaster-slot" x="-14" y="-8" width="28" height="4" rx="2"/><rect class="toaster-lever" x="24" y="2" width="6" height="12" rx="2"/><circle class="toaster-light" cx="-14" cy="14" r="3"/></g><g transform="translate(37 0)"><circle class="step-num-bg" cx="0" cy="-40" r="11"/><text class="step-num" x="0" y="-40" text-anchor="middle" dominant-baseline="central">3</text><path class="toast" d="M-17 22 V-4 C-24 -6 -24 -22 -10 -22 C-4 -28 4 -28 10 -22 C24 -22 24 -6 17 -4 V22 Z"/></g><g transform="translate(111 0)"><circle class="step-num-bg" cx="0" cy="-40" r="11"/><text class="step-num" x="0" y="-40" text-anchor="middle" dominant-baseline="central">4</text><path class="toast" d="M-17 22 V-4 C-24 -6 -24 -22 -10 -22 C-4 -28 4 -28 10 -22 C24 -22 24 -6 17 -4 V22 Z"/><path class="butter" d="M-9 4 L4 -4 L13 6 L0 14 Z"/></g></g></g></g>
+<g transform="translate(320.0 478.0) scale(1.1)"><g class="def"><text class="def-line" x="0" y="0" font-size="30" font-weight="700" text-anchor="middle" dominant-baseline="central">Steps to complete a task</text></g></g>
+</g>
+<g class="ct-centre" data-key="ct" tabindex="0" role="button" aria-label="Computational thinking: Solving a problem logically, using abstraction, decomposition and algorithms, so that a computer could carry out the solution.">
+<circle class="ct-grow" cx="320" cy="320" r="172"/>
+<circle class="ct-ring" cx="320" cy="320" r="82"/>
+<g class="ct-rest"><path class="bulb" d="M320 266 C303 266 291 279 291 295 C291 306 297 313 303 319 C306 322 307 326 307 330 H333 C333 326 334 322 337 319 C343 313 349 306 349 295 C349 279 337 266 320 266 Z"/><path class="bulb-base" d="M308 336 H332 M310 343 H330"/><path class="bulb-spark" d="M312 330 V308 L316 300 L320 308 L324 300 L328 308 V330"/><text class="ct-small" x="320" y="358" text-anchor="middle">Computational</text><text class="ct-small" x="320" y="374" text-anchor="middle">thinking</text></g>
+<g class="ct-def" transform="translate(320 320)">
+<text class="ct-title" x="0" y="-100" text-anchor="middle" dominant-baseline="central">Computational thinking</text>
+<text class="def-line" x="0" y="-62" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">Solving a problem</text>
+<text class="def-line" x="0" y="-39" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">logically, using</text>
+<text class="def-line" x="0" y="-16" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">abstraction,</text>
+<text class="def-line" x="0" y="7" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">decomposition and</text>
+<text class="def-line" x="0" y="30" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">algorithms, so that a</text>
+<text class="def-line" x="0" y="53" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">computer could carry</text>
+<text class="def-line" x="0" y="76" font-size="18.5" font-weight="500" text-anchor="middle" dominant-baseline="central">out the solution.</text>
+</g></g>
+</svg>
+  </div>
+  <div class="panel" id="panel" aria-live="polite"><strong>Tap a part of the diagram</strong><span>Its definition will appear here.</span></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var DEFS = {"abs": ["Abstraction", "Removing unnecessary detail to focus on the important parts of a problem."], "dec": ["Decomposition", "Breaking a problem down into smaller, easier-to-solve problems."], "alg": ["Algorithm", "Steps to complete a task."], "ct": ["Computational thinking", "Solving a problem logically, using abstraction, decomposition and algorithms, so that a computer could carry out the solution."]};
+var svg = document.getElementById("ct");
+var parts = Array.prototype.slice.call(svg.querySelectorAll("[data-key]"));
+var panel = document.getElementById("panel");
+var active = null;
+var lastPointer = "mouse";
+// Focus from a mouse/tap is handled by hover/click; only keyboard (Tab)
+// focus should reveal a definition on its own.
+var pointerFocus = false;
+document.addEventListener("pointerdown", function(){ pointerFocus = true; }, true);
+document.addEventListener("keydown", function(){ pointerFocus = false; }, true);
+
+function setActive(key){
+  active = key;
+  parts.forEach(function(p){ p.classList.toggle("on", p.getAttribute("data-key") === key); });
+  if (key) svg.setAttribute("data-active", key); else svg.removeAttribute("data-active");
+  if (key){
+    var d = DEFS[key];
+    panel.style.setProperty("--pc", "var(--" + key + ")");
+    panel.innerHTML = "<strong></strong><span></span>";
+    panel.firstChild.textContent = d[0];
+    panel.lastChild.textContent = d[1];
+  }
+}
+
+// Touch devices have no hover: say "tap" instead.
+if (window.matchMedia && window.matchMedia("(hover: none)").matches){
+  document.getElementById("hint").textContent = "Tap each part, or the middle, to reveal its definition.";
+}
+
+parts.forEach(function(p){
+  var key = p.getAttribute("data-key");
+  p.addEventListener("pointerdown", function(e){ lastPointer = e.pointerType; });
+  p.addEventListener("pointerenter", function(e){ if (e.pointerType === "mouse") setActive(key); });
+  p.addEventListener("pointerleave", function(e){ if (e.pointerType === "mouse" && active === key) setActive(null); });
+  p.addEventListener("click", function(e){
+    e.stopPropagation();
+    if (lastPointer === "mouse") { setActive(key); return; }  // already shown by hover
+    setActive(active === key ? null : key);                  // touch / pen: tap toggles
+  });
+  p.addEventListener("focus", function(){ if (!pointerFocus) setActive(key); });
+  p.addEventListener("blur", function(){ if (active === key) setActive(null); });
+  p.addEventListener("keydown", function(e){
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); setActive(active === key ? null : key); }
+    if (e.key === "Escape"){ setActive(null); p.blur(); }
+  });
+});
+// Tapping anywhere else hides the definition again.
+document.addEventListener("click", function(){ if (active) setActive(null); });
+
+/* ---- theme (shared with the quizzes) ---- */
+function readTheme(){ try { return localStorage.getItem("mcq_theme") === "dark" ? "dark" : "light"; } catch(e){ return "light"; } }
+function applyTheme(t){ document.body.setAttribute("data-theme", t); }
+applyTheme(readTheme());
+document.getElementById("themeBtn").addEventListener("click", function(e){
+  e.stopPropagation();
+  var t = document.body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  applyTheme(t);
+  try { localStorage.setItem("mcq_theme", t); } catch(err){}
+});
+window.addEventListener("storage", function(e){ if (e.key === "mcq_theme") applyTheme(readTheme()); });
+})();
+</script>
+<script>
+/* When shown in a frame, tell the page how tall this is so the frame fits it
+   exactly. Sends both message formats the gcsecs.com widgets use. */
+(function(){
+  if(window.parent===window) return;
+  var el=document.getElementById('app'); if(!el) return;
+  var last=0;
+  function report(){
+    var h=Math.ceil(el.getBoundingClientRect().bottom+(window.pageYOffset||0));
+    if(h>0&&h!==last){ last=h; try{ window.parent.postMessage({gcsWidget:'mcq',height:h},'*'); window.parent.postMessage({mcqWidgetHeight:h},'*'); }catch(e){} }
+  }
+  if(window.ResizeObserver) new ResizeObserver(report).observe(el); else setInterval(report,500);
+  window.addEventListener('load',report); window.addEventListener('resize',report);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(report);
+  report();
+})();
+</script>
+</body>
+</html>
