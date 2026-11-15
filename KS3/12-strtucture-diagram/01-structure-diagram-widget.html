@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en-GB" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structure Diagram Questions</title>
+<style>
+:root,[data-theme="day"]{--bg:#ffffff;--card:#f3f5f6;--ink:#111111;--muted:#4b5157;--line:#c5ccd2;--accent:#2b7a80;--accentInk:#ffffff;--good:#1d7a35;--goodBg:#e2f3e5;--bad:#b3261e;--badBg:#fce8e6;--aBg:#e4eefb;--aInk:#0c4a8a;--focus:#1a5fb4;--bw:2px;--tint:#eef5f6}
+[data-theme="night"]{--bg:#121417;--card:#1d2126;--ink:#eef1f4;--muted:#aab2ba;--line:#3b434b;--accent:#4db6bc;--accentInk:#071314;--good:#63d483;--goodBg:#163522;--bad:#ff8a80;--badBg:#3f1d1b;--aBg:#18304d;--aInk:#a9cdf6;--focus:#8ab4f8;--tint:#1b2a30}
+[data-theme="send"]{--bg:#f7f0d6;--card:#ede3bf;--ink:#222222;--muted:#4f4836;--line:#c4b68c;--accent:#2b6d71;--accentInk:#fffaea;--good:#1d6a2e;--goodBg:#d9e9c4;--bad:#9e2b1f;--badBg:#f1d3c4;--aBg:#d8e2e6;--aInk:#1d4466;--focus:#1d4466;--tint:#e9e6cf}
+[data-theme="blue"]{--bg:#dde9f4;--card:#cbdbeb;--ink:#15202b;--muted:#3c4a58;--line:#9fb5ca;--accent:#245f8c;--accentInk:#ffffff;--good:#1d6a2e;--goodBg:#d3ead1;--bad:#a12a1f;--badBg:#f1d4cf;--aBg:#bfd4ea;--aInk:#103b63;--focus:#103b63;--tint:#cfe0ef}
+[data-theme="contrast"]{--bg:#000000;--card:#000000;--ink:#ffff00;--muted:#ffffff;--line:#ffff00;--accent:#ffff00;--accentInk:#000000;--good:#00ff66;--goodBg:#003a17;--bad:#ff6b6b;--badBg:#3d0000;--aBg:#000000;--aInk:#00e5ff;--focus:#00e5ff;--bw:3px;--tint:#000000}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{line-height:1.45}
+[hidden]{display:none!important}
+.app{max-width:980px;margin:0 auto;padding:10px 14px 18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.top h1{font-size:1.15rem;margin:0;font-weight:700}
+.tools{display:flex;gap:6px;flex:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{min-height:48px;padding:10px 18px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:1rem}
+.btn.small{min-height:40px;padding:6px 12px;font-size:.9rem;border-radius:10px}
+.btn.primary{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+.btn[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.btn:focus-visible,.tile:focus-visible,.swatch:focus-visible,.qbtn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 12px;padding:10px;border:var(--bw) solid var(--line);border-radius:12px;background:var(--card)}
+.swatch{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 10px;border-radius:10px;border:var(--bw) solid transparent;background:transparent;color:var(--ink);text-align:left;font-size:.92rem}
+.swatch[aria-pressed="true"]{border-color:var(--accent);font-weight:700}
+.dotsw{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #888;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.lead{margin:0 0 14px;font-size:1.02rem}
+.qlist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.qbtn{width:100%;display:flex;align-items:center;gap:12px;min-height:62px;padding:8px 12px;border-radius:12px;border:var(--bw) solid var(--line);background:var(--card);color:var(--ink);text-align:left}
+.num{flex:none;width:36px;height:36px;border-radius:50%;border:var(--bw) solid var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800}
+.qbtn.done .num{background:var(--good);border-color:var(--good);color:var(--bg)}
+.qtxt{flex:1;min-width:0}
+.qtitle{display:block;font-weight:700}
+.qtag{display:block;font-size:.85rem;color:var(--muted)}
+.qdone{flex:none;font-size:.8rem;font-weight:700;color:var(--good)}
+.meta{color:var(--muted);font-weight:600;font-size:.9rem;margin:0}
+.qtext{border:var(--bw) solid var(--line);border-radius:12px;padding:12px 14px;margin:6px 0 12px;background:var(--bg)}
+.qtext p{margin:0 0 10px}
+.qtext p:last-child{margin-bottom:0}
+.qtext .marks{text-align:right;font-weight:700;color:var(--muted)}
+.qtext .part{font-weight:700}
+.qtext table{border-collapse:collapse;width:100%;max-width:460px;margin:0 0 10px;font-size:.95rem}
+.qtext th,.qtext td{border:1px solid var(--ink);padding:6px 10px;text-align:left;vertical-align:top}
+.play{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:760px){.play{grid-template-columns:minmax(0,1fr) 260px;align-items:start}}
+.zoomBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+.zhint{font-size:.85rem;color:var(--muted)}
+.boardWrap{position:relative;border:var(--bw) solid var(--line);border-radius:12px;background:var(--bg);padding:8px 4px}
+#board.zoomed{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+svg.board{display:block;width:100%;height:auto;margin:0 auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#board.zoomed svg.board{max-width:none}
+.ln{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.ah{fill:var(--ink)}
+.gbox{fill:var(--bg);stroke:var(--ink);stroke-width:1.8}
+.gbox.root{stroke-width:2.6}
+.sh{fill:var(--tint);stroke:var(--ink);stroke-width:1.8}
+.stext{fill:var(--ink);font:600 13px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.slot{cursor:pointer;outline:none}
+.slot .hit{fill:transparent;stroke:none}
+.empty{fill:var(--card);stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 4}
+.etext{fill:var(--muted);font:600 11px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.slot .ring{fill:none;stroke:none}
+.slot:focus-visible .ring{stroke:var(--focus);stroke-width:3}
+.slot.active .empty,.slot.active .sh,.slot.over .empty,.slot.over .sh{stroke:var(--accent);stroke-width:3}
+.slot.target .empty{stroke:var(--accent);stroke-width:2.5}
+.bank h3{font-size:1rem;margin:0 0 4px}
+.bank .bhint{font-size:.85rem;color:var(--muted);margin:0 0 8px;min-height:1.2em}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (min-width:760px){.tgrid{grid-template-columns:1fr}}
+.tile{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:8px 10px;border-radius:10px;border:var(--bw) solid var(--ink);background:var(--bg);color:var(--ink);font-weight:700;font-size:.98rem;line-height:1.25;text-align:center;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.tile.sel{border-color:var(--accent);background:var(--aBg);box-shadow:inset 0 0 0 2px var(--accent)}
+.bempty{color:var(--muted);font-size:.9rem;margin:4px 0}
+.pop{position:absolute;z-index:5;max-height:360px;overflow:auto;background:var(--bg);border:var(--bw) solid var(--accent);border-radius:12px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.pop h3{font-size:.98rem;margin:0 0 8px}
+.pop .tile{margin-bottom:6px}
+.pop > .btn{width:100%;margin-top:2px}
+.msg{margin-top:10px;padding:10px 14px;border-radius:10px;font-weight:700;border:var(--bw) solid currentColor}
+.msg.info{background:var(--aBg);color:var(--aInk)}
+.msg.warn{background:var(--badBg);color:var(--bad)}
+.msg.ok{background:var(--goodBg);color:var(--good)}
+.msg .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.msg .btn{flex:1 1 140px}
+.wcount{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.wc{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:var(--bw) solid var(--good);background:var(--goodBg);color:var(--ink);font-weight:700}
+.wc b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.wc.bad{border-color:var(--bad);background:var(--badBg)}
+.wc.bump{animation:wcbump .5s ease-out}
+@keyframes wcbump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+.wbest{font-size:.9rem;color:var(--muted);font-weight:600}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions .btn{flex:1 1 140px}
+.ask{margin-top:10px;padding:12px 14px;border-radius:10px;border:var(--bw) solid var(--bad);background:var(--badBg);color:var(--ink)}
+.ask p{margin:0;font-weight:700}
+.ask .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ask .btn{flex:1 1 140px}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;padding:8px 12px;border-radius:10px;background:var(--card);color:var(--ink);border:2px solid var(--accent);font-weight:700;max-width:220px;transform:translate(-50%,-120%);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){.wc.bump{animation:none}}
+@media (max-width:360px){.app{padding:8px 10px 14px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1>Structure diagram questions</h1>
+    <div class="tools">
+      <button id="menuBtn" class="btn small" type="button" hidden>Menu</button>
+      <button id="themeBtn" class="btn small" type="button" aria-expanded="false" aria-controls="themePanel">Colours</button>
+    </div>
+  </header>
+  <div id="themePanel" class="themes" role="group" aria-label="Colour theme" hidden></div>
+
+  <main>
+    <section id="scrMenu">
+      <p class="lead">Exam-style structure diagram questions. Complete each structure diagram by putting every part in the correct box.</p>
+      <ol id="qlist" class="qlist"></ol>
+    </section>
+
+    <section id="scrQ" hidden>
+      <p class="meta" id="qMeta"></p>
+      <div class="qtext" id="qText"></div>
+      <div class="play" id="play">
+        <div>
+          <div class="zoomBar" id="zoomBar" hidden>
+            <button id="zoomBtn" class="btn small" type="button" aria-pressed="false">Bigger boxes</button>
+            <span class="zhint" id="zoomHint" hidden>Swipe sideways to see the whole structure diagram.</span>
+          </div>
+          <div class="boardWrap" id="boardWrap">
+            <div id="board"></div>
+            <div id="pop" class="pop" role="dialog" aria-label="Choose" hidden></div>
+          </div>
+        </div>
+        <div class="bank" id="bank">
+          <h3 id="bankTitle">Parts</h3>
+          <p class="bhint" id="bankHint" aria-live="polite"></p>
+          <div class="tgrid" id="tgrid"></div>
+        </div>
+      </div>
+      <div id="msg" class="msg" role="status" hidden></div>
+      <div class="wcount">
+        <span class="wc" id="wc">Wrong checks: <b id="wcN">0</b></span>
+        <span class="wbest" id="wcBest"></span>
+      </div>
+      <div class="actions">
+        <button id="checkBtn" class="btn primary" type="button">Check my answer</button>
+        <button id="resetBtn" class="btn" type="button">Reset</button>
+      </div>
+      <div id="resetAsk" class="ask" role="group" aria-label="Confirm reset" hidden>
+        <p>Clear your answer and start this question again?</p>
+        <div class="row">
+          <button id="resetYes" class="btn" type="button">Yes, clear it</button>
+          <button id="resetNo" class="btn primary" type="button">No, keep it</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <noscript><p>This activity needs JavaScript switched on.</p></noscript>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+     QUESTIONS — how to add one
+     Copy a whole { ... } block, paste it below the last one (after a comma)
+     and change it. To reorder, move whole blocks; progress is saved by id,
+     so reordering is safe. Give every question its own id.
+
+     tree:   the structure diagram, one box per line, top box first.
+             Indent each sub-problem 2 spaces further than the box above it.
+             Put a box in [square brackets] to make it an empty box for
+             students to fill; the words inside are the correct answer and
+             become one of the parts they are given.
+             To break a box onto two lines yourself, put \n where the line
+             should break, e.g. 'Background\nmusic'. Otherwise long text
+             wraps automatically.
+     drop:   (optional) boxes whose sub-problems are drawn one row lower,
+             like 'Levels' below — saves width when the diagram is wide.
+     extras: (optional) wrong parts students are also given ("distractors").
+             Leave them out unless the question needs them.
+     Marking: like an OCR mark scheme, each part scores if it is under the
+     right box, so parts side by side can go in either order (e.g.
+     'Gamepad controls' and 'Keyboard controls') and blank branches can swap
+     places. A box with printed sub-problems below it needs its exact part.
+     ===================================================================== */
+  var QUESTIONS = [
+    {
+      id: 'computer-game',
+      title: 'Computer game',
+      marks: 5,
+      text:
+        '<p>Below is a “structure diagram” for a computer game.</p>' +
+        '<p>Add the following parts: “<b>Instructions</b>”, “<b>Gamepad controls</b>”, “<b>Keyboard controls</b>”, “<b>Background music</b>”, “<b>Level 1</b>”.</p>' +
+        '<p class="marks">[5 marks]</p>',
+      tree: [
+        'Computer game',
+        '  [Instructions]',
+        '    [Gamepad controls]',
+        '    [Keyboard controls]',
+        '  Levels',
+        '    [Level 1]',
+        '    Level 2 of game',
+        '    Level 3 of game',
+        '  Sound',
+        '    [Background music]',
+        '    Character movement'
+      ],
+      drop: ['Levels']
+    },
+    {
+      id: 'game-menu',
+      title: 'Game menu',
+      marks: 8,
+      text:
+        '<p>A computer game has a menu that lets the user select one of three options:</p>' +
+        '<ul style="margin:0 0 10px;padding-left:22px"><li>Create New Character</li><li>Start Game</li><li>View High Scores</li></ul>' +
+        '<p>When a new character is selected, the user has to input the name and type of avatar.</p>' +
+        '<p>When start game is selected, the first level and the character are loaded.</p>' +
+        '<p>When view High Scores is selected, the top 10 scores are output.</p>' +
+        '<p><span class="part">(a)</span> Draw a structure diagram for the program. The top level has been completed for you.</p>' +
+        '<p class="marks">[8 marks]</p>',
+      tree: [
+        'Game menu',
+        '  [Create New Character]',
+        '    [Input name]',
+        '    [Input type of avatar]',
+        '  [Start Game]',
+        '    [Load character]',
+        '    [Load level 1]',
+        '  [View High Scores]',
+        '    [Output top 10 scores]'
+      ]
+    },
+    {
+      id: 'sports-fixtures',
+      title: 'School sports fixtures app',
+      marks: 4,
+      text:
+        '<p>A school uses a mobile phone app to organise its sports fixtures (matches against other schools).</p>' +
+        '<p>Students must log in before they can use the app. After logging in, students can choose one of three options:</p>' +
+        '<ul style="margin:0 0 10px;padding-left:22px"><li>Manage fixtures</li><li>Update personal details</li><li>Log out of system</li></ul>' +
+        '<p>When manage fixtures is selected, students can sign up for a new fixture or view the fixtures they are already playing in.</p>' +
+        '<p>When students view their fixtures, they can either view them on-screen or print a paper copy.</p>' +
+        '<p><span class="part">(a)</span> A structure diagram has been used to design the mobile phone app.</p>' +
+        '<p>Use <b>one</b> task from the following table in each space to complete the structure diagram. You will not need all of the tasks.</p>' +
+        '<table><tr><th>Task</th></tr>' +
+        '<tr><td>Sign up for a new fixture</td></tr>' +
+        '<tr><td>Record match scores</td></tr>' +
+        '<tr><td>Update personal details</td></tr>' +
+        '<tr><td>View fixtures on-screen</td></tr>' +
+        '<tr><td>Book the school minibus</td></tr>' +
+        '<tr><td>Print a paper copy of fixtures</td></tr></table>' +
+        '<p class="marks">[4 marks]</p>',
+      tree: [
+        'Login',
+        '  Log out of system',
+        '  Manage fixtures',
+        '    [Sign up for a new fixture]',
+        '    View fixtures',
+        '      [View fixtures on-screen]',
+        '      [Print a paper copy of fixtures]',
+        '  [Update personal details]'
+      ],
+      extras: ['Record match scores', 'Book the school minibus']
+    },
+    {
+      id: 'kebab-delivery',
+      title: 'Kebab delivery app',
+      marks: 6,
+      text:
+        '<p>A kebab shop uses an app so that customers can order a kebab for delivery.</p>' +
+        '<p>First, customers choose their kebab. They choose a filling (chicken, lamb or falafel), a salad and a hot sauce.</p>' +
+        '<p>Next, they enter their delivery address.</p>' +
+        '<p>Finally, they pay, either by card or with a voucher.</p>' +
+        '<p><span class="part">(a)</span> Complete the structure diagram for the app. You will not need all of the parts.</p>' +
+        '<p class="marks">[6 marks]</p>',
+      tree: [
+        'Kebab delivery app',
+        '  [Choose kebab]',
+        '    [Choose filling]',
+        '    [Choose salad]',
+        '    [Choose hot sauce]',
+        '  Enter delivery address',
+        '  Pay',
+        '    [Pay by card]',
+        '    [Pay with voucher]'
+      ],
+      extras: ['Book a table']
+    },
+    {
+      id: 'cinema-booking',
+      title: 'Cinema booking website',
+      marks: 10,
+      text:
+        '<p>A cinema has a website that customers use to book tickets.</p>' +
+        '<p>To choose a film, customers can either search by film title or browse the films showing today.</p>' +
+        '<p>To book tickets, customers choose a showing and then choose their seats:</p>' +
+        '<ul style="margin:0 0 10px;padding-left:22px">' +
+        '<li>to choose a showing, they select a date and then a time</li>' +
+        '<li>to choose their seats, they select the number of tickets, choose the seat type (standard or VIP) and then pick their seats from a seating plan.</li></ul>' +
+        '<p>Customers then pay for their tickets.</p>' +
+        '<p>Finally, customers get their tickets. They can have them emailed to them or print them at home.</p>' +
+        '<p><span class="part">(a)</span> Complete the structure diagram for the website. You will not need all of the parts.</p>' +
+        '<p class="marks">[10 marks]</p>',
+      tree: [
+        'Cinema booking website',
+        '  Choose film',
+        '    [Search by film title]',
+        '    [Browse films showing today]',
+        '  [Book tickets]',
+        '    Choose showing',
+        '      [Select a date]',
+        '      [Select a time]',
+        '    [Choose seats]',
+        '      Select number of tickets',
+        '      [Choose seat type]',
+        '      [Pick seats from seating plan]',
+        '  Pay',
+        '  Get tickets',
+        '    [Email tickets]',
+        '    [Print tickets]'
+      ],
+      drop: ['Book tickets'],
+      extras: ['Order popcorn', 'Write a film review']
+    }
+  ];
+
+  /* Drawing settings */
+  var ARROWS = true;          // arrowheads on the lines down to each box
+  var GAP = 14, VGAP = 46, PAD = 12, FONT_W = 7.1, LINE_H = 16;
+
+  /* ================= Helpers ================= */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function oneLine(s) { return String(s).replace(/\s*\n\s*/g, ' '); }
+  var ZOOM = 1.25;
+
+  /* Greedy word wrap; an author's own \n always wins */
+  function wrap(text, max) {
+    if (text.indexOf('\n') >= 0) return text.split('\n');
+    var words = text.split(/\s+/), lines = [], cur = '';
+    words.forEach(function (w) {
+      if (!cur) cur = w;
+      else if ((cur + ' ' + w).length <= max) cur += ' ' + w;
+      else { lines.push(cur); cur = w; }
+    });
+    if (cur) lines.push(cur);
+    return lines;
+  }
+
+  /* ================= Prepare: parse each tree and lay it out ================= */
+  function parseTree(Q) {
+    var nodes = [], stack = [], drop = Q.drop || [];
+    Q.tree.forEach(function (raw, i) {
+      if (!raw.trim()) return;
+      var indent = raw.match(/^\s*/)[0].replace(/\t/g, '  ').length;
+      var body = raw.trim(), blank = /^\[[\s\S]*\]$/.test(body);
+      var text = blank ? body.slice(1, -1).trim() : body;
+      while (stack.length && stack[stack.length - 1].indent >= indent) stack.pop();
+      var parent = stack.length ? stack[stack.length - 1].node : null;
+      if (!parent && nodes.length) throw new Error('Question "' + Q.id + '": only the first line can be the top box (line ' + (i + 1) + ').');
+      var nd = { id: 'n' + nodes.length, text: text, blank: blank, parent: parent ? parent.id : null, children: [], depth: parent ? parent.depth + 1 : 0, drop: drop.indexOf(text) >= 0 };
+      if (parent) parent.children.push(nd);
+      nodes.push(nd);
+      stack.push({ indent: indent, node: nd });
+    });
+    return nodes;
+  }
+
+  function contourShift(c, s) { var o = {}; for (var r in c) o[r] = [c[r][0] + s, c[r][1] + s]; return o; }
+  function contourMerge(a, b) { for (var r in b) a[r] = a[r] ? [Math.min(a[r][0], b[r][0]), Math.max(a[r][1], b[r][1])] : b[r].slice(); return a; }
+
+  function layout(Q) {
+    var nodes = Q.nodes, root = nodes[0];
+    nodes.forEach(function (n) {
+      var max = n.depth === 0 ? 24 : (n.depth === 1 ? 20 : 15);
+      n.lines = wrap(n.text, max);
+      var longest = Math.max.apply(null, n.lines.map(function (l) { return l.length; }));
+      var minW = n.depth === 0 ? 160 : (n.depth === 1 ? 124 : 104);
+      n.w = Math.round(Math.max(minW, Math.min(230, longest * FONT_W + 20)));
+      n.h0 = Math.max(42, n.lines.length * LINE_H + 20);
+      var p = n.parent ? Q.N[n.parent] : null;
+      n.row = p ? p.row + 1 + (p.drop ? 1 : 0) : 0;
+    });
+    /* Tidy tree: each subtree keeps an outline (min/max x per row) so
+       subtrees can tuck in close wherever their rows don't clash. */
+    function lay(n) {
+      if (!n.children.length) { var c0 = {}; c0[n.row] = [-n.w / 2, n.w / 2]; return c0; }
+      var merged = null, offs = [];
+      n.children.forEach(function (ch) {
+        var cc = lay(ch);
+        if (!merged) { offs.push(0); merged = contourShift(cc, 0); return; }
+        var s = -Infinity;
+        for (var r in cc) if (merged[r]) s = Math.max(s, merged[r][1] + GAP - cc[r][0]);
+        if (s === -Infinity) s = offs[offs.length - 1] + GAP;
+        offs.push(s);
+        contourMerge(merged, contourShift(cc, s));
+      });
+      var mid = (offs[0] + offs[offs.length - 1]) / 2;
+      n.children.forEach(function (ch, i) { ch.rel = offs[i] - mid; });
+      var res = contourShift(merged, -mid);
+      res[n.row] = [-n.w / 2, n.w / 2];
+      for (var r2 = n.row + 1; r2 < n.children[0].row; r2++) contourMerge(res, (function () { var o = {}; o[r2] = [-10, 10]; return o; })());
+      return res;
+    }
+    var outline = lay(root);
+    root.x = 0;
+    (function place(n) { n.children.forEach(function (ch) { ch.x = n.x + ch.rel; place(ch); }); })(root);
+    var minX = Infinity, maxX = -Infinity;
+    for (var r in outline) { minX = Math.min(minX, outline[r][0]); maxX = Math.max(maxX, outline[r][1]); }
+    var rows = 0;
+    nodes.forEach(function (n) { rows = Math.max(rows, n.row + 1); });
+    var rowH = [], rowTop = [], y = PAD;
+    for (var i = 0; i < rows; i++) rowH[i] = 0;
+    nodes.forEach(function (n) { rowH[n.row] = Math.max(rowH[n.row], n.h0); });
+    for (i = 0; i < rows; i++) { if (!rowH[i]) rowH[i] = 42; rowTop[i] = y; y += rowH[i] + VGAP; }
+    nodes.forEach(function (n) { n.x = Math.round(n.x - minX + PAD); n.top = rowTop[n.row]; n.h = rowH[n.row]; });
+    Q.vb = [Math.round(maxX - minX + PAD * 2), Math.round(y - VGAP + PAD)];
+  }
+
+  QUESTIONS.forEach(function (Q) {
+    Q.nodes = parseTree(Q);
+    Q.N = {};
+    Q.nodes.forEach(function (n) { Q.N[n.id] = n; });
+    layout(Q);
+    Q.slots = Q.nodes.filter(function (n) { return n.blank; }).map(function (n) { return n.id; });
+    Q.slots.sort(function (a, b) { return Q.N[a].row - Q.N[b].row || Q.N[a].x - Q.N[b].x; });
+    Q.pieces = Q.slots.map(function (id, i) { return { id: 'p' + i, text: Q.N[id].text }; });
+    (Q.extras || []).forEach(function (t, i) { Q.pieces.push({ id: 'x' + i, text: t }); });
+    Q.P = {};
+    Q.pieces.forEach(function (p) { Q.P[p.id] = p; });
+    Q.total = Q.slots.length;
+  });
+
+  /* ================= Storage and themes ================= */
+  var store = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } }
+  };
+  var KEY_THEME = 'gcsecs-flowchart-shapes-theme';   // shared with the flowchart widgets
+  var KEY_SOLVED = 'gcsecs-structure-diagram-solved';
+  var KEY_BEST = 'gcsecs-structure-diagram-best';
+  var KEY_ZOOM = 'gcsecs-structure-diagram-zoom';
+  function getSolved() { try { var v = JSON.parse(store.get(KEY_SOLVED) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function markSolved(id) { var s = getSolved(); if (s.indexOf(id) < 0) { s.push(id); store.set(KEY_SOLVED, JSON.stringify(s)); } }
+  function getBests() { try { var v = JSON.parse(store.get(KEY_BEST) || '{}'); return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; } catch (e) { return {}; } }
+  function saveBest(id, n) {
+    var b = getBests(), prev = typeof b[id] === 'number' ? b[id] : null;
+    if (prev === null || n < prev) { b[id] = n; store.set(KEY_BEST, JSON.stringify(b)); }
+    return prev;
+  }
+  function plural(n) { return n + ' wrong check' + (n === 1 ? '' : 's'); }
+
+  var THEMES = [
+    { id: 'day', label: 'Day', bg: '#ffffff', ink: '#111111' },
+    { id: 'night', label: 'Night', bg: '#121417', ink: '#eef1f4' },
+    { id: 'send', label: 'Soft lighting', bg: '#f7f0d6', ink: '#222222' },
+    { id: 'blue', label: 'Soft blue', bg: '#dde9f4', ink: '#15202b' },
+    { id: 'contrast', label: 'High contrast', bg: '#000000', ink: '#ffff00' }
+  ];
+  function applyTheme(id) {
+    if (!THEMES.some(function (t) { return t.id === id; })) id = 'day';
+    document.documentElement.setAttribute('data-theme', id);
+    store.set(KEY_THEME, id);
+    var btns = $('themePanel').querySelectorAll('.swatch');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-t') === id ? 'true' : 'false');
+  }
+  function buildThemes() {
+    var panel = $('themePanel');
+    THEMES.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch';
+      b.setAttribute('data-t', t.id);
+      b.innerHTML = '<span class="dotsw" style="background:' + t.bg + ';color:' + t.ink + '" aria-hidden="true">A</span><span>' + esc(t.label) + '</span>';
+      b.addEventListener('click', function () {
+        applyTheme(t.id);
+        panel.hidden = true;
+        $('themeBtn').setAttribute('aria-expanded', 'false');
+        $('themeBtn').focus();
+        postHeight();
+      });
+      panel.appendChild(b);
+    });
+    $('themeBtn').addEventListener('click', function () {
+      var open = panel.hidden;
+      panel.hidden = !open;
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+      postHeight();
+    });
+    applyTheme(store.get(KEY_THEME) || 'day');
+  }
+
+  /* ================= Embedding: tell the parent page our height ================= */
+  var lastH = 0;
+  function postHeight(scrollTop) {
+    if (window.parent === window) return;
+    var h = Math.ceil($('app').getBoundingClientRect().height) + 4;
+    if (h === lastH && !scrollTop) return;
+    lastH = h;
+    try { window.parent.postMessage({ type: 'gcsecs-iframe-height', height: h, scrollTop: !!scrollTop }, '*'); } catch (e) { /* ignore */ }
+  }
+
+  /* ================= State ================= */
+  var S = { idx: 0, Q: null, boxes: {}, bankOrder: [], sel: null, pop: null, popScroll: 0, zoom: true, wrongChecks: 0, lastWrong: null };
+
+  /* ================= Screens ================= */
+  function showScreen(which) {
+    $('scrMenu').hidden = which !== 'menu';
+    $('scrQ').hidden = which !== 'q';
+    $('menuBtn').hidden = which === 'menu';
+    closePop(true);
+    try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+    setTimeout(function () { postHeight(true); }, 0);
+  }
+  function renderMenu() {
+    var solved = getSolved(), bests = getBests(), list = $('qlist');
+    list.innerHTML = '';
+    QUESTIONS.forEach(function (Q, i) {
+      var done = solved.indexOf(Q.id) >= 0;
+      var best = typeof bests[Q.id] === 'number' ? bests[Q.id] : null;
+      var bestTxt = best === null ? '' : (best === 0 ? 'no wrong checks' : 'best: ' + plural(best));
+      var status = done ? (best === 0 ? 'Perfect' : 'Solved') : '';
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'qbtn' + (done ? ' done' : '');
+      b.innerHTML = '<span class="num">' + (i + 1) + '</span><span class="qtxt"><span class="qtitle">' + esc(Q.title) + '</span><span class="qtag">' + Q.marks + ' marks' + (bestTxt ? ' · ' + esc(bestTxt) : '') + '</span></span>' + (status ? '<span class="qdone">' + status + '</span>' : '');
+      b.setAttribute('aria-label', 'Question ' + (i + 1) + ': ' + Q.title + ', ' + Q.marks + ' marks' + (status ? ', ' + status.toLowerCase() : '') + (bestTxt ? ', ' + bestTxt : ''));
+      b.addEventListener('click', function () { openQuestion(i); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  }
+  function goMenu() { S.Q = null; closePop(true); renderMenu(); showScreen('menu'); }
+
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function openQuestion(i) {
+    S.idx = i;
+    S.Q = QUESTIONS[i];
+    $('qMeta').textContent = 'Question ' + (i + 1) + ' of ' + QUESTIONS.length + ' · ' + S.Q.marks + ' marks';
+    $('qText').innerHTML = S.Q.text;
+    showScreen('q');
+    $('board').scrollLeft = 0;
+    S.wrongChecks = 0;
+    S.lastWrong = null;
+    updateCounter(false);
+    resetQuestion();
+  }
+  function resetQuestion() {
+    S.boxes = {};
+    S.sel = null;
+    /* Shuffled so the order of the parts doesn't give away where they go */
+    S.bankOrder = shuffle(S.Q.pieces.map(function (p) { return p.id; }));
+    hideMsg();
+    hideAsk();
+    closePop(true);
+    render();
+  }
+
+  /* ================= Placing ================= */
+  function boxOf(pieceId) { for (var k in S.boxes) if (S.boxes[k] === pieceId) return k; return null; }
+  function unplaced() { return S.bankOrder.filter(function (id) { return !boxOf(id); }); }
+  function placePiece(slotId, pieceId) {
+    var src = boxOf(pieceId), old = S.boxes[slotId];
+    if (src === slotId) { changed(); return; }
+    S.boxes[slotId] = pieceId;
+    if (src) { if (old) S.boxes[src] = old; else delete S.boxes[src]; }
+    changed();
+  }
+  function emptyBox(slotId) { if (S.boxes[slotId]) { delete S.boxes[slotId]; } changed(); }
+  function changed() { S.sel = null; hideMsg(); hideAsk(); render(); }
+
+  /* ================= Rendering ================= */
+  function render() { renderBoard(); renderBank(); postHeight(); }
+
+  function textMarkup(lines, cx, cy, cls) {
+    var y0 = cy - (lines.length - 1) * LINE_H / 2;
+    return lines.map(function (ln, i) {
+      return '<text class="' + (cls || 'stext') + '" x="' + cx + '" y="' + (y0 + i * LINE_H) + '" text-anchor="middle" dominant-baseline="central">' + esc(ln) + '</text>';
+    }).join('');
+  }
+  function headMarkup(x, y) {
+    return '<polygon class="ah" points="' + [x, y, x - 5, y - 9, x + 5, y - 9].join(',') + '"/>';
+  }
+  function boxName(id) {
+    var nd = S.Q.N[id];
+    if (!nd.blank) return '“' + oneLine(nd.text) + '”';
+    var pid = S.boxes[id];
+    return pid ? '“' + oneLine(S.Q.P[pid].text) + '”' : 'an empty box';
+  }
+  function pieceLines(pid, nd) {
+    var max = nd.depth === 0 ? 24 : (nd.depth === 1 ? 20 : 15);
+    return wrap(S.Q.P[pid].text, max);
+  }
+
+  function renderBoard() {
+    var Q = S.Q, vw = Q.vb[0], vh = Q.vb[1], focused = null;
+    var act = document.activeElement;
+    if (act && act.getAttribute && act.getAttribute('data-slot')) focused = act.getAttribute('data-slot');
+
+    var s = '';
+    /* connecting lines */
+    Q.nodes.forEach(function (p) {
+      if (!p.children.length) return;
+      var kids = p.children, cTop = kids[0].top, barY = cTop - VGAP / 2;
+      var xs = kids.map(function (c) { return c.x; });
+      s += '<path class="ln" d="M' + p.x + ' ' + (p.top + p.h) + ' V' + barY + (kids.length > 1 ? ' M' + Math.min.apply(null, xs) + ' ' + barY + ' H' + Math.max.apply(null, xs) : '') + '"/>';
+      kids.forEach(function (c) {
+        s += '<path class="ln" d="M' + c.x + ' ' + barY + ' V' + (ARROWS ? cTop - 7 : cTop) + '"/>' + (ARROWS ? headMarkup(c.x, cTop) : '');
+      });
+    });
+    /* boxes */
+    Q.nodes.forEach(function (nd) {
+      var l = nd.x - nd.w / 2, t = nd.top, cy = t + nd.h / 2;
+      if (!nd.blank) {
+        s += '<g><rect class="gbox' + (nd.depth === 0 ? ' root' : '') + '" x="' + l + '" y="' + t + '" width="' + nd.w + '" height="' + nd.h + '"/>' + textMarkup(nd.lines, nd.x, cy) + '</g>';
+        return;
+      }
+      var pid = S.boxes[nd.id], inner, label;
+      var pn = nd.parent ? Q.N[nd.parent] : null;
+      var under = !pn ? '' : (pn.blank && !S.boxes[pn.id] ? ' under the empty box above' : ' under “' + oneLine(pn.blank ? Q.P[S.boxes[pn.id]].text : pn.text) + '”');
+      if (pid) {
+        inner = '<rect class="sh" x="' + l + '" y="' + t + '" width="' + nd.w + '" height="' + nd.h + '"/>' + textMarkup(pieceLines(pid, nd), nd.x, cy);
+        label = 'Box' + under + ': ' + oneLine(Q.P[pid].text) + '. Activate to change.';
+      } else {
+        inner = '<rect class="empty" x="' + l + '" y="' + t + '" width="' + nd.w + '" height="' + nd.h + '" rx="6"/><text class="etext" x="' + nd.x + '" y="' + cy + '" text-anchor="middle" dominant-baseline="central">Tap to fill</text>';
+        label = 'Empty box' + under + '. Activate to choose a part.';
+      }
+      var cls = 'slot' + (pid ? ' placed' : '') + (S.sel ? ' target' : '') + (S.pop && S.pop.id === nd.id ? ' active' : '');
+      s += '<g class="' + cls + '" data-slot="' + nd.id + '" tabindex="0" role="button" aria-label="' + esc(label) + '">' + inner +
+        '<rect class="ring" x="' + (l - 4) + '" y="' + (t - 4) + '" width="' + (nd.w + 8) + '" height="' + (nd.h + 8) + '" rx="8"/>' +
+        '<rect class="hit" x="' + (l - 4) + '" y="' + (t - 4) + '" width="' + (nd.w + 8) + '" height="' + (nd.h + 8) + '"/></g>';
+    });
+
+    var boardEl = $('board'), avail = boardEl.clientWidth;
+    var need = avail > 0 && avail < vw * 0.95, zoomed = need && S.zoom;
+    $('zoomBar').hidden = !need;
+    $('zoomHint').hidden = !zoomed;
+    $('zoomBtn').setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+    $('zoomBtn').textContent = zoomed ? 'Fit to screen' : 'Bigger boxes';
+    boardEl.classList.toggle('zoomed', zoomed);
+    var keepLeft = boardEl.scrollLeft;
+    var sizeStyle = zoomed ? 'width:' + Math.round(vw * ZOOM) + 'px' : 'max-width:' + Math.round(vw * 1.25) + 'px';
+    boardEl.innerHTML = '<svg class="board" viewBox="0 0 ' + vw + ' ' + vh + '" style="' + sizeStyle + '" role="group" aria-label="Structure diagram with ' + Q.slots.length + ' empty boxes to complete">' + s + '</svg>';
+    if (zoomed) boardEl.scrollLeft = keepLeft;
+    if (focused) {
+      var el = boardEl.querySelector('[data-slot="' + focused + '"]');
+      if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    }
+  }
+
+  function pieceTile(id, extra) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tile' + (extra ? ' ' + extra : '');
+    b.setAttribute('data-piece', id);
+    b.textContent = oneLine(S.Q.P[id].text);
+    return b;
+  }
+  function renderBank() {
+    var left = unplaced(), grid = $('tgrid');
+    grid.innerHTML = '';
+    $('bankTitle').textContent = left.length ? 'Parts (' + left.length + ' left)' : 'Parts';
+    if (!left.length) grid.innerHTML = '<p class="bempty">All parts used. Press “Check my answer”.</p>';
+    left.forEach(function (id) {
+      var on = S.sel && S.sel.id === id;
+      var b = pieceTile(id, on ? 'sel' : '');
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        if (dragSuppress) return;
+        S.sel = on ? null : { kind: 'piece', id: id };
+        closePop(true);
+        render();
+        var again = $('tgrid').querySelector('[data-piece="' + id + '"]');
+        if (again) again.focus();
+      });
+      grid.appendChild(b);
+    });
+    var hint = '';
+    if (S.sel) hint = 'Now tap a box in the structure diagram.';
+    else if (S.Q.extras && S.Q.extras.length && left.length) hint = 'You will not need all of the parts.';
+    $('bankHint').textContent = hint;
+  }
+
+  /* ================= Pop-up chooser ================= */
+  function openPop(id) {
+    S.pop = { kind: 'box', id: id };
+    renderBoard();
+    S.popScroll = $('board').scrollLeft;
+    var pop = $('pop'), wrapEl = $('boardWrap');
+    pop.innerHTML = '';
+    var cur = S.boxes[id], left = unplaced();
+    pop.insertAdjacentHTML('beforeend', '<h3>' + (cur ? 'Change this box' : 'Choose a part for this box') + '</h3>');
+    if (!left.length && !cur) pop.insertAdjacentHTML('beforeend', '<p class="bempty">No parts left.</p>');
+    left.forEach(function (pid) {
+      var b = pieceTile(pid);
+      b.addEventListener('click', function () { var s = S.pop.id; closePop(true); placePiece(s, pid); refocus(s); });
+      pop.appendChild(b);
+    });
+    if (cur) pop.appendChild(popBtn('Empty this box', function () { var s = S.pop.id; closePop(true); emptyBox(s); refocus(s); }));
+    pop.appendChild(popBtn('Cancel', function () { var p = S.pop; closePop(); refocus(p.id); }));
+    pop.hidden = false;
+    var anchor = $('board').querySelector('[data-slot="' + id + '"]');
+    var wr = wrapEl.getBoundingClientRect(), sr = anchor.getBoundingClientRect();
+    var popW = Math.min(260, wr.width - 12);
+    pop.style.width = popW + 'px';
+    var popH = pop.offsetHeight;
+    var x = Math.max(6, Math.min(sr.left - wr.left + sr.width / 2 - popW / 2, wr.width - popW - 6));
+    var below = sr.bottom - wr.top + 6, above = sr.top - wr.top - popH - 6, y;
+    if (below + popH <= wr.height - 4) y = below; else if (above >= 4) y = above; else y = Math.max(4, wr.height - popH - 4);
+    pop.style.left = x + 'px';
+    pop.style.top = y + 'px';
+    var first = pop.querySelector('button');
+    if (first) try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+  }
+  function popBtn(text, fn) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn';
+    b.textContent = text;
+    b.addEventListener('click', fn);
+    return b;
+  }
+  function closePop(silent) {
+    var pop = $('pop');
+    var had = S.pop;
+    pop.hidden = true;
+    pop.innerHTML = '';
+    S.pop = null;
+    if (had && !silent && S.Q) renderBoard();
+  }
+  function refocus(id) {
+    var el = $('board').querySelector('[data-slot="' + id + '"]');
+    if (el) try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+  }
+  function activateBox(id) {
+    if (S.sel) { placePiece(id, S.sel.id); return; }
+    if (S.pop && S.pop.id === id) { closePop(); return; }
+    renderBank();
+    openPop(id);
+  }
+
+  /* ================= Checking ================= */
+  function showMsg(kind, html) { var m = $('msg'); m.className = 'msg ' + kind; m.innerHTML = html; m.hidden = false; postHeight(); }
+  function hideMsg() { $('msg').hidden = true; $('msg').innerHTML = ''; }
+  function updateCounter(bump) {
+    var n = S.wrongChecks || 0, wc = $('wc');
+    $('wcN').textContent = String(n);
+    wc.classList.toggle('bad', n > 0);
+    var best = S.Q ? getBests()[S.Q.id] : null;
+    $('wcBest').textContent = typeof best === 'number' ? 'Your best: ' + (best === 0 ? 'no wrong checks' : plural(best)) : '';
+    if (bump) { wc.classList.remove('bump'); void wc.offsetWidth; wc.classList.add('bump'); }
+  }
+  /* Number of correct boxes, marked like an OCR mark scheme: a part scores
+     if it sits under the right box. So parts side by side can go in any
+     order, and whole blank branches can swap places (e.g. "Start Game" and
+     its parts first). A box with printed sub-problems below it must hold
+     exactly its own part. */
+  function score(boxes) {
+    var Q = S.Q, c = 0;
+    if (!Q.parentOf) {
+      Q.parentOf = {};
+      Q.nodes.forEach(function (n) {
+        if (!n.parent) return;
+        (Q.parentOf[n.text] = Q.parentOf[n.text] || []).push(Q.N[n.parent].text);
+      });
+    }
+    function shown(id) { var n = Q.N[id]; return n.blank ? (boxes[id] ? Q.P[boxes[id]].text : null) : n.text; }
+    Q.slots.forEach(function (id) {
+      var nd = Q.N[id], got = shown(id);
+      if (got === null) return;
+      if (nd.children.some(function (ch) { return !ch.blank; })) { if (got === nd.text) c++; return; }
+      var above = shown(nd.parent), ok = Q.parentOf[got] || [];
+      if (above !== null && ok.indexOf(above) >= 0) c++;
+    });
+    return c;
+  }
+  function check() {
+    closePop(true);
+    hideAsk();
+    var Q = S.Q;
+    var empty = Q.slots.filter(function (id) { return !S.boxes[id]; }).length;
+    if (empty) { showMsg('info', 'Complete the structure diagram before checking. Still empty: ' + empty + (empty === 1 ? ' box.' : ' boxes.')); return; }
+    var right = score(S.boxes);
+    var key = Q.slots.map(function (id) { return S.boxes[id]; }).join('|');
+    if (right === Q.total) solvedMsg(); else wrongMsg(right, key);
+  }
+  function wrongMsg(right, key) {
+    var Q = S.Q;
+    if (key !== S.lastWrong) { S.wrongChecks++; S.lastWrong = key; updateCounter(true); }
+    showMsg('warn', right + ' of ' + Q.total + ' correct. Keep going! Wrong checks: ' + S.wrongChecks + '.');
+  }
+  function solvedMsg() {
+    var Q = S.Q;
+    markSolved(Q.id);
+    var n = S.wrongChecks, prev = saveBest(Q.id, n);
+    var sc = n === 0 ? ' <b>Perfect: no wrong checks!</b>' : ' Wrong checks: ' + n + '. Can you get it to 0 next time?';
+    if (prev !== null && n < prev) sc += ' <b>New best!</b>';
+    updateCounter(false);
+    var last = S.idx === QUESTIONS.length - 1;
+    showMsg('ok', 'All ' + Q.total + ' of ' + Q.total + ' correct. Question complete!' + sc +
+      '<div class="row">' + (last ? '' : '<button type="button" class="btn primary" id="nextBtn">Next question</button>') +
+      '<button type="button" class="btn" id="toMenuBtn">Back to menu</button></div>');
+    if (!last) $('nextBtn').addEventListener('click', function () { openQuestion(S.idx + 1); });
+    $('toMenuBtn').addEventListener('click', goMenu);
+  }
+
+  /* ================= Reset ================= */
+  function askReset() {
+    closePop(true);
+    if (!Object.keys(S.boxes).length) { resetQuestion(); return; }
+    $('resetAsk').hidden = false;
+    postHeight();
+    $('resetNo').focus();
+  }
+  function hideAsk() { $('resetAsk').hidden = true; }
+
+  /* ================= Drag and drop =================
+     Mouse and pen drag straight away. Touch (tablet layout): press and hold, then drag. */
+  var drag = null, dragSuppress = false, LONG_PRESS = 350;
+  function tabletLayout() { return !window.matchMedia || window.matchMedia('(min-width: 760px)').matches; }
+  function beginDrag() {
+    drag.on = true;
+    closePop(true);
+    var g = document.createElement('div');
+    g.className = 'ghost';
+    g.textContent = oneLine(S.Q.P[drag.id].text);
+    document.body.appendChild(g);
+    drag.ghost = g;
+    if (drag.touch && navigator.vibrate) { try { navigator.vibrate(12); } catch (e) { /* ignore */ } }
+  }
+  function dropTarget(x, y) {
+    var el = document.elementFromPoint(x, y);
+    if (!el || !el.closest) return null;
+    var s = el.closest('[data-slot]');
+    if (s) return { box: s.getAttribute('data-slot'), el: s };
+    if (el.closest('#bank')) return { bank: true };
+    return null;
+  }
+  function moveDrag(x, y) {
+    drag.ghost.style.left = x + 'px';
+    drag.ghost.style.top = y + 'px';
+    var t = dropTarget(x, y), el = t && t.box ? t.el : null;
+    if (el !== drag.over) {
+      if (drag.over) drag.over.classList.remove('over');
+      if (el) el.classList.add('over');
+      drag.over = el;
+    }
+  }
+  function finishDrag(x, y) {
+    var d = drag;
+    drag = null;
+    clearTimeout(d.timer);
+    if (d.ghost) d.ghost.remove();
+    dragSuppress = true;
+    setTimeout(function () { dragSuppress = false; }, 400);
+    var t = dropTarget(x, y);
+    if (t && t.box && t.box !== d.from) placePiece(t.box, d.id);
+    else if (t && t.bank && d.from) emptyBox(d.from);
+    else render();
+  }
+  function cancelDrag() {
+    if (!drag) return;
+    clearTimeout(drag.timer);
+    if (drag.ghost) drag.ghost.remove();
+    var was = drag.on;
+    drag = null;
+    if (was) render();
+  }
+  function dragSource(target) {
+    if (!target.closest) return null;
+    var b = target.closest('#tgrid [data-piece]');
+    if (b) return { id: b.getAttribute('data-piece'), from: null };
+    var s = target.closest('#board [data-slot]');
+    if (s && S.boxes[s.getAttribute('data-slot')]) return { id: S.boxes[s.getAttribute('data-slot')], from: s.getAttribute('data-slot') };
+    return null;
+  }
+  function pointerDown(e) {
+    if (e.pointerType === 'touch' || (e.button != null && e.button !== 0) || !S.Q) return;
+    var src = dragSource(e.target);
+    if (!src) return;
+    drag = src;
+    drag.x = e.clientX; drag.y = e.clientY; drag.pid = e.pointerId; drag.on = false;
+  }
+  function pointerMove(e) {
+    if (!drag || drag.touch || e.pointerId !== drag.pid) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) { if (dx * dx + dy * dy < 64) return; beginDrag(); }
+    e.preventDefault();
+    moveDrag(e.clientX, e.clientY);
+  }
+  function pointerUp(e) {
+    if (!drag || drag.touch || e.pointerId !== drag.pid) return;
+    if (!drag.on) { drag = null; return; }
+    finishDrag(e.clientX, e.clientY);
+  }
+  function touchStart(e) {
+    if (drag) cancelDrag();
+    if (e.touches.length !== 1 || !tabletLayout() || !S.Q) return;
+    var src = dragSource(e.target);
+    if (!src) return;
+    var p = e.touches[0];
+    drag = src;
+    drag.touch = true; drag.on = false;
+    drag.x = drag.lx = p.clientX; drag.y = drag.ly = p.clientY;
+    drag.timer = setTimeout(function () { if (drag && drag.touch && !drag.on) { beginDrag(); moveDrag(drag.lx, drag.ly); } }, LONG_PRESS);
+  }
+  function touchMove(e) {
+    if (!drag || !drag.touch) return;
+    var p = e.touches[0];
+    if (!p) return;
+    drag.lx = p.clientX; drag.ly = p.clientY;
+    if (!drag.on) {
+      var dx = p.clientX - drag.x, dy = p.clientY - drag.y;
+      if (dx * dx + dy * dy > 100) { clearTimeout(drag.timer); drag = null; }
+      return;
+    }
+    if (e.cancelable) e.preventDefault();
+    moveDrag(p.clientX, p.clientY);
+  }
+  function touchEnd(e) {
+    if (!drag || !drag.touch) return;
+    clearTimeout(drag.timer);
+    if (!drag.on) { drag = null; return; }
+    if (e.cancelable) e.preventDefault();
+    var p = e.changedTouches && e.changedTouches[0];
+    finishDrag(p ? p.clientX : drag.lx, p ? p.clientY : drag.ly);
+  }
+
+  /* ================= Wiring ================= */
+  function init() {
+    var z = store.get(KEY_ZOOM);
+    S.zoom = z === null ? true : z === '1';
+    buildThemes();
+    renderMenu();
+    $('menuBtn').addEventListener('click', goMenu);
+    $('checkBtn').addEventListener('click', check);
+    $('resetBtn').addEventListener('click', askReset);
+    $('resetYes').addEventListener('click', function () { resetQuestion(); $('resetBtn').focus(); });
+    $('resetNo').addEventListener('click', function () { hideAsk(); $('resetBtn').focus(); });
+    $('zoomBtn').addEventListener('click', function () {
+      S.zoom = !S.zoom;
+      store.set(KEY_ZOOM, S.zoom ? '1' : '0');
+      closePop(true);
+      renderBoard();
+      postHeight();
+    });
+
+    var board = $('board');
+    board.addEventListener('click', function (e) {
+      if (dragSuppress || !e.target.closest) return;
+      var s = e.target.closest('[data-slot]');
+      if (s) activateBox(s.getAttribute('data-slot'));
+    });
+    board.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var s = e.target.closest ? e.target.closest('[data-slot]') : null;
+      if (s) { e.preventDefault(); activateBox(s.getAttribute('data-slot')); }
+    });
+    board.addEventListener('scroll', function () { if (S.pop && Math.abs(board.scrollLeft - (S.popScroll || 0)) > 30) closePop(); });
+
+    document.addEventListener('pointerdown', function () { dragSuppress = false; }, true);
+    document.addEventListener('pointerdown', pointerDown);
+    document.addEventListener('pointermove', pointerMove, { passive: false });
+    document.addEventListener('pointerup', pointerUp);
+    document.addEventListener('pointercancel', function () { if (drag && !drag.touch) cancelDrag(); });
+    document.addEventListener('touchstart', touchStart, { passive: true });
+    document.addEventListener('touchmove', touchMove, { passive: false });
+    document.addEventListener('touchend', touchEnd, { passive: false });
+    document.addEventListener('touchcancel', function () { if (drag && drag.touch) cancelDrag(); });
+    document.addEventListener('contextmenu', function (e) {
+      if ((drag && drag.touch) || (e.target.closest && e.target.closest('.tile, [data-slot]'))) e.preventDefault();
+    });
+    document.addEventListener('pointerdown', function (e) {
+      var pop = $('pop');
+      if (pop.hidden || pop.contains(e.target)) return;
+      if (e.target.closest && e.target.closest('[data-slot]')) return;
+      closePop();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (!$('pop').hidden) { var p = S.pop; closePop(); if (p) refocus(p.id); }
+      else if (!$('resetAsk').hidden) { hideAsk(); $('resetBtn').focus(); }
+      else if (S.sel) { S.sel = null; render(); }
+    });
+
+    if (window.ResizeObserver) new ResizeObserver(function () { postHeight(); }).observe($('app'));
+    else setInterval(postHeight, 500);
+    var lastW = window.innerWidth, rT = null;
+    window.addEventListener('resize', function () {
+      postHeight();
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      closePop();
+      clearTimeout(rT);
+      rT = setTimeout(function () { if (S.Q && !$('scrQ').hidden && !drag) { renderBoard(); postHeight(); } }, 120);
+    });
+    postHeight(true);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
