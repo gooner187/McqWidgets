@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Robot Arm Challenge</title>
+<style>
+:root{--navy:#183956;--ink:#123252;--line:#cbdff4;--pale:#eef5fd}*{box-sizing:border-box}body{margin:0;background:#edf3fa;color:var(--ink);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.app{max-width:1450px;margin:12px auto;padding:12px;background:#fbfdff;border:1px solid #dce7f2;box-shadow:0 4px 18px #17395718}header{height:60px;background:linear-gradient(100deg,#173653,#254d70);border-radius:8px;color:white;display:flex;align-items:center;padding:0 20px;gap:15px}.logo{font-size:27px}h1{font-size:clamp(19px,2vw,27px);margin:0;display:flex;align-items:center;gap:10px;white-space:nowrap}.level,#passedCount,#levelsBtn{white-space:nowrap}.brand:hover{background:#ffd84d;transform:rotate(-4deg) translateY(-1px);box-shadow:3px 3px 0 #111b25}.brand:focus-visible{outline:3px solid #fff;outline-offset:3px}.brand{text-decoration:none;cursor:pointer;display:inline-block;font:900 13px/1 Inter,system-ui,Arial,sans-serif;letter-spacing:.06em;color:#183956;background:#ffc51c;border:2px solid #111b25;border-radius:7px;padding:4px 7px 4px 8px;transform:rotate(-4deg);box-shadow:2px 2px 0 #111b25}@media(max-width:1150px){header{gap:10px}.brand{font-size:11px;padding:3px 5px}#dots{display:none}}@media(max-width:900px){.brand{display:none}}.divider{height:30px;width:2px;background:#7895b1}.level{background:#5b9bd4;border-radius:12px;padding:7px 15px;font-weight:750}.progress{margin-left:auto;display:flex;align-items:center;gap:12px;font-weight:700}.dots{display:flex;align-items:center}.dot{width:12px;height:12px;border-radius:50%;background:#8298ae}.dot.active{background:#8df0a0}.bar{width:25px;height:4px;background:#8298ae}main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(330px,.95fr);gap:15px;margin-top:14px}.scene{border:1px solid #c5d9ed;border-radius:10px;overflow:hidden}svg{display:block;width:100%;height:auto}.panel{background:linear-gradient(145deg,#f4f8fe,#eaf2fc);border:1px solid #cbdff4;border-radius:10px}.task{display:flex;gap:15px;align-items:center;padding:14px 18px;margin-top:13px}.taskicon{width:45px;height:45px;flex:0 0 45px;border-radius:50%;background:#b5d8ff;display:grid;place-items:center;font-size:25px}.task h2,.commands h2,.program h2{font-size:19px;margin:0 0 5px}.task p{margin:0;line-height:1.5}.commands{margin-top:13px;padding:14px 16px 16px}.commandgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.command{background:#e0ecfa;border-radius:9px;padding:11px 13px;min-height:68px}.command b{display:block;font-size:17px;margin-bottom:4px}.command span{font-size:13px;color:#345778}.program{padding:12px;display:flex;flex-direction:column;min-height:100%}.programhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}.programhead h2{margin:0;font-size:21px}.clear{margin-left:auto;border:0;border-radius:8px;background:#dce9f8;padding:9px 13px;color:#173957;font-weight:750;cursor:pointer}.editor{display:flex;flex:1;min-height:520px;border:2px solid #cfdef0;border-radius:10px;overflow:hidden;background:white}.nums{width:43px;flex:0 0 43px;text-align:right;padding:8px 8px 8px 0;background:#eef4fc;border-right:1px solid #d3e1f1;color:#7891ad;font:16px/32px ui-monospace,monospace;user-select:none}textarea{resize:none;flex:1;min-width:0;border:0;outline:0;padding:8px 12px;color:#102f50;font:17px/32px ui-monospace,Consolas,monospace;background:repeating-linear-gradient(to bottom,#fff 0,#fff 31px,#f1f6fd 32px);white-space:pre;overflow:auto}textarea:focus{box-shadow:inset 3px 0 #3688ed}.buttons{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:9px;margin-top:13px}button.action{border:0;border-radius:9px;padding:13px 7px;color:white;font-size:15px;font-weight:800;cursor:pointer}.run{background:#13a52f}.step{background:#397fc4}.reset{background:#8196ad}.action:disabled{opacity:.5;cursor:not-allowed}.status{margin-top:11px;min-height:43px;padding:10px 12px;border-radius:8px;background:#e6f0fc;border:1px solid #d0e0f2;color:#294c70;font-size:14px;line-height:1.4}.status.good{background:#e7f8eb;border-color:#b8e6c2;color:#17632b}.status.error{background:#fff0ed;border-color:#f3c8bf;color:#9b3527}@media(max-width:900px){main{grid-template-columns:1fr}.program{min-height:650px}.app{margin:0}}@media(max-width:560px){header{padding:0 9px;gap:8px}.logo{font-size:21px}.divider{display:none}.level{font-size:13px;padding:6px 9px}.progress{gap:5px;font-size:12px}.bar{width:10px}.dot{width:9px;height:9px}.commandgrid{grid-template-columns:repeat(2,1fr)}.task{padding:11px}.buttons{gap:6px}.action{font-size:13px!important}}
+/* Fit-to-screen layout (desktop/laptop): the page never scrolls; the scene takes all spare height,
+   the task and command boxes are compact, and the code editor scrolls inside itself */
+.taskicon{width:36px;height:36px;flex:0 0 36px;font-size:20px}.task{padding:9px 14px;margin-top:10px;gap:12px}.task h2{font-size:16px;margin:0 0 2px}.task p{font-size:14px;line-height:1.35}
+.commands{margin-top:10px;padding:9px 12px 11px}.commands h2{font-size:16px;margin:0 0 7px}.commandgrid{grid-template-columns:repeat(6,1fr);gap:7px}.command{min-height:0;padding:7px 9px}.command b{font-size:15px;margin-bottom:1px;font-family:ui-monospace,Consolas,monospace}.command span{font-size:12px;line-height:1.25;display:block}
+.scene{background:#1e3955;display:flex;align-items:center;justify-content:center}
+.nums{overflow:hidden}textarea{background-attachment:local}
+@media (min-width:901px){
+  html,body{height:100%;overflow:hidden}
+  .app{height:calc(100vh - 24px);height:calc(100dvh - 24px);display:flex;flex-direction:column;margin:12px auto}
+  header{flex:0 0 auto}
+  main{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) minmax(300px,380px);margin-top:12px}
+  main>section{display:flex;flex-direction:column;min-height:0}
+  .scene{flex:1;min-height:180px}.scene svg{width:100%;height:100%}
+  .program{min-height:0;height:100%}.editor{min-height:96px}
+  .buttons{margin-top:10px}.status{margin-top:9px;min-height:0}
+}
+@media (min-width:901px) and (max-height:700px){header{height:48px}.command span{display:none}.task p{font-size:13px}}
+@media(max-width:1100px) and (min-width:901px){.commandgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.commandgrid{grid-template-columns:repeat(2,1fr)}}
+/* Worked example on each command card: always visible, even in the most compact layout */
+.command .eg{margin-top:4px;font-size:12px;color:#345778}.command .eg code{font:700 13px ui-monospace,Consolas,monospace;background:#fff;border:1px solid #b9d0ea;border-radius:5px;padding:1px 6px;color:#102f50;white-space:nowrap}
+/* Result message shown over the scene (bump = try again, gripped = level complete) */
+.scene{position:relative}.banner{position:absolute;inset:0;display:grid;place-items:start center;background:#0f233a33;padding:5% 16px 16px}:root:not(.no-motion) .banner{animation:fade .25s ease}.banner[hidden]{display:none}
+.bannerbox{background:#fff;border-radius:14px;box-shadow:0 12px 40px #0f233a66;padding:18px 22px;max-width:420px;text-align:center}.bannerbox h3{margin:6px 0 6px;font-size:21px}.bannerbox p{margin:0 0 14px;line-height:1.45;color:#345778;font-size:15px}
+.bicon{width:46px;height:46px;border-radius:50%;margin:0 auto;display:grid;place-items:center;font-size:25px;font-weight:900;color:#fff}.banner.fail .bicon{background:#d6453a}.banner.win .bicon{background:#13a52f}
+.bannerbox button{border:0;border-radius:9px;padding:11px 22px;font-weight:800;font-size:15px;cursor:pointer;color:#fff}.banner.fail button{background:#d6453a}.banner.win button{background:#13a52f}.bannerbox button:focus-visible{outline:3px solid #3688ed;outline-offset:2px}
+@keyframes fade{from{opacity:0}}
+/* Levels: header button, progress dots (green = passed, ring = this level), menu list */
+.levelsbtn{border:0;border-radius:8px;background:#ffffff26;color:#fff;font-weight:800;padding:8px 13px;cursor:pointer;font-size:14px}.levelsbtn:hover{background:#ffffff3d}
+.dot.here{box-shadow:0 0 0 3px #ffffffb0}.dot.passed{background:#8df0a0}.dot.tried{background:#f5c451}
+.levelsbox{width:min(440px,100%)}.levelsbox p{margin:0 0 12px}.levellist{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.levellist li{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #d3e1f1;border-radius:10px;background:#f6faff}.levellist li.current{border-color:#5b9bd4;background:#eaf3fe}
+.lnum{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:#dce9f8;color:#173957}.levellist .passed .lnum{background:#13a52f;color:#fff}
+.linfo{flex:1;min-width:0}.linfo b{display:block}.chip{display:inline-block;margin-top:2px;font-size:12px;font-weight:800;border-radius:20px;padding:2px 9px;background:#e4ebf3;color:#4b6580}.chip.passed{background:#dff6e4;color:#17632b}.chip.tried{background:#fff1cf;color:#8a5a00}.chip.locked{background:#eef1f5;color:#7a8a9b}.resetall{margin-right:auto;background:#fff!important;color:#c0392b;box-shadow:inset 0 0 0 2px #e3a59e}.resetall:hover{background:#fdecea!important}
+.chip.soon{background:#eef1f5;color:#7a8a9b}
+.levellist button{border:0;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer;background:#397fc4;color:#fff}.levellist button:disabled{background:#c9d4e0;cursor:not-allowed}
+.bbtns{display:flex;gap:10px;justify-content:center}.bannerbox button.next{background:#397fc4}
+/* Speed toggle */
+.speed{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;font-weight:700;color:#345778}.speed span{margin-right:2px}.speed button{flex:1;border:1px solid #c8daee;background:#fff;color:#173957;border-radius:8px;padding:6px 4px;font-weight:700;font-size:13px;cursor:pointer}.speed button[aria-checked="true"]{background:#173957;border-color:#173957;color:#fff}
+@media(max-width:560px){.levelsbtn{padding:6px 8px;font-size:12px}#passedCount{display:none}}
+/* Animations switch (same as River Crossing): animations are ON by default, whatever the device setting,
+   because school PCs often have Windows "Show animations" turned off. Students can turn them off here. */
+.motion-toggle{display:flex;align-items:center;gap:.5em;font:inherit;font-size:13px;font-weight:700;color:#173957;background:#fff;border:2px solid #111;border-radius:999px;padding:.25em .4em .25em .8em;cursor:pointer;flex:none}
+.motion-toggle .track{position:relative;width:2.3em;height:1.3em;border-radius:999px;background:#a7b3ba;flex:none}
+.motion-toggle .knob{position:absolute;top:.15em;left:.15em;width:1em;height:1em;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgb(0 0 0/.25)}
+:root:not(.no-motion) .motion-toggle .track{transition:background 150ms}:root:not(.no-motion) .motion-toggle .knob{transition:transform 150ms}
+.motion-toggle[aria-checked="true"] .track{background:#27a845}.motion-toggle[aria-checked="true"] .knob{transform:translateX(1em)}
+.motion-toggle:focus-visible{outline:3px solid #ffd34d;outline-offset:3px}
+@media(max-width:560px){.motion-toggle span:first-child{display:none}}
+/* Level target outline flashes (only while animations are on) */
+.editor{position:relative}#loopLayer{position:absolute;top:0;bottom:0;left:44px;right:0;pointer-events:none;overflow:hidden;z-index:1}
+.loopbox{position:absolute;left:3px;right:10px;border-left:6px solid #7c4dff;background:#7c4dff12;border-radius:4px 8px 8px 4px;box-shadow:inset 0 0 0 1.5px #7c4dff40}
+.looptag{position:absolute;top:5px;right:6px;font:800 11.5px/1 Inter,system-ui,Arial,sans-serif;color:#fff;background:#7c4dff;border-radius:999px;padding:4px 8px}.looptag.live{background:#e65100;font-size:13px}
+button.command{font:inherit;color:inherit;text-align:left;border:0;cursor:pointer}.repeatcmd{background:#ece4ff;box-shadow:inset 0 0 0 2px #7c4dff55}.repeatcmd:hover{background:#e0d4ff}.repeatcmd:focus-visible{outline:3px solid #7c4dff;outline-offset:2px}.repeatcmd i{font-style:normal;font-size:11px;font-weight:800;color:#fff;background:#7c4dff;border-radius:999px;padding:2px 6px;vertical-align:2px;margin-left:3px;font-family:Inter,system-ui,Arial,sans-serif}
+.linkbtn{font:inherit;font-weight:700;color:#5b2fd6;background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+/* Loops intro + demo */
+.modalbox.loopbox2{width:min(860px,100%);max-height:calc(100dvh - 32px);overflow:auto}.loopbox2 h3{font-size:24px;color:#4a22c0}
+#liCap{font-size:17px;line-height:1.45;min-height:50px;margin:4px 0 12px}
+.listage{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;align-items:center;margin-bottom:12px}@media(max-width:700px){.listage{grid-template-columns:1fr}}
+.lied{position:relative;border:2px solid #cfdef0;border-radius:10px;background:#fff;padding:8px 0;min-height:184px;font:22px/42px ui-monospace,Consolas,monospace;color:#102f50}
+.lied.shake{animation:lishake .45s}@keyframes lishake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.lrow{display:flex;white-space:pre;position:relative}.lrow.hl{background:#fff1c2}.lnum{width:40px;flex:none;text-align:right;padding-right:10px;color:#7891ad;font-size:17px}
+.ltxt{position:relative;padding-left:12px}.ind{position:relative;border-radius:5px}.ind.show{background:#ffe08a;box-shadow:0 0 0 2px #e08a00 inset}
+.ind .lbl{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;font:800 13px/1 Inter,system-ui,Arial,sans-serif;background:#e08a00;color:#fff;padding:5px 8px;border-radius:7px;z-index:2;margin-top:2px}
+.cur{display:inline-block;width:0;height:30px;border-left:3px solid #1d63c9;vertical-align:-6px;margin-right:-3px}:root:not(.no-motion) .cur{animation:liblink 1s steps(1) infinite}@keyframes liblink{50%{border-color:transparent}}
+.note{font:700 14px/1 Inter,system-ui,Arial,sans-serif;color:#13804a;margin-left:14px;align-self:center}.note.bad{color:#c62828}
+.libr{position:absolute;left:46px;right:8px;border-left:7px solid #7c4dff;background:#7c4dff14;border-radius:5px 10px 10px 5px;pointer-events:none;transition:height .4s}
+.libr.in{border-left-color:#00a86b;background:#00a86b14}.libr.in .looptag{background:#00a86b}.loopbox.in{border-left-color:#00a86b;background:#00a86b14;box-shadow:inset 0 0 0 1.5px #00a86b40}.loopbox.in .looptag{background:#00a86b}.libr .looptag.live,.loopbox .looptag.live{background:#e65100}
+.libr .looptag{font-size:13px;top:8px}
+:root:not(.no-motion) .pop{animation:lipop .35s cubic-bezier(.3,1.6,.6,1)}@keyframes lipop{from{transform:translateX(-50%) scale(.3);opacity:0}}
+#liScene{width:100%;background:#e6eef8;border-radius:10px;border:2px solid #cfdef0}
+.lierr{background:#fdecea;border:2px solid #f3b4ae;color:#a12a1f;border-radius:9px;padding:9px 12px;font-weight:700;margin-bottom:12px}
+.likey{display:inline-block;margin-left:auto;margin-right:auto;font:800 15px/1 Inter,system-ui,Arial,sans-serif;background:#fff;border:2px solid #23415f;border-bottom-width:5px;border-radius:8px;padding:7px 12px;color:#23415f}
+.likey[hidden]{display:none}.lipri.idle{visibility:hidden}.likeywrap{height:34px;text-align:center;margin:-4px 0 6px}:root:not(.no-motion) .likey.press{animation:lipress .5s}@keyframes lipress{40%{transform:translateY(3px);border-bottom-width:2px}}
+.lipri{background:#7c4dff;color:#fff}.lipri.go{background:#13a52f}:root:not(.no-motion) .lipri.pulse{animation:nudge 1.3s ease-in-out infinite}
+:root:not(.no-motion) #run.nudge{animation:nudge 1.3s ease-in-out infinite}@keyframes nudge{50%{box-shadow:0 0 0 7px #13a52f44;transform:scale(1.05)}}
+:root:not(.no-motion) .target{animation:blink 1.1s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}
+#dots .bar{width:9px}#dots .dot{width:11px;height:11px}
+/* 10-level menu: two columns on wide screens, scrolls inside itself if the window is short */
+.modalbox.levelsbox{width:min(720px,100%);max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);display:flex;flex-direction:column}.levelsbox .levellist{overflow:auto;min-height:0;grid-template-columns:1fr 1fr;padding:2px}
+.levellist li{padding:7px 10px;gap:10px}.levellist .lnum{width:30px;height:30px;flex-basis:30px}.linfo b{font-size:14px}
+@media(max-width:640px){.levelsbox .levellist{grid-template-columns:1fr}}
+/* the hidden attribute does not hide SVG elements by default */
+svg [hidden]{display:none}
+/* Clear-code confirmation (in-page, because browser confirm() pop-ups are blocked in some embeds) */
+.modal{position:fixed;inset:0;background:#0f233a73;display:grid;place-items:center;padding:16px;z-index:10}.modal[hidden]{display:none}.modalbox{background:#fff;border-radius:12px;box-shadow:0 12px 40px #0f233a55;padding:22px 22px 18px;width:min(380px,100%)}.modalbox h3{margin:0 0 6px;font-size:19px}.modalbox p{margin:0 0 18px;line-height:1.45;color:#345778}.modalbtns{display:flex;gap:10px;justify-content:flex-end}.modalbtns button{border:0;border-radius:9px;padding:11px 18px;font-weight:800;font-size:15px;cursor:pointer}.cancel{background:#dce9f8;color:#173957}.ok{background:#d6453a;color:#fff}.modalbtns button:focus-visible{outline:3px solid #3688ed;outline-offset:2px}
+#finPanel{display:none}body.finale .program>:not(#finPanel):not(.status){display:none}
+body.finale #finPanel{display:flex;flex-direction:column;gap:12px;flex:1;text-align:center;justify-content:center;padding:6px 4px}
+#finPanel h2{font-size:26px;margin:0;color:#183956}#finPanel p{margin:0;font-size:15px;line-height:1.45;color:#294c70}
+.ribbon{display:block;margin:0 auto;width:min(150px,17vh);height:auto;filter:drop-shadow(0 6px 10px #8a5a0040);animation:ribbon 3s ease-in-out infinite;-webkit-touch-callout:default;user-select:auto}@keyframes ribbon{50%{transform:rotate(-3deg) translateY(-3px)}}
+html.no-motion .ribbon{animation:none}
+#finPanel .ribbonmsg{font-size:14px;background:#fff7d6;border:1px solid #f0d27a;border-radius:10px;padding:9px 11px;color:#5a3a00}
+.finstats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.finstats div{background:#e6f0fc;border:1px solid #d0e0f2;border-radius:10px;padding:10px 6px;display:flex;flex-direction:column}
+.finstats b{font-size:24px;color:#183956}#finStars{color:#f2a900;letter-spacing:2px}.finstats span{font-size:13px;color:#4d6b8a}
+.finbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px}#finParty{font-size:17px;padding:15px 7px}
+body.finale .commandgrid .command{cursor:default}body.finale .commandgrid .command b{color:#6b3fc7}
+#radio:focus-visible rect{stroke:#183956;stroke-width:4}
+</style></head><body><div class="app">
+<header><div class="logo">⚙</div><h1>Robot Arm Challenge <a class="brand" href="https://www.gcsecs.com/" target="_blank" rel="noopener" title="Visit gcsecs.com (opens in a new tab)" aria-label="GCSE CS website (opens in a new tab)">GCSECS🤣</a></h1><div class="divider"></div><div class="level" id="levelPill">Level 1</div><div class="progress"><div class="dots" id="dots"></div><span id="passedCount">0 / 4</span><button class="motion-toggle" id="motionToggle" type="button" role="switch" aria-checked="true"><span>Animations</span><span class="track" aria-hidden="true"><span class="knob"></span></span></button><button class="levelsbtn" id="levelsBtn" aria-haspopup="dialog">☰ &nbsp;Levels</button></div></header>
+<main><section>
+<div class="scene"><div class="banner" id="banner" hidden role="alertdialog" aria-labelledby="bTitle" aria-describedby="bText"><div class="bannerbox"><div class="bicon" id="bIcon"></div><h3 id="bTitle"></h3><p id="bText"></p><div class="bbtns"><button id="bBtn"></button><button id="bNext" class="next" hidden>Next level ▸</button></div></div></div><svg id="scene" viewBox="0 0 900 430" aria-label="Warehouse with robot arm and box">
+<defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#dce8f6"/><stop offset="1" stop-color="#b9cde3"/></linearGradient><linearGradient id="metal" x2="0" y2="1"><stop stop-color="#526e89"/><stop offset="1" stop-color="#263e58"/></linearGradient><linearGradient id="yellow" x2="0" y2="1"><stop stop-color="#ffd22e"/><stop offset="1" stop-color="#f28b00"/></linearGradient><linearGradient id="crate" x2="0" y2="1"><stop stop-color="#ffc36a"/><stop offset="1" stop-color="#df8527"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect width="900" height="430" fill="url(#wall)"/><rect width="900" height="26" fill="url(#metal)"/><path d="M18 26V350M48 26V350M852 26V350M882 26V350" stroke="#405d79" stroke-width="12"/><path d="M18 40L48 75L18 112M882 40L852 75L882 112" fill="none" stroke="#8da5bd" stroke-width="9"/>
+<g stroke="#829bb7" stroke-width="2.2"><path d="M48 55V350M120 55V350M192 55V350M264 55V350M336 55V350M408 55V350M480 55V350M552 55V350M624 55V350M696 55V350M768 55V350M840 55V350"/><path d="M48 127H852M48 199H852M48 271H852M48 343H852"/></g>
+<g id="partyBack" display="none"></g>
+<g><path d="M215 0V40M195 40H235L244 53H186Z M680 0V40M660 40H700L709 53H651Z" fill="#354c64"/><rect x="184" y="48" width="62" height="11" rx="5" fill="#ffe6a2" filter="url(#glow)"/><rect x="649" y="48" width="62" height="11" rx="5" fill="#ffe6a2" filter="url(#glow)"/><rect x="839" y="210" width="28" height="54" rx="3" fill="#536f8d" stroke="#304b67" stroke-width="3"/><rect x="845" y="217" width="16" height="12" fill="#9db3c9"/></g>
+<rect y="350" width="900" height="25" fill="#849bb3"/><path d="M0 375H900V430H0Z" fill="url(#metal)"/><path d="M0 358H900V374H0Z" fill="#f5b51b" stroke="#172f48" stroke-width="3"/><path d="M0 374L18 358H45L27 374M54 374L72 358H99L81 374M108 374L126 358H153L135 374M162 374L180 358H207L189 374M216 374L234 358H261L243 374M270 374L288 358H315L297 374M324 374L342 358H369L351 374M378 374L396 358H423L405 374M432 374L450 358H477L459 374M486 374L504 358H531L513 374M540 374L558 358H585L567 374M594 374L612 358H639L621 374M648 374L666 358H693L675 374M702 374L720 358H747L729 374M756 374L774 358H801L783 374M810 374L828 358H855L837 374M864 374L882 358H900" stroke="#172f48" stroke-width="4" fill="none"/>
+<!-- boxes are built from BOX_SVG in the script; the art is drawn at column 3, row 3 and moved into place -->
+<g id="obstacles"></g>
+<!-- level target: flashing dashed "put box here" outline (hidden when a level has no target) --><g id="target" class="target" hidden><rect x="266" y="273" width="68" height="68" rx="4" fill="#ffd34d" fill-opacity=".3" stroke="#e08a00" stroke-width="4" stroke-dasharray="9 6"/><text x="300" y="303" text-anchor="middle" font-size="11" font-weight="900" fill="#b36b00" font-family="Arial,Helvetica,sans-serif">PUT BOX</text><text x="300" y="318" text-anchor="middle" font-size="11" font-weight="900" fill="#b36b00" font-family="Arial,Helvetica,sans-serif">HERE</text></g>
+<g id="truck"></g><g id="lift"></g><g id="convBack"></g><g id="binBack"></g><clipPath id="sceneClip"><rect x="0" y="-200" width="900" height="700"/></clipPath><g id="boxes" clip-path="url(#sceneClip)"></g><g id="binFront"></g><g id="convFront"></g>
+<!-- cells outside the arm's reach are hatched; the dashed frame marks the working area (set by REACH in the script) -->
+<defs><linearGradient id="crateBad" x2="0" y2="1"><stop stop-color="#b8a487"/><stop offset="1" stop-color="#7c6950"/></linearGradient><linearGradient id="crateRed" x2="0" y2="1"><stop stop-color="#f27a6b"/><stop offset="1" stop-color="#c0392b"/></linearGradient><linearGradient id="crateBlue" x2="0" y2="1"><stop stop-color="#6aaef5"/><stop offset="1" stop-color="#2862b8"/></linearGradient><linearGradient id="steel" x2="1"><stop stop-color="#7d93a8"/><stop offset=".5" stop-color="#5b7187"/><stop offset="1" stop-color="#3b4f63"/></linearGradient><pattern id="hazard" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="14" height="14" fill="#f5b51b"/><rect width="7" height="14" fill="#1b2a38"/></pattern><pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" fill="#9fb3c8" opacity=".18"/><path d="M0 0V12" stroke="#6f86a0" stroke-width="3" opacity=".35"/></pattern></defs>
+<g id="reachShade"></g>
+<!-- robot: yellow industrial arm bolted to the floor; only the joints move. Rotations are set by draw() -->
+<g id="robot">
+ <defs>
+  <linearGradient id="armY" x2="0" y2="1"><stop stop-color="#ffe26a"/><stop offset=".45" stop-color="#ffc51c"/><stop offset="1" stop-color="#e79800"/></linearGradient>
+  <linearGradient id="pedY" x2="1"><stop stop-color="#ffdc4d"/><stop offset=".55" stop-color="#ffc21a"/><stop offset="1" stop-color="#e08f00"/></linearGradient>
+  <linearGradient id="baseG" x2="0" y2="1"><stop stop-color="#55677a"/><stop offset="1" stop-color="#26343f"/></linearGradient>
+  <linearGradient id="gripG" x2="0" y2="1"><stop stop-color="#4c5b6b"/><stop offset="1" stop-color="#27323d"/></linearGradient>
+  <g id="bolts"><circle r="2.6" cx="0" cy="-1" fill="#8b9bab"/></g>
+ </defs>
+ <g id="carriage">
+  <rect x="-62" y="330" width="124" height="22" rx="6" fill="url(#baseG)" stroke="#111b25" stroke-width="3"/>
+  <rect x="-55" y="333" width="110" height="3.5" rx="1.75" fill="#7d90a3" opacity=".55"/>
+  <rect x="-46" y="312" width="92" height="21" rx="6" fill="url(#baseG)" stroke="#111b25" stroke-width="3"/>
+  <rect x="-40" y="315" width="80" height="3" rx="1.5" fill="#7d90a3" opacity=".5"/>
+  <path d="M-38 314C-40 290-30 262-18.9 246.7A32 32 0 1 1 41 268.5C40 285 38 300 38 314Z" fill="url(#pedY)" stroke="#8a5600" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M-29 309C-31 289-23 266-13 253" fill="none" stroke="#fff3b0" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+ </g>
+ <g id="link1"><rect x="-18" y="-18" width="236" height="36" rx="18" fill="url(#armY)" stroke="#8a5600" stroke-width="3"/><rect x="0" y="-12" width="200" height="4" rx="2" fill="#fff3b0" opacity=".65"/></g>
+ <g id="capS"></g>
+ <g id="link2"><rect x="-15" y="-15" width="210" height="30" rx="15" fill="url(#armY)" stroke="#8a5600" stroke-width="3"/><rect x="0" y="-10" width="180" height="3.5" rx="1.75" fill="#fff3b0" opacity=".65"/></g>
+ <g id="capE"></g>
+ <g id="gripper">
+  <!-- wide parallel-style gripper: fingers hang either side of a box (box is 72 wide) -->
+  <rect x="-8" y="5" width="16" height="8" fill="#3a4757" stroke="#111b25" stroke-width="2.5"/>
+  <g id="clawL"><path d="M0 0L-5 9V50L3 58" fill="none" stroke="#18212b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 0L-5 9V50L3 58" fill="none" stroke="#61748a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g id="clawR"><path d="M0 0L-5 9V50L3 58" fill="none" stroke="#18212b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 0L-5 9V50L3 58" fill="none" stroke="#61748a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <rect x="-50" y="10" width="100" height="16" rx="6" fill="url(#gripG)" stroke="#111b25" stroke-width="3"/>
+  <rect x="-43" y="13" width="86" height="3" rx="1.5" fill="#8b9bab" opacity=".55"/>
+  <circle cx="-42" cy="22" r="3.4" fill="#9aabbb"/><circle cx="42" cy="22" r="3.4" fill="#9aabbb"/>
+ </g>
+ <g id="capW"></g>
+</g>
+<g id="partyFront" display="none"></g>
+</svg></div>
+<div class="panel task"><div class="taskicon">◎</div><div><h2>Your task</h2><p id="taskText"></p></div></div>
+<div class="panel commands"><h2>Available commands</h2><div class="commandgrid" id="cmdGrid"><div class="command"><b>left</b><span>Move left a number of squares</span><div class="eg">e.g. <code>left 1</code></div></div><div class="command"><b>right</b><span>Move right a number of squares</span><div class="eg">e.g. <code>right 3</code></div></div><div class="command"><b>up</b><span>Move up a number of squares</span><div class="eg">e.g. <code>up 2</code></div></div><div class="command"><b>down</b><span>Move down a number of squares</span><div class="eg">e.g. <code>down 1</code></div></div><div class="command"><b>open</b><span>Open the gripper</span><div class="eg">e.g. <code>open</code></div></div><div class="command"><b>close</b><span>Close the gripper</span><div class="eg">e.g. <code>close</code></div></div></div></div>
+</section><aside class="panel program"><div class="programhead"><span style="font-size:24px;font-weight:900">‹/›</span><h2>Your program</h2><button class="clear" id="clear">▤ &nbsp;Clear code</button></div><div class="editor"><div class="nums" id="nums"></div><div id="loopLayer" aria-hidden="true"></div><textarea id="code" spellcheck="false" aria-label="Type your robot commands" placeholder="Type your commands here..."></textarea></div><div class="speed" role="radiogroup" aria-label="Animation speed"><span>Speed</span><button data-speed="slow" role="radio">🐢 Slow</button><button data-speed="normal" role="radio">Normal</button><button data-speed="fast" role="radio">Fast 🐇</button></div><div class="buttons"><button class="action run" id="run">▶ &nbsp;Run</button><button class="action step" id="step">▷| &nbsp;Step</button><button class="action reset" id="reset">⟲ &nbsp;Reset</button></div><div id="finPanel"><h2>Challenge complete!</h2><img id="ribbon" class="ribbon" alt="Golden ribbon: Robot Arm Challenge completed" width="150" height="185"><p class="ribbonmsg"><b>Keep your golden ribbon!</b> Right-click it, choose <b>Copy image</b>, then paste it into your notes or work. On a phone or tablet, press and hold the ribbon instead.</p><div class="finstats"><div><b id="finPassed">16 / 16</b><span>levels passed</span></div><div><b id="finStars">★★★</b><span>Factory finale</span></div></div><button class="action run" id="finParty">🎵 Start the party</button><div class="finbtns"><button class="action step" id="finReplay">⟲ Replay Level 15</button><button class="action reset" id="finLevels">☰ All levels</button></div></div><div class="status" id="status" role="status">Ready. Type your commands, then select Run or Step.</div></aside></main></div>
+<div class="modal" id="levelsMenu" hidden role="dialog" aria-modal="true" aria-labelledby="lmTitle"><div class="modalbox levelsbox"><h3 id="lmTitle">Levels</h3><p>Your progress is saved on this device.</p><ol class="levellist" id="levelList"></ol><div class="modalbtns"><button class="resetall" id="lmReset">⟲ Reset all progress</button><button class="cancel" id="lmClose">Close</button></div></div></div>
+<div class="modal" id="loopIntro" hidden role="dialog" aria-modal="true" aria-labelledby="liTitle"><div class="modalbox loopbox2"><h3 id="liTitle">🔁 Introducing loops</h3><p id="liCap" aria-live="polite"></p><div class="listage"><div class="lied" id="liEd" aria-hidden="true"></div><svg id="liScene" viewBox="0 0 300 140" aria-hidden="true"></svg></div><div class="likeywrap"><span class="likey" id="liKey" hidden></span></div><div class="lierr" id="liErr" hidden></div><div class="modalbtns"><button class="cancel" id="liSkip">Skip intro</button><button class="lipri" id="liBtn">Show me ▸</button></div></div></div>
+<div class="modal" id="confirmReset" hidden role="dialog" aria-modal="true" aria-labelledby="crTitle"><div class="modalbox"><h3 id="crTitle">Reset all progress?</h3><p>All progress will be lost: every passed level, your saved code and the loop intros. Levels will be locked again and you will start from Level 0. Are you sure?</p><div class="modalbtns"><button class="cancel" id="crCancel">Cancel</button><button class="ok" id="crOk">Yes, reset everything</button></div></div></div>
+<div class="modal" id="confirmClear" hidden role="dialog" aria-modal="true" aria-labelledby="ccTitle"><div class="modalbox"><h3 id="ccTitle">Clear code?</h3><p>All code will be deleted.</p><div class="modalbtns"><button class="cancel" id="ccCancel">Cancel</button><button class="ok" id="ccOk">OK</button></div></div></div>
+<script>
+(()=>{
+const NS='http://www.w3.org/2000/svg',cell=72,ox=48,oy=55,REF={c:3,r:3},FLOOR_R=3; // REF: the square the box/target art is drawn at
+/* ---- LEVELS (data) ----------------------------------------------------------------------
+   Boxes can be {c,r,bad:true}: a damaged box (not fragile) that must go in the trash bin (bin:{c}).
+   Each built level gives: task text, robot start square, boxes (list of squares), optional target square (or targets: a list, all must be filled),
+   goal ('grip' = holding the box, 'deliver' = box released and resting on the target) and win message.
+   Unbuilt levels only need n and title; they show as "Coming soon". */
+const LEVELS=[
+ {n:0,title:'Introduction',built:true,task:'<b>Move the robot arm up 1 and right 1.</b> The code is already written for you. Select <b>▶ Run</b> and watch the gripper move into the flashing outline!',
+  start:{c:2,r:2},boxes:[],target:{c:3,r:1},goal:'reach',code:'up 1\nright 1',win:['You did it!','You just ran your first robot program. Now try Level 1!']},
+ {n:1,title:'Grip the box',built:true,task:'<b>Grip the box.</b> Count the grid squares and write the commands that move the gripper to the box and grip it.',
+  start:{c:2,r:2},boxes:[{c:3,r:3}],target:null,goal:'grip',win:['Box gripped!','Great programming. Level 1 complete!']},
+ {n:2,title:'Move the box to the target',built:true,task:'<b>Move the box to the target.</b> Grip the box, lift it, carry it to the flashing outline, lower it all the way down and let go. The box is fragile, so don’t drop it!',
+  start:{c:2,r:1},boxes:[{c:3,r:3}],target:{c:5,r:3},goal:'deliver',win:['Box delivered!','Great programming. Level 2 complete!']},
+ {n:3,title:'Lift it over the barrier',built:true,task:'<b>Lift the box over the barrier.</b> Move the fragile box to the flashing outline. The barrier is in the way, so lift the box high enough to clear it.',
+  start:{c:5,r:2},boxes:[{c:3,r:3}],target:{c:5,r:3},obstacles:[{c:4,top:2}],goal:'deliver',win:['Over the top!','Great programming. Level 3 complete!']},
+ {n:4,title:'Box on box',built:true,task:'<b>Put one box on top of the other.</b> Pick up the box on the left and set it down gently on the box on the right, inside the flashing outline. Don’t drop it!',
+  start:{c:2,r:1},boxes:[{c:3,r:3},{c:5,r:3}],target:{c:5,r:2},goal:'deliver',win:['Box stacked!','Great programming. Level 4 complete!']},
+
+ {n:5,title:'Stack 3 boxes',built:true,task:'<b>Build a tower of 3 boxes.</b> Move the two boxes on the left, one at a time, onto the box on the right to fill both flashing outlines. Watch the height change as the tower grows!',
+  start:{c:2,r:1},boxes:[{c:3,r:3},{c:3,r:2},{c:5,r:3}],targets:[{c:5,r:2},{c:5,r:1}],goal:'deliver',win:['Tower built!','Great programming. Level 5 complete!']},
+
+ {n:6,title:'Trash the bad box',built:true,task:'<b>Bin the bad box, then deliver the good one.</b> The damaged box on top (red X) goes in the trash bin. Then move the fragile box underneath to the flashing outline.',
+  start:{c:2,r:1},boxes:[{c:3,r:3},{c:3,r:2,bad:true}],bin:{c:5},target:{c:4,r:3},goal:'deliver',win:['Sorted!','Great programming. Level 6 complete!']},
+
+ {n:7,title:'Arm in the middle',built:true,task:'<b>Swing it across.</b> The robot now stands in the middle of the floor. Grip the fragile box on the left and carry it over the robot to the flashing outline on the right. Lift it high enough to clear the robot’s base!',
+  start:{c:6,r:1},boxes:[{c:2,r:3}],target:{c:8,r:3},baseX:432,reach:{c0:2,c1:8,r0:0,r1:3},mid:true,
+  obstacles:[{c:4,top:3,base:true},{c:5,top:2,base:true},{c:6,top:3,base:true}],goal:'deliver',win:['Over the middle!','Great programming. Level 7 complete!']},
+
+ {n:8,title:'Conveyor to truck',built:true,task:'<b>Load the truck.</b> The conveyor brings 3 fragile boxes, one at a time. Put each box in the flashing outline at the front of the truck bed. The truck pulls forward after each box. Load all 3!',
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true},{c:0,r:3,conv:true},{c:-1,r:3,conv:true}],conveyor:{c:1},truck:{c:5},target:{c:7,r:2},baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'truck',win:['Truck loaded!','Great programming. Level 8 complete! That was a lot of typing. Level 9 shows you a shortcut.']},
+{n:9,title:'Loops',built:true,loops:true,needLoop:true,intro:'loops',task:'<b>Load the truck with a loop.</b> Same job as Level 8, but put the commands for one trip inside <code>repeat 3:</code> and indent them. <button type="button" class="linkbtn" data-demo="full">Watch the loops intro again</button>',
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true},{c:0,r:3,conv:true},{c:-1,r:3,conv:true}],conveyor:{c:1},truck:{c:5},target:{c:7,r:2},baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'truck',win:['Loop power!','Great programming. Level 9 complete! Your loop did the same trip 3 times, so you only had to type it once.']},
+ {n:10,title:'Tower builder',built:true,loops:true,needLoop:true,task:'<b>Build a tower of 3 boxes on the lift.</b> Put each box in the flashing outline. After each box the lift goes down one square, so the top of the tower is always in the same place. Use a loop!',
+  start:{c:1,r:0},boxes:[{c:1,r:3,conv:true},{c:0,r:3,conv:true},{c:-1,r:3,conv:true}],conveyor:{c:1},lift:{c:7},target:{c:7,r:1},baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'lift',win:['Tower built!','Great programming. Level 10 complete! The lift made every trip the same, so one loop built the whole tower.']},
+ {n:11,title:'Sorting line',built:true,loops:true,needLoop:true,task:'<b>Sort the boxes.</b> The conveyor brings red and blue boxes in turn: red, blue, red, blue… Drop each box into the bin of the same colour. One pass of your loop can sort one pair!',
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true,color:'red'},{c:0,r:3,conv:true,color:'blue'},{c:-1,r:3,conv:true,color:'red'},{c:-2,r:3,conv:true,color:'blue'},{c:-3,r:3,conv:true,color:'red'},{c:-4,r:3,conv:true,color:'blue'}],conveyor:{c:1},bins:[{c:6,color:'red'},{c:7,color:'blue'}],baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'sort',win:['All sorted!','Great programming. Level 11 complete! One loop pass sorted a red and a blue box, and repeating it sorted them all.']},
+{n:12,title:'Loop inside a loop',built:true,loops:true,nest:true,needLoop:true,needNested:true,intro:'nested',task:'<b>Sort with a loop inside a loop.</b> The conveyor sends 3 red boxes, then 1 blue box, and then the same again. Put the red trip in an inner loop, and the blue trip after it, all inside an outer loop. <button type="button" class="linkbtn" data-demo="nested">Watch the loops inside loops intro</button>',
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true,color:'red'},{c:0,r:3,conv:true,color:'red'},{c:-1,r:3,conv:true,color:'red'},{c:-2,r:3,conv:true,color:'blue'},{c:-3,r:3,conv:true,color:'red'},{c:-4,r:3,conv:true,color:'red'},{c:-5,r:3,conv:true,color:'red'},{c:-6,r:3,conv:true,color:'blue'}],conveyor:{c:1},bins:[{c:6,color:'red'},{c:7,color:'blue'}],baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'sort',win:['Loops in loops!','Great programming. Level 12 complete! Your inner loop ran 3 times for each pass of the outer loop: 2 × 3 = 6 red trips.']},
+{n:13,title:'Loops in loops: harder',built:true,loops:true,nest:true,needLoop:true,needNested:true,task:'<b>Two loops inside one loop.</b> The conveyor sends 2 red boxes, then 2 blue boxes, and does that 3 times (12 boxes!). Inside an outer loop, put one loop for the red boxes and another loop for the blue boxes. <button type="button" class="linkbtn" data-demo="nestquick">See how loops inside loops work</button>',
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true,color:'red'},{c:0,r:3,conv:true,color:'red'},{c:-1,r:3,conv:true,color:'blue'},{c:-2,r:3,conv:true,color:'blue'},{c:-3,r:3,conv:true,color:'red'},{c:-4,r:3,conv:true,color:'red'},{c:-5,r:3,conv:true,color:'blue'},{c:-6,r:3,conv:true,color:'blue'},{c:-7,r:3,conv:true,color:'red'},{c:-8,r:3,conv:true,color:'red'},{c:-9,r:3,conv:true,color:'blue'},{c:-10,r:3,conv:true,color:'blue'}],conveyor:{c:1},bins:[{c:6,color:'red'},{c:7,color:'blue'}],baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'sort',nestHint:'You sorted them all, but this level is about loops inside a loop. Inside repeat 3:, put a repeat 2: for the red trip and another repeat 2: for the blue trip.',
+  win:['Super sorter!','Great programming. Level 13 complete! Your outer loop ran 3 times, and each time two inner loops ran twice: 3 × (2 + 2) = 12 boxes sorted.']},
+{n:14,title:'Debug the loop',built:true,loops:true,nest:true,needLoop:true,needNested:true,task:'<b>Debug the loop!</b> This code should sort 3 red boxes then 1 blue box, twice, but it has <b>4 bugs</b>. Run it, read what goes wrong, fix it and run it again. <button type="button" class="linkbtn" data-hint>Give me a hint</button> · <button type="button" class="linkbtn" data-restore>Get the buggy code back</button>',
+  code:'repeat 2\n    repeat 2:\n        open\n        down 2\n        close\n        up 2\n        right 5\n        open\n    left 5\n    open\n    down 2\n    close\n    up 2\n    right 5\n    open\n    left 6',hints:['Run the code and read the message under the buttons. It tells you which line has the problem.','Every repeat line needs a colon at the end.','The conveyor sends 3 red boxes before each blue box. Does the inner loop repeat enough times?','Every line of the red trip must be inside the inner loop. Check how far each line is indented.','The blue bin is 6 squares to the right of the conveyor, not 5.'],
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true,color:'red'},{c:0,r:3,conv:true,color:'red'},{c:-1,r:3,conv:true,color:'red'},{c:-2,r:3,conv:true,color:'blue'},{c:-3,r:3,conv:true,color:'red'},{c:-4,r:3,conv:true,color:'red'},{c:-5,r:3,conv:true,color:'red'},{c:-6,r:3,conv:true,color:'blue'}],conveyor:{c:1},bins:[{c:6,color:'red'},{c:7,color:'blue'}],baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'sort',nestHint:'You sorted them all, but keep the loop inside a loop: the red trip goes in repeat 3: inside repeat 2:.',
+  win:['Bugs squashed!','Great debugging. Level 14 complete! Programmers spend lots of time finding and fixing bugs, and you just fixed 4.']},
+{n:15,title:'Factory finale',built:true,loops:true,nest:true,needLoop:true,convSpeed:0.4,stars:[16,22],task:'<b>Factory finale!</b> The fast conveyor sends 1 blue box, then 2 red boxes, and does that 3 times (9 boxes). Sort every box into the bin of its colour. <b>Stars:</b> ★★★ for 16 lines or fewer, ★★ for 22 or fewer. Loops inside loops will help!',
+  start:{c:1,r:1},boxes:[{c:1,r:3,conv:true,color:'blue'},{c:0,r:3,conv:true,color:'red'},{c:-1,r:3,conv:true,color:'red'},{c:-2,r:3,conv:true,color:'blue'},{c:-3,r:3,conv:true,color:'red'},{c:-4,r:3,conv:true,color:'red'},{c:-5,r:3,conv:true,color:'blue'},{c:-6,r:3,conv:true,color:'red'},{c:-7,r:3,conv:true,color:'red'}],conveyor:{c:1},bins:[{c:6,color:'red'},{c:7,color:'blue'}],baseX:360,reach:{c0:1,c1:7,r0:0,r1:3},mid:true,
+  obstacles:[{c:3,top:3,base:true},{c:4,top:2,base:true},{c:5,top:3,base:true}],goal:'sort',win:['Factory complete!','Level 15 complete!']}];
+let LEVEL=1,L=LEVELS[0];let finActive=false,spinO=null,finRaf=0; // finish screen state (see FINISH SCREEN below)
+// Barriers: obstacles:[{c,top}] fills column c from row top down to the floor
+// Truck (Level 8+): its bed fills row 3 of 3 columns starting at tc; the cab (column after the bed) is solid from row 2 down
+let tc=0,belt=0,lw=0; // lw: how many squares the lift (Level 10) has gone down
+const truckSolids=()=>{if(!L.truck)return[];const t=Math.round(tc);return[0,1,2].map(i=>({c:t+i,top:3,truck:true})).concat([{c:t+3,top:2,truck:true}])};
+const liftSolids=()=>{if(!L.lift)return[];const t=2+Math.round(lw);return t<=FLOOR_R?[{c:L.lift.c,top:t,lift:true}]:[]};
+const solids=()=>(L.obstacles||[]).concat(truckSolids(),liftSolids());
+const isSolid=(c,r)=>solids().some(o=>o.c===c&&r>=o.top);
+// Boxes: boxAt finds a box resting in a square (not the one being carried); a released box lands on the floor, a barrier or another box
+const boxAt=(c,r)=>boxes.findIndex((b,i)=>!b.binned&&!(holding&&i===held)&&b.c===c&&b.r===r);
+const landRow=(c,skip=-1)=>Math.min(FLOOR_R,...solids().filter(o=>o.c===c).map(o=>o.top-1),...boxes.filter((b,i)=>i!==skip&&!b.binned&&!(holding&&i===held)&&b.c===c&&b.r>=0).map(b=>b.r-1));
+const BOX_SVG='<path class="bBody" fill="url(#crate)" stroke="#9a4e13" stroke-width="4" stroke-linejoin="round"/><path class="bX" stroke="#b86a20" stroke-width="5"/><path class="bInner" fill="none" stroke="#ffda98" stroke-width="2" opacity=".7"/><g class="bLabel" hidden><rect x="268" y="297" width="64" height="19" rx="3" fill="#fff6e6" stroke="#c62828" stroke-width="2"/><text x="300" y="311" text-anchor="middle" font-size="11.5" font-weight="900" letter-spacing=".6" fill="#c62828" font-family="Arial,Helvetica,sans-serif">FRAGILE</text></g><path class="bCrack" hidden d="M282 271l6 14-7 9 9 12-5 10 8 12M318 271l-4 11 8 8-6 13 7 9M264 318l12 3 7-6 10 5M336 296l-10 4-5 10" fill="none" stroke="#5a2a06" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
+function buildBoxes(){const g=$('boxes');g.innerHTML='';boxes=(L.boxes||[]).map(b=>({c:b.c,r:b.r,crack:false,bad:!!b.bad,fragile:BOX.fragile&&!b.bad&&!b.color,binned:false,conv:!!b.conv,truck:false,onLift:false,color:b.color||null}));boxes.forEach(b=>{const e=document.createElementNS(NS,'g');e.innerHTML=BOX_SVG;e.querySelector('.bLabel').toggleAttribute('hidden',!b.fragile);
+  if(b.bad){e.querySelector('.bBody').setAttribute('fill','url(#crateBad)');e.querySelector('.bBody').setAttribute('stroke','#5b4a36');e.querySelector('.bX').setAttribute('stroke','#7a6650');
+    const x=document.createElementNS(NS,'path');x.setAttribute('class','bBad');x.setAttribute('d','M280 287L320 327M320 287L280 327');x.setAttribute('stroke','#d32f2f');x.setAttribute('stroke-width','8');x.setAttribute('stroke-linecap','round');e.appendChild(x)}
+  if(b.color){const red=b.color==='red',dk=red?'#8e1f14':'#14397a';e.querySelector('.bBody').setAttribute('fill',red?'url(#crateRed)':'url(#crateBlue)');e.querySelector('.bBody').setAttribute('stroke',dk);e.querySelector('.bX').setAttribute('stroke',dk);e.querySelector('.bInner').setAttribute('stroke','#ffffff');
+    const lb=e.querySelector('.bLabel');lb.removeAttribute('hidden');lb.querySelector('rect').setAttribute('stroke',dk);const tx=lb.querySelector('text');tx.textContent=red?'RED':'BLUE';tx.setAttribute('fill',dk)}
+  g.appendChild(e)});drawBin()}
+// Trash bin: back wall behind the boxes, front panel in front, so a box dropped in sinks out of sight
+function drawBin(){const bk=$('binBack'),fr=$('binFront');bk.innerHTML=fr.innerHTML='';
+  // Sorting bins (Level 11): one per colour, with a tally of the boxes inside
+  (L.bins||[]).forEach(bn=>{const x=ox+bn.c*cell+5,top=oy+FLOOR_R*cell+14,bot=oy+(FLOOR_R+1)*cell,red=bn.color==='red',c1=red?'#c0392b':'#2862b8',c2=red?'#7a1c12':'#14397a',c3=red?'#e8786b':'#6aaef5';
+    el('path',{d:`M${x} ${top}H${x+62}L${x+57} ${bot}H${x+5}Z`,fill:c2},bk);
+    el('path',{d:`M${x} ${top+12}H${x+62}L${x+57} ${bot}H${x+5}Z`,fill:c1,stroke:c2,'stroke-width':3,'stroke-linejoin':'round'},fr);
+    el('rect',{x:x-3,y:top+6,width:68,height:9,rx:4,fill:c3,stroke:c2,'stroke-width':3},fr);
+    const n=el('text',{class:'binTally','data-c':bn.c,x:x+31,y:top+40,'text-anchor':'middle','font-size':17,'font-weight':900,fill:'#fff','font-family':'Arial,Helvetica,sans-serif'},fr);n.textContent='0';
+    const t=el('text',{x:x+31,y:top-6,'text-anchor':'middle','font-size':12,'font-weight':900,fill:c2,'font-family':'Arial,Helvetica,sans-serif'},fr);t.textContent=red?'RED':'BLUE'});
+  if(!L.bin)return;const x=ox+L.bin.c*cell+5,top=oy+FLOOR_R*cell+14,bot=oy+(FLOOR_R+1)*cell;
+  el('path',{d:`M${x} ${top}H${x+62}L${x+57} ${bot}H${x+5}Z`,fill:'#1e3d2c'},bk);
+  el('path',{d:`M${x} ${top+12}H${x+62}L${x+57} ${bot}H${x+5}Z`,fill:'#2f7d4f',stroke:'#173b27','stroke-width':3,'stroke-linejoin':'round'},fr);
+  el('rect',{x:x-3,y:top+6,width:68,height:9,rx:4,fill:'#3d9a63',stroke:'#173b27','stroke-width':3},fr);
+  [x+18,x+31,x+44].forEach(lx=>el('path',{d:`M${lx} ${top+24}V${bot-8}`,stroke:'#5fbf86','stroke-width':3,'stroke-linecap':'round'},fr));
+  const t=el('text',{x:x+31,y:top-6,'text-anchor':'middle','font-size':12,'font-weight':900,fill:'#1e5a38','font-family':'Arial,Helvetica,sans-serif'},fr);t.textContent='TRASH'}
+/* ------------------------------------------------------------------------------------------ */
+// Arm geometry (SVG units): link lengths, shoulder height, wrist sits this far above the target cell centre
+// The base is fixed at BASE_X; REACH lists the grid columns/rows the gripper can get to from there
+const DEF_BASE_X=156,DEF_REACH={c0:2,c1:5,r0:0,r1:3};let BASE_X=DEF_BASE_X,REACH=DEF_REACH; // levels may set baseX and reach
+const RMIN=70; // mid-floor levels: the arm swings round (waist turn) instead of flipping its elbow over the base
+const L1=200,L2=180,SHOULDER_Y=255,WRIST_UP=62,MOVE_MS_PER_SQUARE=320,GRIP_MS=380;
+// Claw rotation in degrees: open clears the box; closing on the box stops at its sides, otherwise the claws shut fully
+const CLAW_OPEN=14,CLAW_TOUCH=-5,CLAW_ON_BOX=-9,CLAW_SHUT=-22;
+/* ---- BOX SQUEEZE (reusable: keep this in every level) ----------------------------------
+   squeeze = 0 normal box, 1 gripped (sides pinched in where the claws press, top/bottom bow out a little),
+   negative = sides bulge out (used for the spring-back wobble on release).
+   boxPaths(x,y,size,squeeze) returns the outline, cross-brace and inner-highlight paths for a box whose
+   top-left corner is (x,y). Close on a box: tween squeeze 0→1 once the claws touch (see squeezeOnClose).
+   Open/release: tween with springBack(k). Keep the box squeezed for as long as it is held. */
+const SQUEEZE_PX=10,BULGE_PX=3;
+function boxPaths(x,y,w,sq){const h=w,p=SQUEEZE_PX*sq,b=BULGE_PX*sq,cy=y+h*.62,i=6;
+  return{body:`M${x} ${y}Q${x+w/2} ${y-b} ${x+w} ${y}Q${x+w-p} ${cy} ${x+w} ${y+h}Q${x+w/2} ${y+h+b} ${x} ${y+h}Q${x+p} ${cy} ${x} ${y}Z`,
+    cross:`M${x+5} ${y+5}L${x+w-5} ${y+h-5}M${x+w-5} ${y+5}L${x+5} ${y+h-5}`,
+    inner:`M${x+i} ${y+5}H${x+w-i}Q${x+w-i-p*.8} ${cy} ${x+w-i} ${y+h-5}H${x+i}Q${x+i+p*.8} ${cy} ${x+i} ${y+5}Z`}}
+const squeezeOnClose=k=>Math.max(0,(k-(CLAW_OPEN-CLAW_TOUCH)/(CLAW_OPEN-CLAW_ON_BOX))/(1-(CLAW_OPEN-CLAW_TOUCH)/(CLAW_OPEN-CLAW_ON_BOX)));
+const springBack=k=>Math.cos(k*Math.PI*1.5)*(1-k); // 1 → slight bulge → 0
+/* ------------------------------------------------------------------------------------------ */
+// Animations play by default, whatever the device's own setting (school PCs often turn effects off).
+// Students can switch them off with the header switch; the choice is remembered in this browser.
+let reduceMotion=false;try{reduceMotion=localStorage.getItem('robotArmChallenge.motion')==='off'}catch(e){}
+document.documentElement.classList.toggle('no-motion',reduceMotion);
+let pos={...L.start},claw=CLAW_SHUT,program=[],pointer=0,busy=false,gen=0;
+// Box state: its cell (fractional while falling), whether the gripper is holding it, and a small shake offset when bumped
+// Box properties. fragile is groundwork for a later "dropping a fragile box is a fail" rule (not enforced yet)
+const BOX={fragile:true};
+let boxes=[],held=-1,sqIdx=-1,shakeIdx=-1,crushIdx=-1,box=null,holding=false,shakeX=0,shakeY=0,squeeze=0,crush=0,crushAt=null,crushAxis='v',crushDir=0; // crush 0..1: box squashed against the floor or a barrier
+const $=id=>document.getElementById(id),code=$('code'),status=$('status'),nums=$('nums');
+const point=p=>({x:ox+(p.c+.5)*cell,y:oy+(p.r+.5)*cell});
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),deg=r=>r*180/Math.PI;
+const wait=t=>new Promise(r=>setTimeout(r,t));
+function el(tag,attrs,parent){let n=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));parent.appendChild(n);return n}
+// Dark round joint with a ring and bolts; it turns with its link so rotation is visible
+function cap(g,R){el('circle',{r:R,fill:'#2b3642',stroke:'#111b25','stroke-width':3},g);el('circle',{r:R-5,fill:'none',stroke:'#6d7f92','stroke-width':2},g);el('circle',{r:R*.42,fill:'#1a232d'},g);for(let k=0;k<3;k++)el('circle',{cx:(R*.7)*Math.cos(k*2.094),cy:(R*.7)*Math.sin(k*2.094),r:R*.11,fill:'#9aabbb'},g)}
+function drawReach(){const g=$('reachShade');g.innerHTML='';const x0=ox+REACH.c0*cell,x1=ox+(REACH.c1+1)*cell,y0=oy+REACH.r0*cell,y1=oy+(REACH.r1+1)*cell;
+ if(x0>ox)el('rect',{x:ox,y:oy,width:x0-ox,height:4*cell,fill:'url(#hatch)'},g);
+ if(x1<ox+11*cell)el('rect',{x:x1,y:oy,width:ox+11*cell-x1,height:4*cell,fill:'url(#hatch)'},g);
+ el('rect',{x:x0,y:y0,width:x1-x0,height:y1-y0,fill:'none',stroke:'#2f6fb0','stroke-width':3,'stroke-dasharray':'10 7',rx:4},g);
+ const lab=el('text',{x:(x0+x1)/2,y:y0+16,'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#2f6fb0'},g);lab.textContent='WORKING AREA';}
+cap($('capS'),23);cap($('capE'),19);cap($('capW'),14);
+const set=(id,t)=>$(id).setAttribute('transform',t);
+// Inverse kinematics: base slides on its rail, the two joints rotate so the gripper hangs over (possibly fractional) grid position p
+function draw(){
+  const t=point(pos);let wx=t.x,wy=t.y-WRIST_UP;
+  const bx=BASE_X,sx=bx+12,sy=SHOULDER_Y;
+  if(spinO){wx=sx+spinO.R*spinO.f;wy=spinO.wy}
+  let dx=wx-sx,dy=wy-sy;
+  if(spinO){dx=spinO.R*spinO.f;dy=spinO.wy-sy}
+  // Mid-floor levels: solve in the arm's swing plane (horizontal reach Rh), then turn the plane to face the target (view x scaled by f)
+  const Rh=spinO?spinO.R:L.mid?Math.hypot(dx,RMIN):dx,f=spinO?spinO.f:L.mid?dx/Rh:1;
+  const d=clamp(Math.hypot(Rh,dy),Math.abs(L1-L2)+1,L1+L2-.5);
+  const a=Math.atan2(dy,Rh),alpha=Math.acos(clamp((L1*L1+d*d-L2*L2)/(2*L1*d),-1,1)),p1=a-alpha;
+  const ex=sx+L1*Math.cos(p1)*f,ey=sy+L1*Math.sin(p1),t1=Math.atan2(ey-sy,ex-sx),len1=Math.hypot(ex-sx,ey-sy);
+  const t2=Math.atan2(wy-ey,wx-ex),len2=Math.hypot(wx-ex,wy-ey);
+  const gx=wx,gy=wy,ga=claw;
+  const r1=$('link1').children,r2=$('link2').children;r1[0].setAttribute('width',len1+36);r1[1].setAttribute('width',len1);r2[0].setAttribute('width',len2+30);r2[1].setAttribute('width',len2);
+  set('carriage',`translate(${bx} 0)`);
+  set('link1',`translate(${sx} ${sy}) rotate(${deg(t1)})`);set('capS',`translate(${sx} ${sy}) rotate(${deg(t1)})`);
+  set('link2',`translate(${ex} ${ey}) rotate(${deg(t2)})`);set('capE',`translate(${ex} ${ey}) rotate(${deg(t2)})`);
+  if(L.truck){const sh=(tc-L.truck.c)*cell;set('truck',`translate(${sh} 0)`);document.querySelectorAll('#truck .spin').forEach(w=>w.setAttribute('transform',`rotate(${deg(sh/20)} ${w.dataset.cx} ${w.dataset.cy})`))}
+  if(L.lift)drawLiftPose();
+  if(L.bins)document.querySelectorAll('.binTally').forEach(t=>t.textContent=boxes.filter(b=>b.binned&&b.binC===+t.dataset.c).length);
+  if(L.conveyor)document.querySelectorAll('#convBack .spin').forEach(w=>w.setAttribute('transform',`rotate(${deg(belt/6)} ${w.dataset.cx} ${w.dataset.cy})`));
+  set('gripper',`translate(${gx} ${gy})`);set('capW',`translate(${gx} ${gy}) rotate(${deg(t2)})`);
+  const els=$('boxes').children;boxes.forEach((b,i)=>{const e=els[i];if(!e)return;const cr=i===crushIdx?crush:0,bp=cr>0?crushAt:holding&&i===held?pos:b,sq=i===sqIdx?squeeze:0,sh=i===shakeIdx;
+    const ax=crushAxis==='v'?300:300+crushDir*36,ay=crushAxis==='v'?343:307,sc=crushAxis==='v'?`${1+.2*cr} ${1-.5*cr}`:`${1-.4*cr} ${1+.12*cr}`;
+    e.setAttribute('transform',`translate(${(bp.c-REF.c)*cell+(sh?shakeX:0)} ${(bp.r-REF.r)*cell+(sh?shakeY:0)}) translate(${ax} ${ay}) scale(${sc}) translate(${-ax} ${-ay})`);
+    const pth=boxPaths(264,271,72,sq);e.querySelector('.bLabel').setAttribute('transform',`translate(300 307) scale(${1-.14*sq} ${1+.04*sq}) translate(-300 -307)`);
+    e.querySelector('.bBody').setAttribute('d',pth.body);e.querySelector('.bX').setAttribute('d',pth.cross);e.querySelector('.bInner').setAttribute('d',pth.inner);e.querySelector('.bCrack').toggleAttribute('hidden',!(b.crack||b.bad));e.toggleAttribute('hidden',b.binned)});
+  set('clawL',`translate(-42 22) rotate(${ga})`);set('clawR',`translate(42 22) scale(-1 1) rotate(${ga})`);
+}
+const ease=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+// Runs fn(eased 0..1) every frame for dur ms; resolves false if Reset interrupted it
+function tween(dur,fn){dur*=SPEEDS[speed];const g=gen;if(reduceMotion){fn(1);draw();return Promise.resolve(g===gen)}return new Promise(res=>{const t0=performance.now();const f=now=>{if(g!==gen)return res(false);const k=Math.min(1,(now-t0)/dur);fn(ease(k));draw();k<1?requestAnimationFrame(f):res(true)};requestAnimationFrame(f)})}
+function message(s,type=''){status.textContent=s;status.className='status'+(type?' '+type:'')}
+let hl=-1;
+// Line numbers grow with the program and scroll with the editor
+let loopRun=null; // the loop pass shown on the bracket while running
+function highlight(line){hl=line;const n=Math.max(20,code.value.split('\n').length+5);nums.innerHTML=Array.from({length:n},(_,i)=>`<span style="display:block;${i===line?'background:#dceaff;border-radius:4px;color:#245c98':''}">${i+1}</span>`).join('');renderLoops()}
+// Coloured loop box beside the indented lines: "repeat 3 times", and "2 of 3" while that pass runs
+let cwCode=0;const charW=()=>{if(!cwCode){const c=document.createElement('canvas').getContext('2d');c.font=getComputedStyle(code).font;cwCode=c.measureText('0000000000').width/10||10}return cwCode};
+function renderLoops(){const g=$('loopLayer');if(!g)return;g.innerHTML='';if(!L.loops)return;const ln=code.value.split(/\r?\n/);
+  ln.forEach((raw,i)=>{const m=raw.match(/^[ \t]*repeat ?(\d+) ?:\s*$/i);if(!m)return;const d=indentOf(raw);let last=i;
+    for(let j=i+1;j<ln.length;j++){if(!ln[j].trim())continue;if(indentOf(ln[j])>d)last=j;else break}
+    if(last===i)return;const b=document.createElement('div');b.className='loopbox'+(d>0?' in':'');b.style.top=(8+i*32-code.scrollTop+1)+'px';b.style.height=((last-i+1)*32-2)+'px';b.style.left=(3+d*charW())+'px';const bt=8+i*32-code.scrollTop+1,bh=(last-i+1)*32-2,st=bt<0?Math.min(bh-24,-bt+4+(d>0?28:0)):5;
+    const lv=(loopRun||[]).find(x=>x.line===i),t=document.createElement('span');t.className='looptag'+(lv?' live':'');t.textContent=lv?`${lv.i} of ${lv.of}`:`repeat ${m[1]} times`;t.style.top=st+'px';b.appendChild(t);g.appendChild(b)})}
+// Commands are case-insensitive and the space before the number is optional: "right 1", "right1", "RIGHT 1", "Right1"
+// Loops (Level 9+): "repeat N:" then the lines that belong to the loop are indented. No colon = no indent = error.
+const indentOf=raw=>raw.match(/^[ \t]*/)[0].replace(/\t/g,'    ').length;
+function parseCmd(s,i){let m=s.match(/^(left|right|up|down) ?(.*)$/),g=s.match(/^(open|close)(?: ?(\d.*))?$/);
+  if(m){if(!/^\d+$/.test(m[2])||+m[2]<1||+m[2]>20)throw Error(`Line ${i+1}: enter “${m[1]}” followed by a number from 1 to 20, e.g. ${m[1]} 1.`);return{c:m[1],n:+m[2],line:i}}
+  if(g){if(g[2])throw Error(`Line ${i+1}: “${g[1]}” does not need a number.`);return{c:g[1],n:1,line:i}}
+  throw Error(`Line ${i+1}: “${s.split(' ')[0]}” is not a recognised command.`)}
+// A block is the run of lines at one indent. "repeat N:" opens a deeper block (its body, indented further).
+// Each expanded step lists the loop passes it is inside: loops = [{line,i,of}] outermost first; loop = the innermost.
+function parse(){const toks=[];code.value.split(/\r?\n/).forEach((raw,i)=>{const s=raw.trim().toLowerCase().replace(/\s+/g,' ');if(s)toks.push({i,s,ind:L.loops?indentOf(raw):0})});
+  function block(k,ind,depth){const steps=[];while(k<toks.length){const t=toks[k];if(t.ind<ind)break;
+      if(t.ind>ind)throw Error(depth?`Line ${t.i+1}: this line’s indent doesn’t line up with the lines above it. Use the same number of spaces as the other lines in its loop.`:`Line ${t.i+1}: this line is indented, but it is not inside a loop. Delete the spaces at the start of the line.`);
+      const rp=t.s.match(/^repeat ?(.*)$/);
+      if(rp&&!L.loops)throw Error(`Line ${t.i+1}: loops (“repeat”) unlock in Level 9.`);
+      if(rp){const m=rp[1].match(/^(\d+) ?(:?)$/);
+        if(!m||+m[1]<1||+m[1]>20)throw Error(`Line ${t.i+1}: enter “repeat”, a number from 1 to 20 and a colon, e.g. repeat 3:`);
+        if(!m[2])throw Error(`Line ${t.i+1}: “repeat ${m[1]}” needs a colon at the end: repeat ${m[1]}:  The colon tells the robot that the indented lines belong to the loop.`);
+        if(depth>0&&!L.nest)throw Error(`Line ${t.i+1}: a loop inside a loop unlocks in Level 12. Start “repeat” at the left edge.`);
+        const n=+m[1],nx=toks[k+1];if(!nx)throw Error(`Line ${t.i+1}: the loop is empty. Add indented lines under “repeat ${n}:”.`);
+        if(nx.ind<=t.ind)throw Error(`Line ${nx.i+1}: the lines after “repeat ${n}:” must be indented (pushed in with spaces) so they belong to the loop.`);
+        const r=block(k+1,nx.ind,depth+1);for(let p=1;p<=n;p++)r.steps.forEach(q=>steps.push({...q,loops:[{line:t.i,i:p,of:n},...(q.loops||[])]}));k=r.k;continue}
+      steps.push(parseCmd(t.s,t.i));k++}
+    return{steps,k}}
+  const out=block(0,0,0).steps;out.forEach(q=>{if(q.loops)q.loop=q.loops[q.loops.length-1]});
+  if(!out.length)throw Error('Please enter at least one command.');return out}
+const banner=$('banner');
+function showBanner(kind,title,text,btn){banner.className='banner '+kind;$('bIcon').textContent=kind==='win'?'✓':'!';$('bTitle').textContent=title;$('bText').textContent=text;$('bBtn').textContent=btn;$('bNext').hidden=kind!=='win';$('bNext').textContent=LEVELS.some(x=>x.n===LEVEL+1)?'Next level ▸':'🏆 Finish ▸';banner.hidden=false;(kind==='win'?$('bNext'):$('bBtn')).focus()}
+function resetScene(){lw=0;tc=L.truck?L.truck.c:0;belt=0;crush=0;crushAt=null;pos={...L.start};claw=CLAW_SHUT;holding=false;held=sqIdx=shakeIdx=crushIdx=-1;buildBoxes();squeeze=0;shakeX=shakeY=0;banner.hidden=true;draw()}
+function reset(){gen++;busy=false;loopRun=null;resetScene();pointer=0;program=[];highlight(-1);message('Robot reset. Your program is ready to run.');$('run').disabled=$('step').disabled=false}
+const isOpen=()=>claw>=CLAW_OPEN-.5,atBox=()=>!holding&&boxAt(pos.c,pos.r)>=0;
+// Bump animation: glide to the point of contact, then knock against the box 4 times
+async function bump(from,dir,dist,shakeBox=true){
+  const to={c:from.c+dir.c*dist,r:from.r+dir.r*dist};
+  if(dist>0&&!await tween(Math.min(2400,180+MOVE_MS_PER_SQUARE*dist),k=>{pos={c:from.c+(to.c-from.c)*k,r:from.r+(to.r-from.r)*k}}))return false;
+  for(let i=0;i<4;i++){
+    if(!await tween(120,k=>{pos={c:to.c-dir.c*.14*k,r:to.r-dir.r*.14*k};shakeX=shakeY=0}))return false;
+    if(!await tween(110,k=>{pos={c:to.c-dir.c*.14*(1-k),r:to.r-dir.r*.14*(1-k)};if(k>.85&&shakeBox){shakeX=dir.c*5;shakeY=dir.r*4}}))return false;
+  }
+  if(!await tween(140,k=>{shakeX=dir.c*5*(1-k);shakeY=dir.r*4*(1-k)}))return false;return true} // shakes boxes[shakeIdx]
+async function one(){if(pointer>=program.length)return false;let q=program[pointer];loopRun=q.loops||null;highlight(q.line);
+  if(['left','right','up','down'].includes(q.c)){
+    const dir={c:q.c==='right'?1:q.c==='left'?-1:0,r:q.c==='down'?1:q.c==='up'?-1:0},nc=pos.c+dir.c*q.n,nr=pos.r+dir.r*q.n;
+    // Walk the path square by square and find the first problem: the floor, the box, or leaving the working area.
+    // Standing rule: hitting the floor or a box is animated (crush/bump) before any out-of-reach message.
+    let kFloor=0,kOut=0,kObs=0,obsBox=false,obsBase=false,obsTruck=false,obsLift=false;for(let k=1;k<=q.n&&!kFloor&&!kOut&&!kObs;k++){const c=pos.c+dir.c*k,r=pos.r+dir.r*k;if(r>FLOOR_R)kFloor=k;else if(c<REACH.c0||c>REACH.c1||r<REACH.r0)kOut=k;else if(isSolid(c,r)){kObs=k;const so=solids().find(o=>o.c===c&&r>=o.top);obsBase=!!so.base;obsTruck=!!so.truck;obsLift=!!so.lift}else if(holding&&boxAt(c,r)>=0){kObs=k;obsBox=true}}
+    let kBox=0;if(!holding&&!(atBox()&&dir.c!==0))for(let k=1;k<=q.n;k++){const c=pos.c+dir.c*k,r=pos.r+dir.r*k;if(boxAt(c,r)>=0){if(!(q.c==='down'&&isOpen()))kBox=k;break}}
+    // Standing rule: an open gripper may close around a box, but pushing on down past it crushes the box
+    let kEnc=-1,encIdx=-1;
+    if(!holding&&q.c==='down'){if(atBox()){kEnc=0;encIdx=boxAt(pos.c,pos.r)}
+      else if(isOpen())for(let k=1;k<q.n;k++){const i=boxAt(pos.c,pos.r+k);if(i>=0){kEnc=k;encIdx=i;break}}}
+    if(kEnc>=0){const from={...pos},to={c:pos.c,r:pos.r+kEnc};message(`Running “${q.c} ${q.n}”…`);
+      if(kEnc>0&&!await tween(Math.min(2400,180+MOVE_MS_PER_SQUARE*kEnc),k=>{pos={c:from.c,r:from.r+kEnc*k}}))return false;
+      crushAt={c:boxes[encIdx].c,r:boxes[encIdx].r};crushAxis='v';crushDir=0;crushIdx=encIdx;shakeIdx=encIdx;
+      if(!await tween(520,k=>{crush=k;pos={c:to.c,r:to.r+.33*k}}))return false;boxes[encIdx].crack=true;draw();
+      for(let i=0;i<4;i++){if(!await tween(70,k=>{shakeX=(i%2?-1:1)*4*(1-k)}))return false}shakeX=0;draw();
+      const text='The gripper pushed down on the box and crushed it. Stop moving down when the open gripper is around the box.';
+      message(`Line ${q.line+1}: Crunch! ${text} Reset and try again.`,'error');showBanner('fail','Crunch!',text,'Try again');return false}
+    const hitK=kFloor||kObs,wall=kFloor?'floor':obsBox?'box':obsBase?'base':obsTruck?'truck':obsLift?'lift':'barrier',sideHit=dir.c!==0;
+    if(hitK&&(!kBox||hitK<kBox)){const from={...pos};message(`Running “${q.c} ${q.n}”…`);
+      if(holding){ // carried box is pushed into the floor or a barrier: squash, crack, shake
+        const dist=sideHit?hitK-.78:hitK-1,to={c:from.c+dir.c*dist,r:from.r+dir.r*dist};
+        if(dist>0&&!await tween(Math.min(2400,180+MOVE_MS_PER_SQUARE*dist),k=>{pos={c:from.c+(to.c-from.c)*k,r:from.r+(to.r-from.r)*k}}))return false;
+        crushAt={...to};crushAxis=sideHit?'h':'v';crushDir=dir.c;crushIdx=held;shakeIdx=held;
+        if(!await tween(520,k=>{crush=k;pos=sideHit?{c:to.c+dir.c*.2*k,r:to.r}:{c:to.c,r:to.r+.3*k}}))return false;boxes[held].crack=true;draw();
+        for(let i=0;i<4;i++){if(!await tween(70,k=>{shakeX=(i%2?-1:1)*4*(1-k)}))return false}shakeX=0;draw();
+        const text=wall==='floor'?'The box was pushed into the floor and crushed. Count the squares down more carefully.':wall==='box'?(sideHit?'The box crashed into the other box and broke. Lift it higher before you move it sideways.':'The box was pushed down into the other box and crushed. Lower it only until it sits on top.'):wall==='lift'?(sideHit?'The box crashed into the lift and broke. Lift it higher before you move it sideways.':'The box was pushed down into the lift and crushed. Lower it only until it sits on the lift.'):wall==='truck'?(sideHit?'The box crashed into the truck and broke. Lift it higher before you move it over the truck.':'The box was pushed down into the truck bed and crushed. Lower it only until it sits on the bed.'):wall==='base'?(sideHit?'The box crashed into the robot’s base and broke. Lift it higher so it clears the robot.':'The box was pushed down onto the robot’s base and crushed. Move past the robot before you lower the box.'):sideHit?'The box crashed into the barrier and broke. Lift the box higher so it goes over the barrier.':'The box was pushed down onto the barrier and crushed. Move past the barrier before you lower the box.';
+        message(`Line ${q.line+1}: Crunch! ${text} Reset and try again.`,'error');showBanner('fail','Crunch!',text,'Try again');return false}
+      const dist=wall==='floor'?FLOOR_R-from.r+.35:sideHit?hitK-.97:hitK-.75;
+      if(!await bump(from,dir,dist,false))return false;
+      const text=wall==='floor'?'The gripper hit the floor. Count the squares down more carefully.':wall==='base'?'The gripper hit the robot’s own base. Go up and over it.':wall==='truck'?'The gripper hit the truck. Count the squares more carefully.':wall==='lift'?'The gripper hit the lift. Count the squares more carefully.':'The gripper hit the barrier. Go up and over it.';
+      message(`Line ${q.line+1}: Bump! ${text} Reset and try again.`,'error');showBanner('fail','Bump!',text,'Try again');return false}
+    if(kOut&&(!kBox||kOut<kBox)){message(`Line ${q.line+1}: the arm can’t reach that far. Stay inside the dashed working area.`,'error');showBanner('fail','Out of reach','That move would take the gripper outside the dashed working area.','Try again');return false}
+    // Collision check: the gripper may only enter the box's square from above with the claws open,
+    // and with open claws around the box it can only leave upwards (unless it is holding the box)
+    let hit=-1,side=dir.c!==0;
+    if(!holding){
+      if(atBox()&&side){hit=0;shakeIdx=boxAt(pos.c,pos.r)}
+      else for(let k=1;k<=q.n;k++){const c=pos.c+dir.c*k,r=pos.r+dir.r*k;if(boxAt(c,r)>=0){if(!(q.c==='down'&&isOpen()))hit=k;shakeIdx=boxAt(c,r);break}}
+    }
+    const from={...pos};message(`Running “${q.c} ${q.n}”…`);
+    // Carrying the box sideways along the floor scrapes it: lift it first
+    if(holding&&side&&pos.r===landRow(pos.c)){shakeIdx=held;if(!await bump(from,dir,.12))return false;
+      const text=pos.r===FLOOR_R?'The box scraped along the floor. Lift it up before you move it sideways.':'The box scraped along the surface it was sitting on. Lift it up before you move it sideways.';
+      message(`Line ${q.line+1}: ${text} Reset and try again.`,'error');showBanner('fail','Scrape!',text,'Try again');return false}
+    if(hit>=0){
+      const dist=hit===0?.12:hit-(side?.85:.72);
+      if(!await bump(from,dir,dist))return false;
+      const title='Bump!',text=side?'The gripper crashed into the side of the box. Move the gripper above the box first, then lower it.':'The gripper was closed, so it pushed into the top of the box. Open the gripper before you lower it onto the box.';
+      message(`Line ${q.line+1}: ${text} Reset and try again.`,'error');showBanner('fail',title,text,'Try again');return false}
+    if(!await tween(Math.min(2600,220+MOVE_MS_PER_SQUARE*q.n),k=>{pos={c:from.c+(nc-from.c)*k,r:from.r+(nr-from.r)*k}}))return false;
+    pos={c:nc,r:nr};draw();message(`Executed “${q.c} ${q.n}”.`)}
+  else if(q.c==='open'){
+    const a0=claw,dropping=holding;message('Opening gripper…');
+    let box=null;if(dropping){box=boxes[held];box.c=pos.c;box.r=pos.r;sqIdx=held;holding=false;held=-1}
+    const s0=squeeze;if(!await tween(dropping?GRIP_MS*1.6:GRIP_MS,k=>{claw=a0+(CLAW_OPEN-a0)*Math.min(1,k*1.6);if(dropping)squeeze=s0*springBack(k)}))return false;squeeze=0;
+    const bi=dropping?boxes.indexOf(box):-1;
+    // Trash bin: anything let go over the bin falls in (no smash) and is crunched out of sight
+    const sb=dropping&&(L.bins||[]).find(bn=>bn.c===box.c);
+    if(sb){const r0=box.r; // falls into the bin (sorting bins are padded: nothing breaks)
+      if(!await tween(220+110*(FLOOR_R+.3-r0),k=>{box.r=r0+(FLOOR_R+.3-r0)*k*k}))return false;box.binned=true;box.binC=sb.c;box.c=-99;draw();
+      if(box.color!==sb.color){const text=`That was a ${box.color.toUpperCase()} box in the ${sb.color.toUpperCase()} bin. Each box goes in the bin of the same colour.`;
+        message(`Line ${q.line+1}: Wrong bin! ${text} Reset and try again.`,'error');showBanner('fail','Wrong bin!',text,'Try again');return false}
+      message(`The ${box.color} box is in the ${sb.color} bin.`)}
+    else if(dropping&&L.bin&&box.c===L.bin.c){const r0=box.r;
+      if(!await tween(220+110*(FLOOR_R+.15-r0),k=>{box.r=r0+(FLOOR_R+.15-r0)*k*k}))return false;
+      crushAt={c:box.c,r:FLOOR_R+.15};crushAxis='v';crushDir=0;crushIdx=bi;
+      if(!await tween(300,k=>{crush=.75*k}))return false;box.binned=true;box.c=-99;crushIdx=-1;crush=0;draw();
+      if(!box.bad){const text='That was the good box! Only the damaged box with the red X goes in the bin.';
+        message(`Line ${q.line+1}: Oops! ${text} Reset and try again.`,'error');showBanner('fail','Oops!',text,'Try again');return false}
+      message('The bad box is in the bin.')}
+    else{
+    const land=dropping?landRow(box.c,bi):0;if(dropping&&box.r<land){const r0=box.r;if(!await tween(260+120*(land-r0),k=>{box.r=r0+(land-r0)*k*k}))return false;box.r=land;draw();
+      // Standing rule: a fragile box that is let go above the floor breaks, and the run fails
+      if(box.fragile){box.crack=true;shakeIdx=boxes.indexOf(box);
+        for(let i=0;i<3;i++){if(!await tween(70,k=>{shakeX=(i%2?-1:1)*4*(1-k);shakeY=3*(1-k)}))return false}shakeX=shakeY=0;draw();
+        const text='Fragile boxes must be lowered all the way down before you open the gripper.';
+        message(`Line ${q.line+1}: Smash! The box was dropped and broke. ${text} Reset and try again.`,'error');showBanner('fail','Smash!',text,'Try again');return false}}
+    // Truck: a box set down on the bed must go in the front empty slot (the flashing outline)
+    // Lift: a box set down in the flashing outline (on the lift or on the tower) joins the tower
+    if(dropping&&L.lift&&box.c===L.lift.c&&box.r===L.target.r&&Math.round(lw)===boxes.filter(o=>o.onLift).length)box.onLift=true;
+    if(dropping&&L.truck){const t=Math.round(tc),next=L.truck.c+2,n=boxes.filter(o=>o.truck).length;if(box.r===2&&box.c>=t&&box.c<=t+2){
+      if(box.c===next&&t===L.truck.c+n&&!boxes.some(o=>o!==box&&o.truck&&o.c===box.c))box.truck=true;
+      else{const text='Load the truck from the front. Put each box in the flashing outline.';
+        message(`Line ${q.line+1}: Wrong place! ${text} Reset and try again.`,'error');showBanner('fail','Wrong place!',text,'Try again');return false}}}
+    if(dropping&&box.bad){const text='The damaged box with the red X must go in the trash bin, not here.';
+      message(`Line ${q.line+1}: Wrong place! ${text} Reset and try again.`,'error');showBanner('fail','Wrong place!',text,'Try again');return false}
+    message(dropping?'Gripper opened. The box was let go.':'Gripper opened.')}}
+  else{
+    const a0=claw,onBox=atBox()&&isOpen(),a1=onBox?CLAW_ON_BOX:CLAW_SHUT,bi=onBox?boxAt(pos.c,pos.r):-1;if(onBox)sqIdx=bi;message('Closing gripper…');
+    if(!await tween(onBox?GRIP_MS*1.3:GRIP_MS,k=>{claw=a0+(a1-a0)*k;if(onBox)squeeze=squeezeOnClose(k)}))return false;if(onBox)squeeze=1;
+    if(onBox){holding=true;held=bi;boxes[bi].truck=false;boxes[bi].onLift=false}message(onBox?'Gripper closed on the box.':'Gripper closed.')}
+  if(!await worldTick())return false;
+  pointer++;
+  // Standing rule: as soon as the level's goal is met, stop. Later lines are not run.
+  if(goalMet()&&L.needNested&&!program.some(p=>p.loops&&p.loops.length>1)){pointer=program.length;const text=L.nestHint||'You sorted them all, but this level is about a loop inside a loop. Put the red trip in repeat 3: inside repeat 2:, with the blue trip after it.';
+    message(`Use a loop inside a loop! ${text}`,'error');showBanner('fail','Loop inside a loop!',text,'Try again');return false}
+  if(goalMet()&&L.needLoop&&!program.some(p=>p.loop)){pointer=program.length;const text=L.goal==='truck'?'The truck is loaded, but this level is about loops. Load it again with the commands for one trip inside repeat 3: (indented).':'You reached the goal, but this level is about loops. Try again with the commands for one trip inside repeat 3: (indented).';
+    message(`Use a loop! ${text}`,'error');showBanner('fail','Use a loop!',text,'Try again');return false}
+  if(goalMet()){const skipped=program.length-pointer;pointer=program.length;
+    message(`Excellent! ${L.win[0]} Level ${LEVEL} complete!`+(skipped&&program.some(p=>p.loop)?` The program stopped at line ${q.line+1}${q.loop?` (pass ${q.loop.i} of ${q.loop.of})`:''}, so the last ${skipped===1?'command was':skipped+' commands were'} not run.`:'')+(skipped&&!program.some(p=>p.loop)?` The program stopped at line ${q.line+1}, so the ${skipped===1?'line':skipped+' lines'} after it ${skipped===1?'was':'were'} not run.`:''),'good');
+    setStatus(LEVEL,'passed');if(L.stars){const n=code.value.split(/\r?\n/).filter(x=>x.trim()).length,st=n<=L.stars[0]?3:n<=L.stars[1]?2:1;saveStars(LEVEL,st);
+      const more=st===3?(n<L.stars[0]?` That beats our best answer of ${L.stars[0]} lines. Genius!`:' Top marks: you used loops inside loops brilliantly.'):st===2?` For ★★★, get it down to ${L.stars[0]} lines. Try putting the 2 red trips in a loop inside your loop.`:` For ★★, get it down to ${L.stars[1]} lines. Put one blue trip and two red trips inside repeat 3:.`;
+      showBanner('win',`${'★'.repeat(st)}${'☆'.repeat(3-st)} ${L.win[0]}`,`You sorted all 9 boxes with ${n} lines of code.`+more,'Play again')}
+    else showBanner('win',L.win[0],L.win[1],'Play again');return false}
+  if(pointer>=program.length){
+    if(L.goal==='reach')message('Program finished, but the gripper is not in the flashing outline yet. Reset and try again.');
+    else if(L.goal==='sort'){const n=boxes.filter(b=>!b.binned).length;message(holding?'Program finished, but the gripper is still holding a box. Drop it into the bin of the same colour.':`Program finished, but ${n} ${n===1?'box still needs':'boxes still need'} sorting. Reset and try again.`)}
+    else if(L.goal==='lift'){const n=3-boxes.filter(b=>b.onLift&&!b.crack).length;message(holding?'Program finished, but the gripper is still holding a box. Lower it into the flashing outline and open the gripper.':`Program finished, but the tower still needs ${n} more ${n===1?'box':'boxes'}. Reset and try again.`)}
+    else if(L.goal==='truck'){const n=3-boxes.filter(b=>b.truck&&!b.crack).length;message(holding?'Program finished, but the gripper is still holding a box. Lower it into the flashing outline and open the gripper.':`Program finished, but the truck still needs ${n} more ${n===1?'box':'boxes'}. Reset and try again.`)}
+    else if(L.goal==='deliver'){
+      if(holding)message('Program finished, but the gripper is still holding the box. Lower it onto the target and open the gripper.');
+      else message(targetsOf().length>1?'Program finished, but not every flashing outline has a box in it yet. Reset and try again.':'Program finished, but the box is not on the target yet. Reset and try again.')}
+    else if(atBox())message('Program finished. The gripper is around the box but has not gripped it yet. What command is missing?');
+    else message('Program finished, but the box has not been gripped. Reset and try again.');
+    return false}
+  return true}
+// Goal check, run after every command: grip = holding the box; deliver = box let go and resting on the target
+const targetsOf=()=>L.targets||(L.target?[L.target]:[]);
+const goalMet=()=>L.goal==='sort'?(!holding&&boxes.every(b=>b.binned)):L.goal==='lift'?(!holding&&boxes.filter(b=>b.onLift&&!b.crack).length===3):L.goal==='reach'?(pos.c===L.target.c&&pos.r===L.target.r):L.goal==='grip'?holding:L.goal==='truck'?(!holding&&boxes.filter(b=>b.truck&&!b.crack).length===3):(!holding&&targetsOf().length>0&&targetsOf().every(t=>boxes.some(b=>!b.crack&&!b.bad&&!b.binned&&b.c===t.c&&b.r===t.r))&&boxes.every(b=>!b.bad||b.binned));
+function begin(){$('run').classList.remove('nudge');if(pointer===0){program=parse();resetScene();setStatus(LEVEL,'tried')}}
+async function run(){if(busy)return;try{begin()}catch(e){message(e.message,'error');return}const g=gen;busy=true;$('run').disabled=$('step').disabled=true;
+  try{while(pointer<program.length){let more=await one();if(!more||g!==gen)break;await wait((reduceMotion?450:160)*SPEEDS[speed]);if(g!==gen)break}}catch(err){failSafe(err)}
+  if(g===gen){busy=false;$('run').disabled=$('step').disabled=false}}
+// Safety net: an unexpected error never leaves the buttons locked; Reset always recovers
+function failSafe(err){console.error(err);pointer=program.length;message('Something went wrong running that line. Select Reset to try again.','error')}
+async function step(){if(busy)return;try{begin()}catch(e){message(e.message,'error');return}if(pointer>=program.length){message('Program finished. Select Reset to try again.');return}
+  const g=gen;busy=true;$('run').disabled=$('step').disabled=true;try{await one()}catch(err){failSafe(err)}if(g===gen){busy=false;$('run').disabled=$('step').disabled=false}}
+$('bBtn').onclick=()=>{reset();code.focus()};
+/* ---- LEVELS & SAVED PROGRESS ------------------------------------------------------------
+   To add a level: add its data to LEVELS at the top of the script and set built:true.
+   Progress is kept in localStorage under one shared key: {levelNumber: 'tried' | 'passed'}. */
+// (LEVELS and the current LEVEL are defined at the top of the script)
+const PKEY='robotArmChallenge.progress';
+function loadProgress(){try{return JSON.parse(localStorage.getItem(PKEY))||{}}catch(e){return{}}}
+const SKEY='robotArmChallenge.stars';function loadStars(){try{return JSON.parse(localStorage.getItem(SKEY))||{}}catch(e){return{}}}
+function saveStars(n,v){const s=loadStars();if((s[n]||0)>=v)return;s[n]=v;try{localStorage.setItem(SKEY,JSON.stringify(s))}catch(e){}}
+function setStatus(n,st){const pr=loadProgress();if(pr[n]==='passed'&&st==='tried')return;pr[n]=st;try{localStorage.setItem(PKEY,JSON.stringify(pr))}catch(e){}memProgress=pr;renderProgress()}
+let memProgress=loadProgress();
+const statusOf=n=>(loadProgress()[n]||memProgress[n]||'none');
+function renderProgress(){const d=$('dots');d.innerHTML='';LEVELS.forEach((L,i)=>{if(i)el2('i','bar',d);const st=statusOf(L.n);el2('i','dot'+(L.n===LEVEL?' here':'')+(st==='passed'?' passed':st==='tried'?' tried':''),d).title=`Level ${L.n}: ${label(L)}`});
+  $('passedCount').textContent=`${LEVELS.filter(L=>statusOf(L.n)==='passed').length} / ${LEVELS.length} passed`;
+  const ul=$('levelList');ul.innerHTML='';LEVELS.forEach(L=>{const st=statusOf(L.n),li=el2('li',(L.n===LEVEL?'current ':'')+(st==='passed'?'passed':''),ul);
+    li.innerHTML=`<div class="lnum">${st==='passed'?'✓':L.built&&!unlocked(L.n)?'🔒':L.n}</div><div class="linfo"><b>Level ${L.n}${L.title?': '+L.title:''}</b><span class="chip ${!L.built?'soon':!unlocked(L.n)?'locked':st}">${label(L)}</span></div>`;
+    const b=el2('button','',li);const lk=!L.built||!unlocked(L.n);b.textContent=lk?'🔒 Locked':L.n===LEVEL?(st==='passed'?'Replay':'Playing'):st==='passed'?'Replay':'Play';b.disabled=lk||(L.n===LEVEL&&st!=='passed');
+    b.onclick=()=>{closeLM();if(L.n===LEVEL&&!finActive)reset();else{if(L.n===LEVEL)LEVEL=-1;loadLevel(L.n)}}});
+  const last=LEVELS[LEVELS.length-1].n;if(statusOf(last)==='passed'){const li=el2('li','passed'+(finActive?' current':''),ul);li.innerHTML='<div class="lnum">🏆</div><div class="linfo"><b>Challenge completed!</b><span class="chip passed">The finish party</span></div>';const b=el2('button','',li);b.textContent='🎉 Party';b.onclick=()=>{closeLM();openFinale()}}}
+// Levels unlock one at a time: Level 0 is always open, every other level opens when the one before it is passed
+const unlocked=n=>n===0||statusOf(n-1)==='passed';
+function label(L){const st=statusOf(L.n);return !L.built?'Coming soon':!unlocked(L.n)?`Pass Level ${L.n-1} first`:st==='passed'?'Passed'+(loadStars()[L.n]?' '+'★'.repeat(loadStars()[L.n])+'☆'.repeat(3-loadStars()[L.n]):''):st==='tried'?'Attempted, not passed yet':'Not attempted yet'}
+function el2(tag,cls,parent){const n=document.createElement(tag);if(cls)n.className=cls;parent.appendChild(n);return n}
+const lm=$('levelsMenu'),openLM=()=>{renderProgress();lm.hidden=false;$('lmClose').focus()},closeLM=()=>{lm.hidden=true};
+$('levelsBtn').onclick=openLM;$('lmClose').onclick=closeLM;lm.onclick=e=>{if(e.target===lm)closeLM()};document.addEventListener('keydown',e=>{if(!lm.hidden&&e.key==='Escape')closeLM()});
+// Next level: go to the next built level, or open the menu if it isn't built yet
+$('bNext').onclick=()=>{const nx=LEVELS.find(x=>x.n===LEVEL+1);if(nx&&nx.built)loadLevel(nx.n);else if(!nx&&statusOf(LEVEL)==='passed')openFinale();else openLM()};
+// Switch level in place: each level keeps its own code while the page is open; the last level played is remembered
+const drafts={};
+// Commands panel: from the loops level on, open/close share a box and a "repeat" box is added (click it to see the loop demo)
+const CMD_BASE=document.getElementById('cmdGrid').innerHTML;
+const CMD_LOOPS='<div class="command"><b>left</b><span>Move left a number of squares</span><div class="eg">e.g. <code>left 1</code></div></div><div class="command"><b>right</b><span>Move right a number of squares</span><div class="eg">e.g. <code>right 3</code></div></div><div class="command"><b>up</b><span>Move up a number of squares</span><div class="eg">e.g. <code>up 2</code></div></div><div class="command"><b>down</b><span>Move down a number of squares</span><div class="eg">e.g. <code>down 1</code></div></div><div class="command"><b>open / close</b><span>Open or close the gripper</span><div class="eg">e.g. <code>open</code> <code>close</code></div></div><button type="button" class="command repeatcmd" data-demo="quick" title="Show me how loops work"><b>repeat <i>▶ demo</i></b><span>Repeat the indented lines below</span><div class="eg">e.g. <code>repeat 3:</code></div></button>';
+function loadLevel(n){const nl=LEVELS.find(x=>x.n===n&&x.built);if(!nl)return;endFinale();drafts[LEVEL]=code.value;LEVEL=n;L=nl;$('cmdGrid').innerHTML=L.loops?(L.nest?CMD_LOOPS.replace('data-demo="quick"','data-demo="nestquick"'):CMD_LOOPS):CMD_BASE;loopRun=null;BASE_X=L.baseX||DEF_BASE_X;REACH=L.reach||DEF_REACH;drawReach();
+  // mid-floor levels: the gripper swings round in front of the robot, so boxes are drawn in front of the arm links (but behind the claws)
+  if(L.mid){$('gripper').before($('boxes'));$('boxes').after($('binFront'));$('binFront').after($('convFront'))}else{$('binBack').after($('boxes'));$('boxes').after($('binFront'));$('binFront').after($('convFront'))}drawTruck();drawLift();drawConveyor();
+  code.value=drafts[n]??(L.code||'');$('run').classList.toggle('nudge',!!L.code&&code.value===L.code);$('levelPill').textContent=`Level ${n}`;$('taskText').innerHTML=L.task;document.title=`Robot Arm Challenge — Level ${n}`;
+  // one flashing outline per target square (#target is the template and stays hidden)
+  const t=$('target');t.setAttribute('hidden','');document.querySelectorAll('.tclone').forEach(x=>x.remove());
+  targetsOf().forEach(tg=>{const cl=t.cloneNode(true);cl.removeAttribute('id');cl.removeAttribute('hidden');cl.classList.add('tclone');if(L.goal==='reach'){const tx=cl.querySelectorAll('text');tx[0].textContent='PUT GRIPPER';tx.forEach(t=>t.setAttribute('font-size','9.5'))}cl.setAttribute('transform',`translate(${(tg.c-REF.c)*cell} ${(tg.r-REF.r)*cell})`);t.after(cl)});
+  drawObstacles();try{localStorage.setItem('robotArmChallenge.level',String(n))}catch(e){}reset();renderProgress();
+  if(L.intro){let seen=false;try{seen=localStorage.getItem(`robotArmChallenge.${L.intro}Intro`)==='done'}catch(e){}if(!seen)openLoopIntro(L.intro==='nested'?'nested':'full')}}
+/* ---- CONVEYOR & TRUCK (Level 8+) ------------------------------------------------------------
+   After every command: the truck pulls forward one square once a box is loaded and the gripper is clear of it;
+   the conveyor slides the next box in once the pickup square (conveyor.c, floor row) is empty. */
+async function worldTick(){
+  if(L.lift){const lb=boxes.filter(b=>b.onLift),want=lb.length;
+    if(want<3&&lw<want&&!lb.some(b=>b.c===pos.c&&b.r===pos.r)){message('The lift goes down one square…');const l0=lw,st=lb.map(b=>[b,b.r]);
+      if(!await tween(750,k=>{lw=l0+(want-l0)*k;st.forEach(([b,r])=>b.r=r+(want-l0)*k)}))return false;lw=want;st.forEach(([b,r])=>b.r=r+(want-l0));draw()}}
+  if(L.truck){const tb=boxes.filter(b=>b.truck),want=L.truck.c+tb.length;
+    if(tb.length<3&&tc<want&&!tb.some(b=>b.c===pos.c&&b.r===pos.r)){message('The truck pulls forward one square…');const t0=tc,st=tb.map(b=>[b,b.c]);
+      if(!await tween(750,k=>{tc=t0+(want-t0)*k;st.forEach(([b,c])=>b.c=c+(want-t0)*k)}))return false;tc=want;st.forEach(([b,c])=>b.c=c+(want-t0));draw()}}
+  if(L.conveyor){const pc=L.conveyor.c,F=FLOOR_R,full=(pos.c===pc&&pos.r===F)||boxes.some((b,i)=>!b.binned&&!(holding&&i===held)&&b.c===pc&&b.r===F);
+    const qd=boxes.filter((b,i)=>b.conv&&!b.binned&&!(holding&&i===held)&&b.r===F&&b.c<pc);
+    if(!full&&qd.length){message(L.convSpeed?'The fast conveyor whizzes in the next box…':'The conveyor brings the next box…');const st=qd.map(b=>[b,b.c]),p0=belt;
+      if(!await tween(800*(L.convSpeed||1),k=>{st.forEach(([b,c])=>b.c=c+k);belt=p0+k*cell}))return false;st.forEach(([b,c])=>b.c=c+1);belt=p0+cell;draw()}}
+  return true}
+function spinner(g,cx,cy,r,spokes,col){const s=el('g',{class:'spin','data-cx':cx,'data-cy':cy},g);for(let i=0;i<spokes;i++){const a=i*Math.PI*2/spokes;el('path',{d:`M${cx} ${cy}L${cx+r*Math.cos(a)} ${cy+r*Math.sin(a)}`,stroke:col,'stroke-width':2.5,'stroke-linecap':'round'},s)}return s}
+// Scissor lift (Level 10): platform top starts at the top of row 2 and goes down one square per box
+function drawLift(){const g=$('lift');g.innerHTML='';if(!L.lift)return;const x=ox+L.lift.c*cell,fl=oy+4*cell;
+  el('rect',{x:x-2,y:fl-8,width:cell+4,height:12,rx:3,fill:'#2b3642',stroke:'#111b25','stroke-width':2.5},g);
+  el('path',{id:'liftLegs',fill:'none',stroke:'#e08a00','stroke-width':6,'stroke-linecap':'round'},g);
+  el('path',{id:'liftLegs2',fill:'none',stroke:'#ffd34d','stroke-width':2,'stroke-linecap':'round'},g);
+  el('rect',{id:'liftTop',x:x,width:cell,height:12,rx:3,fill:'url(#steel)',stroke:'#1b2a38','stroke-width':3},g);
+  el('rect',{id:'liftHaz',x:x+3,width:cell-6,height:5,fill:'url(#hazard)'},g);
+  const t=el('text',{id:'liftLbl',x:x+cell/2,'text-anchor':'middle','font-size':11,'font-weight':900,fill:'#1b2a38','letter-spacing':1.5,'font-family':'Arial,Helvetica,sans-serif'},g);t.textContent='LIFT'}
+function drawLiftPose(){const x=ox+L.lift.c*cell,fl=oy+4*cell,top=oy+(2+lw)*cell,y1=top+12,y2=fl-8;
+  $('liftTop').setAttribute('y',top);$('liftHaz').setAttribute('y',top+3.5);$('liftLbl').setAttribute('y',Math.min(fl+22,top+28));
+  let d='';const h=y2-y1;if(h>4){const n=h>70?2:1,sh=h/n;for(let i=0;i<n;i++){const a=y1+i*sh,b=a+sh;d+=`M${x+8} ${a}L${x+cell-8} ${b}M${x+cell-8} ${a}L${x+8} ${b}`}}
+  $('liftLegs').setAttribute('d',d);$('liftLegs2').setAttribute('d',d);$('liftLbl').toggleAttribute('hidden',h<30)}
+// Flatbed truck drawn with its bed starting at column L.truck.c; draw() slides the whole group as tc changes
+function drawTruck(){const g=$('truck');g.innerHTML='';g.removeAttribute('transform');if(!L.truck)return;const x0=ox+L.truck.c*cell,W=3*cell,deck=oy+3*cell;
+  el('rect',{x:x0+10,y:deck+14,width:W+64,height:16,rx:4,fill:'#2b3642',stroke:'#111b25','stroke-width':2.5},g);
+  for(let i=0;i<3;i++)el('rect',{x:x0+i*cell+5,y:deck-cell+5,width:cell-10,height:cell-10,rx:4,fill:'#cfe6ff','fill-opacity':.25,stroke:'#6f9cc9','stroke-width':2,'stroke-dasharray':'6 5'},g);
+  el('rect',{x:x0,y:deck,width:W+4,height:17,rx:3,fill:'url(#steel)',stroke:'#1b2a38','stroke-width':3},g);
+  for(let i=0;i<=3;i++)el('rect',{x:x0+i*cell-2,y:deck-14,width:5,height:16,rx:2,fill:'#5c7086',stroke:'#1b2a38','stroke-width':1.5},g);
+  el('rect',{x:x0+W+4,y:deck-56,width:9,height:72,rx:2,fill:'#5c7086',stroke:'#1b2a38','stroke-width':2.5},g);
+  const cx=x0+W+15,top=oy+2*cell+12;
+  el('path',{d:`M${cx} ${deck+30}V${top+8}Q${cx} ${top} ${cx+8} ${top}H${cx+38}Q${cx+48} ${top} ${cx+52} ${top+12}L${cx+62} ${top+44}Q${cx+66} ${top+50} ${cx+66} ${top+58}V${deck+30}Z`,fill:'#2f6fb0',stroke:'#173b62','stroke-width':3,'stroke-linejoin':'round'},g);
+  el('path',{d:`M${cx+30} ${top+8}H${cx+46}L${cx+56} ${top+40}H${cx+30}Z`,fill:'#bfe3ff',stroke:'#173b62','stroke-width':2.5,'stroke-linejoin':'round'},g);
+  el('path',{d:`M${cx+24} ${top+48}V${deck+22}`,stroke:'#173b62','stroke-width':2},g);el('rect',{x:cx+14,y:top+56,width:8,height:3,rx:1.5,fill:'#173b62'},g);
+  el('rect',{x:cx+58,y:top+66,width:10,height:8,rx:2,fill:'#ffe6a2',stroke:'#173b62','stroke-width':1.5},g);
+  const t=el('text',{x:x0+W/2,y:deck+12,'text-anchor':'middle','font-size':10,'font-weight':900,fill:'#1b2a38','letter-spacing':1.5,'font-family':'Arial,Helvetica,sans-serif'},g);t.textContent='LOAD FRONT FIRST ▸';
+  [x0+44,x0+W-36,cx+40].forEach(wx=>{const wy=oy+4*cell-21;el('circle',{cx:wx,cy:wy,r:20,fill:'#1a232d',stroke:'#0c1218','stroke-width':2},g);el('circle',{cx:wx,cy:wy,r:9,fill:'#9aabbb'},g);spinner(g,wx,wy,15,5,'#55677a');el('circle',{cx:wx,cy:wy,r:3.5,fill:'#2b3642'},g)})}
+// Conveyor: belt along the floor from the left wall to the pickup square; boxes come in through a rubber-flap hatch
+function drawConveyor(){const bk=$('convBack'),fr=$('convFront');bk.innerHTML=fr.innerHTML='';if(!L.conveyor)return;const xe=ox+(L.conveyor.c+1)*cell+4,fl=oy+4*cell;
+  el('rect',{x:0,y:fl-96,width:ox,height:96,fill:'#1c2733'},bk);
+  el('rect',{x:-12,y:fl,width:xe+12,height:15,rx:7.5,fill:'#263340',stroke:'#111b25','stroke-width':2.5},bk);
+  for(let x=10;x<xe;x+=26){el('circle',{cx:x,cy:fl+7.5,r:5,fill:'#6d7f92'},bk);spinner(bk,x,fl+7.5,4.5,3,'#c9d6e2')}
+  for(let i=0;i<5;i++)el('rect',{x:2+i*9,y:fl-94,width:8,height:94,rx:2,fill:'#3a4a5a',stroke:'#1c2733','stroke-width':1.5},fr);
+  el('rect',{x:0,y:fl-106,width:ox+4,height:14,rx:3,fill:'url(#hazard)',stroke:'#1b2a38','stroke-width':2},fr);}
+/* ---- LOOPS INTRO & DEMO ----------------------------------------------------------------------
+   'full': shown before the loops level the first time (and from the task link): types "repeat 3:", auto-indents,
+   shows the loop box, runs it with a 1 of 3 / 2 of 3 / 3 of 3 counter, then the no-colon mistake.
+   'quick': from the repeat command box: the loop box and the counter run only. */
+let liGen=0,li={};const LIC=52,LIX=20,LIY=18;
+const liWait=ms=>{const g=liGen;return new Promise(r=>setTimeout(()=>r(g===liGen),reduceMotion?Math.min(ms,120):ms))};
+function liRender(){const e=$('liEd');let h='';li.lines.forEach((t,i)=>{const sp=t.match(/^ */)[0].length;let body=t.slice(sp);
+    let ind=sp?`<span class="ind${li.indLbl===i?' show':''}">${' '.repeat(sp)}${li.indLbl===i?`<span class="lbl pop">${li.indTxt||'indented!'}</span>`:''}</span>`:'';
+    let txt=body;if(li.cur&&li.cur.line===i){const c=li.cur.col;if(c<=sp){ind=sp?`<span class="ind${li.indLbl===i?' show':''}">${' '.repeat(c)}<span class="cur"></span>${' '.repeat(sp-c)}${li.indLbl===i?'<span class="lbl pop">indented!</span>':''}</span>`:'<span class="cur"></span>'}else txt=body.slice(0,c-sp)+'<span class="cur"></span>'+body.slice(c-sp)}
+    h+=`<div class="lrow${li.hl===i?' hl':''}"><span class="lnum">${i+1}</span><span class="ltxt">${ind}${txt}</span>${li.notes[i]?`<span class="note${li.notes[i].bad?' bad':''}">${li.notes[i].t}</span>`:''}</div>`});
+  (li.brs||[]).forEach(b=>{h+=`<div class="libr${b.cls?' '+b.cls:''}" style="left:${46+b.ind*liCW()}px;top:${8+b.from*42}px;height:${(b.to-b.from+1)*42}px"><span class="looptag${b.live?' live':''}">${b.tag}</span></div>`});
+  if(li.br){h+=`<div class="libr" style="top:${8+li.br.from*42}px;height:${(li.br.to-li.br.from+1)*42}px"><span class="looptag${li.br.live?' live':''}">${li.br.tag}</span></div>`}
+  e.innerHTML=h}
+async function liType(t){for(const ch of t){const l=li.lines[li.cur.line];li.lines[li.cur.line]=l.slice(0,li.cur.col)+ch+l.slice(li.cur.col);li.cur.col++;liRender();if(!await liWait(115))return false}return true}
+function liCap(h){$('liCap').innerHTML=h}
+async function liKey(t){const k=$('liKey');k.textContent=t;k.hidden=false;k.classList.remove('press');void k.offsetWidth;k.classList.add('press');const ok=await liWait(650);k.hidden=true;return ok}
+function liAsk(label,go,enterKey){const b=$('liBtn'),g=liGen;b.textContent=label;b.hidden=false;b.className='lipri pulse'+(go?' go':'');b.focus();
+  return new Promise(res=>{const done=()=>{document.removeEventListener('keydown',kd,true);b.onclick=null;b.className='lipri idle';res(g===liGen)};
+    const kd=e=>{if(e.key==='Enter'&&!$('loopIntro').hidden&&document.activeElement!==b&&enterKey){e.preventDefault();done()}};b.onclick=done;document.addEventListener('keydown',kd,true)})}
+function liScene(){const s=$('liScene');s.innerHTML='';for(let r=0;r<2;r++)for(let c=0;c<5;c++)el('rect',{x:LIX+c*LIC,y:LIY+r*LIC,width:LIC,height:LIC,fill:'#f4f8fd',stroke:'#b8cce2','stroke-width':1.5},s);
+  el('rect',{x:LIX+3*LIC+5,y:LIY+LIC+5,width:LIC-10,height:LIC-10,rx:4,fill:'#ffd34d','fill-opacity':.3,stroke:'#e08a00','stroke-width':3,'stroke-dasharray':'7 5'},s);
+  const g=el('g',{id:'liGrip'},s);el('rect',{x:-6,y:-200,width:12,height:186,rx:5,fill:'#ffc51c',stroke:'#8a5600','stroke-width':2},g);el('rect',{x:-22,y:-16,width:44,height:10,rx:4,fill:'#3a4757',stroke:'#111b25','stroke-width':2},g);
+  el('path',{d:'M-17 -7L-21 6L-15 15M17 -7L21 6L15 15',fill:'none',stroke:'#18212b','stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},g);
+  li.g={c:0,r:0};liGrip()}
+function liGrip(){const g=$('liGrip'),cs=li.cs||LIC,x0=li.ox??LIX,y0=li.oy??LIY;if(g)g.setAttribute('transform',`translate(${x0+(li.g.c+.5)*cs} ${y0+(li.g.r+.5)*cs}) scale(${li.gs||1})`)}
+let liCWv=0;const liCW=()=>{if(!liCWv){const c=document.createElement('canvas').getContext('2d');c.font='22px ui-monospace,Consolas,monospace';liCWv=c.measureText('0000000000').width/10||13}return liCWv};
+// Nested demo scene: 4 x 3 grid; every "right 1" leaves a star, so the stars count how many times the inner line ran
+function liScene2(){liScene();const s=$('liScene');s.innerHTML='';li.cs=40;li.ox=24;li.oy=10;li.gs=.78;
+  for(let r=0;r<3;r++)for(let c=0;c<4;c++)el('rect',{x:li.ox+c*40,y:li.oy+r*40,width:40,height:40,fill:'#f4f8fd',stroke:'#b8cce2','stroke-width':1.5},s);
+  el('g',{id:'liStars'},s);const g=el('g',{id:'liGrip'},s);el('rect',{x:-6,y:-200,width:12,height:186,rx:5,fill:'#ffc51c',stroke:'#8a5600','stroke-width':2},g);el('rect',{x:-22,y:-16,width:44,height:10,rx:4,fill:'#3a4757',stroke:'#111b25','stroke-width':2},g);
+  el('path',{d:'M-17 -7L-21 6L-15 15M17 -7L21 6L15 15',fill:'none',stroke:'#18212b','stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'},g);
+  const t0=el('text',{x:240,y:52,'text-anchor':'middle','font-size':13,'font-weight':800,fill:'#4a22c0','font-family':'Arial,Helvetica,sans-serif'},s);t0.textContent='right 1 ran';const t=el('text',{id:'liCount',x:240,y:96,'text-anchor':'middle','font-size':38,'font-weight':900,fill:'#4a22c0','font-family':'Arial,Helvetica,sans-serif'},s);t.textContent='0';el('text',{x:240,y:116,'text-anchor':'middle','font-size':13,'font-weight':800,fill:'#4a22c0','font-family':'Arial,Helvetica,sans-serif'},s).textContent='times';li.g={c:0,r:0};liGrip()}
+function liStar(){const n=$('liStars').children.length+1,t=el('text',{x:li.ox+(Math.round(li.g.c)+.5)*40,y:li.oy+(Math.round(li.g.r)+.5)*40+9,'text-anchor':'middle','font-size':24,fill:'#ffb300',stroke:'#8a5600','stroke-width':1},$('liStars'));t.textContent='★';$('liCount').textContent=n}
+async function liNestRun(){const o=li.brs[0],n=li.brs[1];
+  for(let a=1;a<=2;a++){o.tag=`${a} of 2`;o.live=true;
+    for(let b=1;b<=3;b++){li.hl=2;n.tag=`${b} of 3`;n.live=true;liRender();if(!await liMove(1,0))return false;liStar();if(!await liWait(220))return false}
+    n.live=false;n.tag='repeat 3 times';li.hl=3;liRender();if(!await liMove(0,1))return false;if(!await liWait(150))return false;
+    li.hl=4;liRender();if(!await liMove(-3,0))return false;if(!await liWait(200))return false}
+  o.live=false;o.tag='done ✓';n.tag='done ✓';li.hl=-1;liRender();return true}
+async function liNested(mode){const NL=['repeat 2:','    repeat 3:','        right 1','    down 1','    left 3'];
+  $('liTitle').textContent='🔁 Loops inside loops';liReset(NL.slice());li.cur=null;liScene2();
+  const outer={from:0,to:4,ind:0,tag:'repeat 2 times'},inner={from:1,to:2,ind:4,tag:'repeat 3 times',cls:'in'};
+  if(mode==='nested'){li.brs=[];liRender();
+    liCap('A loop can go <b>inside</b> another loop. The inside loop runs all the way through <b>every time</b> the outside loop goes round once.');if(!await liAsk('Show me ▸'))return;
+    li.brs=[outer];liRender();liCap('The <b>outer</b> loop (purple) holds every line indented under <b>repeat 2:</b>');if(!await liWait(2200))return;
+    li.brs=[outer,inner];li.indLbl=2;li.indTxt='indented twice!';liRender();liCap('The <b>inner</b> loop (green) is inside it. Its line is <b>indented twice</b>, so it belongs to both loops. <b>down 1</b> and <b>left 3</b> are only in the outer loop.');
+    if(!await liAsk('Next ▸'))return;li.indLbl=-1}
+  else{li.brs=[outer,inner];liRender();liCap('The green <b>inner</b> loop sits inside the purple <b>outer</b> loop. Every time the outer loop goes round once, the inner loop runs all the way through.')}
+  liCap(li.brs.length?'Press Run. Watch both counters, and count the stars.':'');if(!await liAsk('▶ Run',true))return;
+  if(!await liNestRun())return;
+  liCap('<b>right 1</b> ran <b>6 times</b>: 3 times for each of the 2 outer passes. <b>2 × 3 = 6!</b> <b>down 1</b> and <b>left 3</b> are only in the outer loop, so they ran 2 times.');
+  if(mode==='nestquick'){$('liSkip').textContent='Watch full intro';$('liSkip').onclick=()=>liPlay('nested');if(!await liAsk('Got it ✓',true))return;return closeLoopIntro()}
+  if(!await liAsk('Next ▸'))return;
+  liReset(['repeat 2:','    repeat 3:','        (red trip)','    (blue trip)']);li.cur=null;liScene2();li.brs=[{from:0,to:3,ind:0,tag:'repeat 2 times'},{from:1,to:2,ind:4,tag:'repeat 3 times',cls:'in'}];liRender();
+  liCap('<b>Your turn!</b> The conveyor sends 3 red boxes, then 1 blue box, twice. Put the red trip in the inner loop and the blue trip after it, inside the outer loop. Click the <b>repeat</b> box any time to see this again.');
+  $('liSkip').textContent='Watch again';$('liSkip').onclick=()=>liPlay('nested');if(!await liAsk(`Start Level ${LEVEL} ▸`,true))return;closeLoopIntro()}
+function liMove(dc,dr){const g0={...li.g},gn=liGen,dur=reduceMotion?0:520;return new Promise(res=>{const t0=performance.now();const f=now=>{if(gn!==liGen)return res(false);const k=dur?Math.min(1,(now-t0)/dur):1,e=ease(k);li.g={c:g0.c+dc*e,r:g0.r+dr*e};liGrip();k<1?requestAnimationFrame(f):res(true)};requestAnimationFrame(f)})}
+function liReset(lines){li={key:li.key,lines:lines||[''],cur:{line:0,col:0},hl:-1,notes:{},indLbl:-1,br:null,g:{c:0,r:0}};$('liErr').hidden=true;liScene();liRender()}
+async function liRun(){ // highlight each line as it runs, with the pass counter on the loop box
+  for(let k=1;k<=3;k++){li.hl=1;li.br.tag=`${k} of 3`;li.br.live=true;liRender();if(!await liMove(1,0))return false;if(!await liWait(260))return false}
+  li.hl=2;li.br.tag='done ✓';li.br.live=false;liRender();if(!await liMove(0,1))return false;return liWait(300)}
+function openLoopIntro(mode){li.key=mode.startsWith('nest')?'nestedIntro':'loopsIntro';liKeyName=li.key;$('loopIntro').hidden=false;liPlay(mode)}
+let liKeyName='loopsIntro';
+function closeLoopIntro(){liGen++;$('loopIntro').hidden=true;try{localStorage.setItem('robotArmChallenge.'+liKeyName,'done')}catch(e){}code.focus()}
+async function liPlay(mode){const g=++liGen,ok=()=>g===liGen;if(mode==='nested'||mode==='nestquick'){$('liSkip').textContent=mode==='nestquick'?'Close':'Skip intro';$('liSkip').onclick=closeLoopIntro;$('liBtn').hidden=false;return liNested(mode)}$('liSkip').textContent=mode==='quick'?'Close':'Skip intro';$('liSkip').onclick=closeLoopIntro;$('liBtn').hidden=false;
+  if(mode==='quick'){$('liTitle').textContent='🔁 How a loop works';liReset(['repeat 3:','    right 1','down 1']);li.cur=null;li.br={from:0,to:1,tag:'repeat 3 times'};li.notes={1:{t:'← inside the loop'},2:{t:'← not indented: runs once'}};liRender();
+    liCap('The <b>indented</b> line is inside the loop box, so it is repeated 3 times. The line at the edge runs once, after the loop.');
+    if(!await liAsk('▶ Run',true))return;liCap('Watch the counter on the loop box…');if(!await liRun())return;
+    liCap('<b>right 1</b> ran 3 times. <b>down 1</b> ran once, after the loop finished.');
+    $('liSkip').textContent='Watch full intro';$('liSkip').onclick=()=>liPlay('full');if(!await liAsk('Got it ✓',true))return;return closeLoopIntro()}
+  $('liTitle').textContent='🔁 Introducing loops';liReset();li.cur=null;liRender();
+  liCap('Sometimes a robot has to do the same job again and again. A <b>loop</b> repeats commands for you, so you only type them once.');
+  if(!await liAsk('Show me ▸'))return;li.cur={line:0,col:0};liRender();
+  liCap('Start a loop with <b>repeat</b>, how many times, and a <b>colon :</b>');if(!await liType('repeat 3:'))return;li.notes[0]={t:'← the colon : is important!'};liRender();
+  if(!await liAsk('Press Enter ↵',false,true))return;delete li.notes[0];liKey('↵ Enter');li.lines.push('');li.cur={line:1,col:0};liRender();if(!await liWait(300))return;
+  for(let k=0;k<4;k++){li.lines[1]+=' ';li.cur.col++;liRender();if(!await liWait(90))return}
+  li.indLbl=1;liRender();liCap('The line ended with a colon, so the next line is pushed in by itself. This space is called an <b>indent</b>.');if(!await liWait(1900))return;
+  li.indLbl=-1;liCap('Now type the command you want to repeat.');if(!await liType('right 1'))return;if(!await liWait(300))return;
+  li.br={from:0,to:1,tag:'repeat 3 times'};liRender();liCap('Indented lines are <b>inside</b> the loop. Everything in the purple loop box will be repeated <b>3 times</b>.');
+  if(!await liAsk('Next ▸'))return;
+  liKey('↵ Enter');li.lines.push('    ');li.cur={line:2,col:4};li.br.to=2;liRender();liCap('Press Enter again and you are still inside the loop…');if(!await liWait(1400))return;
+  liKey('⌫ Backspace');li.lines[2]='';li.cur.col=0;li.br.to=1;liRender();liCap('…so delete the indent to step back to the edge. Now you are <b>outside</b> the loop.');if(!await liWait(1500))return;
+  if(!await liType('down 1'))return;li.cur=null;li.notes={2:{t:'← not indented: runs once, after the loop'}};liRender();
+  liCap('Press Run and watch which lines light up.');if(!await liAsk('▶ Run',true))return;liCap('Watch the counter on the loop box…');if(!await liRun())return;
+  liCap('<b>right 1</b> ran 3 times, inside the loop. <b>down 1</b> ran once, after the loop finished.');if(!await liAsk('Next ▸'))return;
+  liReset();liCap('What if you forget the colon?');if(!await liType('repeat 3'))return;if(!await liWait(500))return;liKey('↵ Enter');li.lines.push('');li.cur={line:1,col:0};
+  li.notes={1:{t:'✗ no colon, so no indent!',bad:true}};liRender();const ed=$('liEd');ed.classList.remove('shake');void ed.offsetWidth;if(!reduceMotion)ed.classList.add('shake');
+  $('liErr').textContent='Line 1: “repeat 3” needs a colon at the end: repeat 3:';$('liErr').hidden=false;
+  liCap('No colon means no indent, and the program stops with an error. Always end the repeat line with a <b>colon :</b>');if(!await liAsk('Next ▸'))return;
+  liReset(['repeat 3:','    …','    …']);li.cur=null;li.br={from:0,to:2,tag:'one trip goes in here'};liRender();
+  liCap('<b>Your turn!</b> Load the truck again, but put the commands for one trip inside <b>repeat 3:</b>. Remember the colon and the indent! You can watch a loop again any time by clicking the <b>repeat</b> box.');
+  $('liSkip').textContent='Watch again';$('liSkip').onclick=()=>liPlay('full');if(!await liAsk(`Start Level ${LEVEL} ▸`,true))return;closeLoopIntro()}
+document.addEventListener('click',e=>{const d=e.target.closest('[data-demo]');if(d)openLoopIntro(d.dataset.demo)});
+// Debug level: hints one at a time, and a button to put the buggy starting code back
+let hintN=0;document.addEventListener('click',e=>{if(e.target.closest('[data-hint]')&&L.hints){const h=L.hints[hintN%L.hints.length];message(`Hint ${hintN%L.hints.length+1} of ${L.hints.length}: ${h}`);hintN++}
+  if(e.target.closest('[data-restore]')&&L.code){if(busy)return;code.value=L.code;drafts[LEVEL]=L.code;reset();renderLoops();message('The buggy code is back. Find the 4 bugs!');code.focus()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('loopIntro').hidden)closeLoopIntro()});
+// Steel barrier: 40 wide (narrower than a square, so neighbours don't overlap it), hazard-striped cap
+function drawObstacles(){const g=$('obstacles');g.innerHTML='';(L.obstacles||[]).filter(o=>!o.base).forEach(o=>{const x=ox+o.c*cell+16,y=oy+o.top*cell+2,h=oy+(FLOOR_R+1)*cell-y;
+  el('rect',{x,y,width:40,height:h,rx:4,fill:'url(#steel)',stroke:'#1b2a38','stroke-width':3},g);
+  el('rect',{x:x+2,y:y+2,width:36,height:14,fill:'url(#hazard)'},g);
+  for(let yy=y+30;yy<y+h-8;yy+=26){el('circle',{cx:x+9,cy:yy,r:2.6,fill:'#9fb0c0'},g);el('circle',{cx:x+31,cy:yy,r:2.6,fill:'#9fb0c0'},g)}
+  el('path',{d:`M${x+6} ${y+20}V${y+h-6}`,stroke:'#c9d6e2','stroke-width':3,opacity:.5,'stroke-linecap':'round'},g)})}
+{let sv=0;try{const v=localStorage.getItem('robotArmChallenge.level');if(v!==null)sv=+v}catch(e){}LEVEL=-1;
+ if(!LEVELS.some(x=>x.n===sv&&x.built)||!unlocked(sv))sv=Math.max(0,...LEVELS.filter(x=>x.built&&unlocked(x.n)&&statusOf(x.n)!=='passed').map(x=>x.n).slice(0,1),...LEVELS.filter(x=>x.built&&unlocked(x.n)).map(x=>x.n).slice(-1));loadLevel(sv)}
+/* ---- SPEED (Slow / Normal / Fast), remembered on this device ---- */
+var speed='normal';const SPEEDS={slow:2,normal:1,fast:.45};try{const sv=localStorage.getItem('robotArmChallenge.speed');if(SPEEDS[sv])speed=sv}catch(e){}
+function renderSpeed(){document.querySelectorAll('.speed button').forEach(b=>b.setAttribute('aria-checked',b.dataset.speed===speed))}
+document.querySelectorAll('.speed button').forEach(b=>b.onclick=()=>{speed=b.dataset.speed;try{localStorage.setItem('robotArmChallenge.speed',speed)}catch(e){}renderSpeed()});renderSpeed();
+const motionToggle=$('motionToggle');function showMotion(){motionToggle.setAttribute('aria-checked',String(!reduceMotion))}
+motionToggle.onclick=()=>{reduceMotion=!reduceMotion;document.documentElement.classList.toggle('no-motion',reduceMotion);try{localStorage.setItem('robotArmChallenge.motion',reduceMotion?'off':'on')}catch(e){}showMotion()};showMotion();
+// Reset all progress (Levels menu): clears passed levels, saved code, the last level and the loop intros; keeps speed and animation settings
+const cr=$('confirmReset'),closeCR=()=>{cr.hidden=true;$('lmReset').focus()};
+$('lmReset').onclick=()=>{cr.hidden=false;$('crCancel').focus()};$('crCancel').onclick=closeCR;cr.onclick=e=>{if(e.target===cr)closeCR()};
+document.addEventListener('keydown',e=>{if(!cr.hidden&&e.key==='Escape'){e.stopImmediatePropagation();closeCR()}},true);
+$('crOk').onclick=()=>{try{['progress','level','loopsIntro','nestedIntro','stars'].forEach(k=>localStorage.removeItem('robotArmChallenge.'+k))}catch(e){}
+  memProgress={};Object.keys(drafts).forEach(k=>delete drafts[k]);cr.hidden=true;closeLM();LEVEL=-1;loadLevel(0);code.value=L.code||'';$('run').classList.toggle('nudge',!!L.code);delete drafts[-1];renderProgress();message('All progress has been reset. Start again from Level 0!')};
+$('run').onclick=run;$('step').onclick=step;$('reset').onclick=reset;const cc=$('confirmClear'),closeCC=()=>{cc.hidden=true;$('clear').focus()};
+$('clear').onclick=()=>{cc.hidden=false;$('ccCancel').focus()};
+$('ccCancel').onclick=closeCC;cc.onclick=e=>{if(e.target===cc)closeCC()};document.addEventListener('keydown',e=>{if(!cc.hidden&&e.key==='Escape')closeCC()});
+$('ccOk').onclick=()=>{cc.hidden=true;code.value='';reset();code.focus()};
+code.onscroll=()=>{nums.scrollTop=code.scrollTop;renderLoops()};
+// Loop levels: Enter after a line ending in ":" indents the next line (4 spaces); Enter keeps the indent;
+// Enter on an empty indented line steps back out to the edge; Tab / Shift+Tab indent; Backspace in the indent removes 4 spaces
+function insertText(t){if(!document.execCommand||!(t===''?(code.selectionStart===code.selectionEnd||document.execCommand('delete')):document.execCommand('insertText',false,t))){code.setRangeText(t,code.selectionStart,code.selectionEnd,'end');code.dispatchEvent(new Event('input'))}}
+code.addEventListener('keydown',e=>{if(!L.loops||e.ctrlKey||e.metaKey||e.altKey)return;const v=code.value,a=code.selectionStart,b=code.selectionEnd,ls=v.lastIndexOf('\n',a-1)+1,before=v.slice(ls,a),ind=indentOf(before),allSp=/^[ \t]*$/.test(before);
+  if(e.key==='Enter'){e.preventDefault();
+    if(a===b&&allSp&&ind>0&&!v.slice(a).split('\n')[0].trim()){code.setSelectionRange(ls,a);insertText('');return}
+    insertText('\n'+' '.repeat(ind+(/:\s*$/.test(before)?4:0)))}
+  else if(e.key==='Tab'){e.preventDefault();if(e.shiftKey){const n=Math.min(4,indentOf(v.slice(ls).match(/^[ ]*/)[0]));if(n){code.setSelectionRange(ls,ls+n);insertText('');code.setSelectionRange(Math.max(ls,a-n),Math.max(ls,a-n))}}else insertText('    ')}
+  else if(e.key==='Backspace'&&a===b&&allSp&&before.length>0&&!/\t/.test(before)){e.preventDefault();const n=before.length%4||4;code.setSelectionRange(a-n,a);insertText('')}});
+code.oninput=()=>{renderLoops();$('run').classList.remove('nudge');highlight(hl);if(!busy){banner.hidden=true;pointer=0;program=[];highlight(-1);message('Program edited. Select Run or Step when ready.')}};
+/* ---- FINISH SCREEN: "Robot Arm Challenge completed" victory dance (after Level 15) ----------------
+   Click the music system (radio) to start the party: a WebAudio beat plays, the back wall rolls up to show a crowd of
+   dancing robot arms, a disco ball lowers, and the yellow arm spins at the waist, snapping its claw on the beat with
+   confetti bursting from the gripper. Click again to stop: everything runs backwards. The Animations switch keeps the
+   scene still (wall up, ball down) but the music still plays. */
+const FIN={n:'fin',mid:true,baseX:438,start:{c:5,r:1},boxes:[],finale:true};
+const party={on:false,p:0,phi:0,t0:0,last:0,lastBeat:-1,parts:[],notes:[],built:false};
+const CONF=['#ff4d6d','#ffd60a','#3ddc84','#4cc9f0','#b388ff','#ff9f1c'];
+function buildParty(){if(party.built)return;party.built=true;
+  $('scene').querySelector('defs').insertAdjacentHTML('beforeend','<linearGradient id="stageG" x2="0" y2="1"><stop stop-color="#140b30"/><stop offset="1" stop-color="#3b1d6e"/></linearGradient><linearGradient id="beamG" x2="0" y2="1"><stop stop-color="#fff6c8" stop-opacity=".55"/><stop offset="1" stop-color="#fff6c8" stop-opacity="0"/></linearGradient><radialGradient id="ballG" cx=".35" cy=".3"><stop stop-color="#ffffff"/><stop offset=".5" stop-color="#b9c6d4"/><stop offset="1" stop-color="#5d6b7a"/></radialGradient><pattern id="facets" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="none" stroke="#46525f" stroke-width="1.2"/><rect x="2" y="2" width="3" height="3" fill="#fff" opacity=".7"/></pattern><filter id="neonGlow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>');
+  const bk=$('partyBack'),cp=el('clipPath',{id:'stageClip'},bk);el('rect',{x:48,y:26,width:804,height:324},cp);
+  const st=el('g',{'clip-path':'url(#stageClip)'},bk);el('rect',{x:48,y:26,width:804,height:324,fill:'url(#stageG)'},st);
+  party.beams=[215,680].map(x=>{const b=el('polygon',{points:`${x-10},53 ${x+10},53 ${x+110},350 ${x-110},350`,fill:'url(#beamG)'},st);b.dataset.x=x;return b});
+  const neon=el('text',{x:450,y:84,'text-anchor':'middle','font-size':40,'font-weight':900,fill:'#ff7ad9',stroke:'#ffd1f3','stroke-width':1.5,filter:'url(#neonGlow)','font-family':'Arial Black,Arial,sans-serif','letter-spacing':2},st);neon.textContent='YOU DID IT!';party.neon=neon;
+  party.crowd=[[120,'#ef476f'],[250,'#3a86ff'],[360,'#2ec4b6'],[545,'#9b5de5'],[660,'#ff8c42'],[800,'#06d6a0']].map(([x,col],i)=>{
+    const g=el('g',{transform:`translate(${x} 350) scale(.55)`},st);el('rect',{x:-40,y:-20,width:80,height:20,rx:5,fill:'#26343f',stroke:'#111b25','stroke-width':3},g);
+    el('path',{d:'M-24 -20C-26 -45-16 -70 0 -76C16 -70 26 -45 24 -20Z',fill:col,stroke:'#111b25','stroke-width':3},g);
+    const l1=el('g',{},g);el('rect',{x:-14,y:-14,width:168,height:28,rx:14,fill:col,stroke:'#111b25','stroke-width':3},l1);el('circle',{r:13,fill:'#2b3642',stroke:'#111b25','stroke-width':3},l1);
+    const l2=el('g',{},l1);el('rect',{x:-12,y:-12,width:136,height:24,rx:12,fill:col,stroke:'#111b25','stroke-width':3},l2);el('circle',{r:11,fill:'#2b3642',stroke:'#111b25','stroke-width':3},l2);
+    const gr=el('g',{},l2);el('rect',{x:-26,y:-4,width:52,height:12,rx:4,fill:'#27323d',stroke:'#111b25','stroke-width':2.5},gr);
+    const cl=[-1,1].map(s=>{const c=el('path',{d:'M0 0V30L5 36',fill:'none',stroke:'#18212b','stroke-width':7,'stroke-linecap':'round'},gr);c.dataset.s=s;return c});
+    return {l1,l2,gr,cl,ph:i*1.1}});
+  // roller shutter: the back wall that rolls up into the ceiling
+  const sh=el('g',{id:'shutter'},st);el('rect',{x:48,y:26,width:804,height:324,fill:'url(#wall)'},sh);
+  let d='';for(let y=44;y<350;y+=18)d+=`M48 ${y}H852`;el('path',{d,stroke:'#9fb5cc','stroke-width':2.5},sh);el('rect',{x:48,y:336,width:804,height:14,fill:'#7f95ad',stroke:'#4f6780','stroke-width':2},sh);
+  el('rect',{x:78,y:64,width:300,height:172,rx:14,fill:'#183956',stroke:'#ffc51c','stroke-width':5},sh);
+  [['🏆',116,44,'#fff'],['ROBOT ARM CHALLENGE',158,22,'#fff'],['COMPLETED!',198,36,'#ffc51c'],['Switch on the music to party!',224,14,'#cfe0f2']].forEach(([t,y,s,f])=>{const e=el('text',{x:228,y,'text-anchor':'middle','font-size':s,'font-weight':900,fill:f,'font-family':'Arial,Helvetica,sans-serif'},sh);e.textContent=t});
+  party.shutter=sh;
+  const fr=$('partyFront');party.spots=el('g',{},fr);party.spotList=Array.from({length:28},(_,i)=>{const c=el('circle',{r:4+(i*7)%6,fill:CONF[i%6]},party.spots);return {c,x:48+(i*293)%804,y:34+(i*131)%300}});
+  const ball=el('g',{},fr);party.string=el('line',{x1:0,x2:0,y2:-36,stroke:'#2a3f55','stroke-width':3},ball);el('rect',{x:-7,y:-40,width:14,height:9,rx:2,fill:'#5d6b7a'},ball);
+  el('circle',{r:32,fill:'url(#ballG)'},ball);party.facets=el('circle',{r:32,fill:'url(#facets)',opacity:.75},ball);el('circle',{cx:-11,cy:-12,r:6,fill:'#fff',opacity:.85},ball);party.ball=ball;
+  // the music system
+  const rd=el('g',{id:'radio',tabindex:0,role:'button','aria-label':'Music system: switch the party on',style:'cursor:pointer;outline:none'},fr);party.radio=rd;
+  el('path',{d:'M85 290V272Q85 262 95 262H175Q185 262 185 272V290',fill:'none',stroke:'#1d2733','stroke-width':7},rd);
+  el('line',{x1:182,y1:266,x2:212,y2:214,stroke:'#8aa0b6','stroke-width':3.5,'stroke-linecap':'round'},rd);el('circle',{cx:212,cy:214,r:4,fill:'#8aa0b6'},rd);
+  el('rect',{x:60,y:282,width:150,height:66,rx:12,fill:'#ef476f',stroke:'#7a1430','stroke-width':3},rd);el('rect',{x:66,y:286,width:138,height:4,rx:2,fill:'#ffb3c4',opacity:.7},rd);
+  party.spk=[95,175].map(x=>{const g=el('g',{},rd);el('circle',{cx:x,cy:317,r:23,fill:'#1d2733'},g);el('circle',{cx:x,cy:317,r:15,fill:'#3a4b5e'},g);el('circle',{cx:x,cy:317,r:5,fill:'#8aa0b6'},g);g.dataset.x=x;return g});
+  el('rect',{x:122,y:293,width:26,height:18,rx:3,fill:'#cfe7ff',stroke:'#7a1430','stroke-width':2},rd);party.led=el('circle',{cx:135,cy:329,r:5.5,fill:'#5b2232',stroke:'#7a1430','stroke-width':2},rd);
+  const tip=el('g',{},rd);el('path',{d:'M74 232H196Q206 232 206 242V252Q206 262 196 262H146L135 272L124 262H74Q64 262 64 252V242Q64 232 74 232Z',fill:'#ffc51c',stroke:'#8a5600','stroke-width':2.5},tip);
+  party.tipT=el('text',{x:135,y:253,'text-anchor':'middle','font-size':14,'font-weight':900,fill:'#4a2d00','font-family':'Arial,Helvetica,sans-serif'},tip);party.tip=tip;
+  party.notesG=el('g',{'pointer-events':'none'},fr);party.conf=el('g',{'pointer-events':'none'},fr);
+  rd.addEventListener('click',toggleParty);rd.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleParty()}})}
+/* music: an original, generated 4-bar loop (C, Am, F, G) at 120 beats a minute */
+const AU={ctx:null,master:null,timer:0,next:0,step:0};
+const mf=m=>440*Math.pow(2,(m-69)/12);
+const LEAD=[[72,76,79,76,81,79,76,0],[72,76,81,76,84,81,79,0],[77,81,84,81,79,77,76,0],[74,79,83,79,86,83,79,0]];
+function auNode(t,dur,vol){const c=AU.ctx,g=c.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);g.connect(AU.master);return g}
+function auNoise(t,dur,vol,type,f){const c=AU.ctx,s=c.createBufferSource(),fl=c.createBiquadFilter();s.buffer=AU.noise;fl.type=type;fl.frequency.value=f;s.connect(fl);fl.connect(auNode(t,dur,vol));s.start(t);s.stop(t+dur)}
+function auTone(t,freq,dur,vol,type,lp){const c=AU.ctx,o=c.createOscillator();o.type=type;o.frequency.setValueAtTime(freq,t);let n=auNode(t,dur,vol);if(lp){const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=lp;f.connect(n);n=f}o.connect(n);o.start(t);o.stop(t+dur)}
+function auStep(s,t){const bar=s>>4,i=s&15,c=AU.ctx;
+  if(i%4===0){const o=c.createOscillator();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);o.connect(auNode(t,.28,.9));o.start(t);o.stop(t+.3)}
+  if(i===4||i===12)auNoise(t,.16,.45,'bandpass',1500);
+  if(i%2)auNoise(t,.04,.12,'highpass',7000);else if(i%4===2)auNoise(t,.09,.18,'highpass',6500);
+  if(i%2===0){const root=[48,45,41,43][bar];auTone(t,mf(root+(i%4===2?12:0)),.12,.32,'sawtooth',700)}
+  if(i%2===0){const m=LEAD[bar][i>>1];if(m)auTone(t,mf(m),.2,.07,'square',2600)}}
+function auSched(){const c=AU.ctx;if(!c||!AU.master)return;while(AU.next<c.currentTime+.12){auStep(AU.step,AU.next);AU.next+=.125;AU.step=(AU.step+1)%64}}
+function auStart(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!AU.ctx){AU.ctx=new C();AU.comp=AU.ctx.createDynamicsCompressor();AU.comp.connect(AU.ctx.destination);
+    const b=AU.ctx.createBuffer(1,AU.ctx.sampleRate,AU.ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;AU.noise=b}
+  const c=AU.ctx;if(c.resume)c.resume();auStop(true);const m=c.createGain();m.gain.setValueAtTime(0,c.currentTime);m.gain.linearRampToValueAtTime(.22,c.currentTime+.3);m.connect(AU.comp);AU.master=m;
+  AU.step=0;AU.next=c.currentTime+.06;party.t0=performance.now()+60;AU.timer=setInterval(auSched,25);auSched()}catch(e){console.warn(e)}}
+function auStop(now){clearInterval(AU.timer);const m=AU.master;AU.master=null;if(!m||!AU.ctx)return;const c=AU.ctx;try{m.gain.cancelScheduledValues(c.currentTime);m.gain.setValueAtTime(m.gain.value,c.currentTime);m.gain.linearRampToValueAtTime(0,c.currentTime+(now?.02:.35))}catch(e){}setTimeout(()=>m.disconnect(),now?60:450)}
+function setPartyUI(){const on=party.on;party.tipT.textContent=on?'STOP THE PARTY':'CLICK ME! 🎵';party.radio.setAttribute('aria-label',on?'Music system: stop the party':'Music system: switch the party on');party.radio.setAttribute('aria-pressed',String(on));
+  party.led.setAttribute('fill',on?'#3ddc84':'#5b2232');$('finParty').textContent=on?'■ Stop the party':'🎵 Start the party';$('finParty').classList.toggle('reset',on);$('finParty').classList.toggle('run',!on)}
+function toggleParty(){party.on=!party.on;if(party.on){auStart();if(!party.t0)party.t0=performance.now()}else auStop();setPartyUI();
+  message(party.on?'🎉 Party time! Click the music system again to stop the party.':'The party is over… click the music system to start it again!')}
+function spawnConfetti(x,y,n){const fr=party.conf;for(let i=0;i<n&&party.parts.length<260;i++){const e=el('rect',{width:7,height:11,rx:1.5,fill:CONF[(Math.random()*6)|0]},fr);
+  party.parts.push({e,x:x+(Math.random()-.5)*60,y,vx:(Math.random()-.5)*340,vy:-120-Math.random()*260,r:Math.random()*360,vr:(Math.random()-.5)*720,life:0})}}
+function partyFrame(now){if(!finActive)return;finRaf=requestAnimationFrame(partyFrame);const dt=Math.min(.05,(now-(party.last||now))/1000);party.last=now;
+  const tgt=party.on?1:0;party.p=reduceMotion?tgt:clamp(party.p+(tgt?1:-1)*dt/2.2,0,1);const P=ease(party.p),dance=reduceMotion?0:ease(clamp((party.p-.45)/.55,0,1));
+  const beats=party.on||party.p>0?(now-party.t0)/500:0,fb=beats-Math.floor(beats),pulse=party.on?Math.exp(-fb*6):0;
+  party.shutter.setAttribute('transform',`translate(0 ${-P*330})`);
+  const by=-80+P*185;party.ball.setAttribute('transform',`translate(785 ${by})`);party.string.setAttribute('y1',26-by);party.ball.setAttribute('display',P>0?'inline':'none');
+  if(!reduceMotion)$('facets').setAttribute('patternTransform',`translate(${(now/40)%9} 0)`);
+  party.beams.forEach((b,i)=>{b.setAttribute('opacity',P*(.75+.25*Math.sin(now/300+i)));b.setAttribute('transform',`rotate(${reduceMotion?0:Math.sin(now/900+i*2)*20} ${b.dataset.x} 53)`)});
+  party.neon.setAttribute('opacity',P*(reduceMotion?1:.85+.15*Math.sin(now/90)));
+  party.spots.setAttribute('opacity',P*.55);party.spotList.forEach((s,i)=>{const x=48+((s.x-48+(reduceMotion?0:now/1000*(40+i%5*12)))%804);s.c.setAttribute('cx',x);s.c.setAttribute('cy',s.y)});
+  party.crowd.forEach(a=>{const k=dance,s=Math.sin(beats*Math.PI+a.ph),s2=Math.sin(beats*Math.PI*.5+a.ph);const a1=-100+k*28*s,a2=60+k*35*s2;
+    a.l1.setAttribute('transform',`translate(0 -76) rotate(${a1})`);a.l2.setAttribute('transform',`translate(140 0) rotate(${a2})`);a.gr.setAttribute('transform',`translate(112 0) rotate(${90-a1-a2})`);
+    const op=k*(.5+.5*Math.cos(2*Math.PI*beats+a.ph));a.cl.forEach(c=>c.setAttribute('transform',`translate(${c.dataset.s*20} 6) scale(${c.dataset.s} 1) rotate(${-op*25})`))});
+  party.spk.forEach(g=>{const x=g.dataset.x;g.setAttribute('transform',`translate(${x} 317) scale(${1+.12*pulse*(reduceMotion?0:1)}) translate(${-x} -317)`)});
+  party.tip.setAttribute('transform',`translate(0 ${party.on||reduceMotion?0:-Math.abs(Math.sin(now/260))*7})`);
+  // the yellow arm: spins at the waist (its reach turns round, so the view squashes through cos φ) and snaps its claw on the beat
+  party.phi+=dt*dance*Math.PI/2;const f=1-dance+dance*Math.cos(party.phi);
+  spinO={R:200,f,wy:200-dance*16*Math.abs(Math.sin(beats*Math.PI))};claw=CLAW_SHUT+(CLAW_OPEN-CLAW_SHUT)*dance*(.5+.5*Math.cos(2*Math.PI*beats));if(dance===0)party.phi=0;draw();
+  const bi=Math.floor(beats);if(party.on&&dance>.85&&!reduceMotion&&bi!==party.lastBeat){party.lastBeat=bi;spawnConfetti(450+200*f,spinO.wy+70,bi%4===0?34:12)}
+  if(party.on&&!reduceMotion&&bi%2===0&&bi!==party.lastNote){party.lastNote=bi;const n=el('text',{x:0,y:0,'font-size':22,'font-weight':900,fill:CONF[bi%6]},party.notesG);n.textContent=bi%4?'♪':'♫';party.notes.push({e:n,x:95+(bi%3)*40,y:270,life:0})}
+  party.parts=party.parts.filter(q=>{q.life+=dt;q.vy+=520*dt;q.vx*=.99;q.x+=q.vx*dt;q.y+=q.vy*dt;q.r+=q.vr*dt;if(q.y>344){q.y=344;q.vx*=.6;q.vy=0;q.vr=0}
+    const o=q.life>2.6?Math.max(0,1-(q.life-2.6)/.6):1;q.e.setAttribute('transform',`translate(${q.x} ${q.y}) rotate(${q.r})`);q.e.setAttribute('opacity',o);if(o<=0||reduceMotion){q.e.remove();return false}return true});
+  party.notes=party.notes.filter(q=>{q.life+=dt;q.y-=50*dt;q.e.setAttribute('x',q.x+Math.sin(q.life*5)*8);q.e.setAttribute('y',q.y);const o=1-q.life/1.6;q.e.setAttribute('opacity',Math.max(0,o));if(o<=0){q.e.remove();return false}return true})}
+/* ---- GOLDEN RIBBON (finish screen) -----------------------------------------------------------------
+   Drawn on a canvas and turned into a PNG <img>, so students can right-click → Copy image (or press and hold on a tablet)
+   and paste it into their notes, the same as the golden ribbon in the gcsecs.com self-quizzes. */
+function makeRibbon(){const W=520,H=640,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),cx=260,cy=248,R=200,TAU=Math.PI*2;
+  const gold=(y0,y1)=>{const g=x.createLinearGradient(0,y0,0,y1);g.addColorStop(0,'#fff1a8');g.addColorStop(.35,'#f6c945');g.addColorStop(.7,'#e0a21c');g.addColorStop(1,'#b97a0e');return g};
+  x.lineJoin='round';
+  // tails with a V cut at the bottom
+  [[-1,-8],[1,8]].forEach(([s,tilt])=>{x.save();x.translate(cx+s*70,cy+120);x.rotate(tilt*Math.PI/180);x.beginPath();x.moveTo(-58,0);x.lineTo(58,0);x.lineTo(58,262);x.lineTo(0,218);x.lineTo(-58,262);x.closePath();
+    x.fillStyle=gold(0,262);x.fill();x.lineWidth=6;x.strokeStyle='#8a5a00';x.stroke();x.fillStyle='rgba(255,255,255,.35)';x.fillRect(-40,10,12,215);x.fillStyle='rgba(120,70,0,.25)';x.fillRect(28,10,12,215);x.restore()});
+  // pleated rosette edge
+  x.beginPath();for(let i=0;i<=96;i++){const a=i/96*TAU,r=i%2?R-20:R;x.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a))}x.closePath();x.fillStyle=gold(cy-R,cy+R);x.fill();x.lineWidth=5;x.strokeStyle='#8a5a00';x.stroke();
+  const disc=(r,fill,stroke,w)=>{x.beginPath();x.arc(cx,cy,r,0,TAU);x.fillStyle=fill;x.fill();if(stroke){x.lineWidth=w;x.strokeStyle=stroke;x.stroke()}};
+  disc(R-32,'#c4861a','#8a5a00',4);const rg=x.createRadialGradient(cx-50,cy-60,20,cx,cy,R-40);rg.addColorStop(0,'#fff4b8');rg.addColorStop(.6,'#f3c23c');rg.addColorStop(1,'#d79a1a');disc(R-42,rg,'#a86e08',3);
+  // curved lettering round the band
+  const arcText=(t,r,mid,top)=>{x.save();x.font='900 31px "Arial Black",Arial,sans-serif';x.fillStyle='#5a3a00';x.textAlign='center';x.textBaseline='middle';const sp=t.split(''),ws=sp.map(ch=>x.measureText(ch).width+2),tot=ws.reduce((a,b)=>a+b,0);let a=mid-(top?1:-1)*tot/2/r;
+    sp.forEach((ch,i)=>{const da=ws[i]/r,ca=a+(top?1:-1)*da/2;x.save();x.translate(cx+r*Math.cos(ca),cy+r*Math.sin(ca));x.rotate(ca+(top?Math.PI/2:-Math.PI/2));x.fillText(ch,0,0);x.restore();a+=(top?1:-1)*da});x.restore()};
+  arcText('ROBOT ARM CHALLENGE',128,-Math.PI/2,true);arcText('★ COMPLETED ★',128,Math.PI/2,false);
+  // centre: the yellow robot arm on navy
+  disc(92,'#183956','#8a5a00',5);x.save();x.beginPath();x.arc(cx,cy,88,0,TAU);x.clip();
+  x.fillStyle='#26343f';x.fillRect(cx-52,cy+52,64,14);x.fillStyle='#ffc51c';x.beginPath();x.moveTo(cx-40,cy+53);x.quadraticCurveTo(cx-42,cy+22,cx-20,cy+14);x.quadraticCurveTo(cx+2,cy+22,cx,cy+53);x.fill();
+  const S={x:cx-20,y:cy+18},E={x:cx+5,y:cy-50},Wr={x:cx+52,y:cy-8};x.lineCap='round';
+  [[S,E,22],[E,Wr,18]].forEach(([a,b,w])=>{x.strokeStyle='#8a5600';x.lineWidth=w+5;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();x.strokeStyle='#ffc51c';x.lineWidth=w;x.stroke()});
+  [[S,10],[E,9],[Wr,7]].forEach(([p,r])=>{x.beginPath();x.arc(p.x,p.y,r,0,TAU);x.fillStyle='#2b3642';x.fill();x.lineWidth=2.5;x.strokeStyle='#111b25';x.stroke()});
+  x.fillStyle='#3a4757';x.fillRect(Wr.x-20,Wr.y+6,40,8);x.strokeStyle='#18212b';x.lineWidth=6;x.beginPath();x.moveTo(Wr.x-17,Wr.y+12);x.lineTo(Wr.x-19,Wr.y+34);x.lineTo(Wr.x-12,Wr.y+40);x.moveTo(Wr.x+17,Wr.y+12);x.lineTo(Wr.x+19,Wr.y+34);x.lineTo(Wr.x+12,Wr.y+40);x.stroke();
+  x.fillStyle='#ffd60a';[[-58,-30,7],[-46,-58,5],[60,-52,6],[30,56,5]].forEach(([dx,dy,r])=>{x.save();x.translate(cx+dx,cy+dy);x.beginPath();for(let i=0;i<10;i++){const a=i*Math.PI/5-Math.PI/2,rr=i%2?r*.45:r;x.lineTo(rr*Math.cos(a),rr*Math.sin(a))}x.fill();x.restore()});x.restore();
+  // shine
+  x.save();x.beginPath();x.arc(cx,cy,R-44,Math.PI*1.05,Math.PI*1.45);x.lineWidth=10;x.strokeStyle='rgba(255,255,255,.55)';x.lineCap='round';x.stroke();x.restore();
+  // small print on the tails
+  x.save();x.font='800 17px Arial,sans-serif';x.fillStyle='#5a3a00';x.textAlign='center';x.translate(cx-80,cy+270);x.rotate(-8*Math.PI/180);x.fillText('16 / 16',0,0);x.fillText('LEVELS',0,20);x.restore();
+  x.save();x.font='800 17px Arial,sans-serif';x.fillStyle='#5a3a00';x.textAlign='center';x.translate(cx+80,cy+270);x.rotate(8*Math.PI/180);x.fillText('GCSECS',0,0);x.fillText('.COM',0,20);x.restore();
+  return c.toDataURL('image/png')}
+const LEARNED='<div class="command"><b>Sequences</b><span>Commands run in order, one line at a time</span></div><div class="command"><b>Precision</b><span>Count the squares and grip gently</span></div><div class="command"><b>Loops</b><span><code>repeat 3:</code> runs the indented lines again</span></div><div class="command"><b>Loops in loops</b><span>An inner loop runs fully on every outer pass</span></div><div class="command"><b>Debugging</b><span>Read the error, find the bug, fix it</span></div><div class="command"><b>Efficiency</b><span>Fewer lines that do the same job</span></div>';
+function openFinale(){buildParty();if(!$('ribbon').src)$('ribbon').src=makeRibbon();banner.hidden=true;gen++;busy=false;loopRun=null;drafts[LEVEL]=code.value;L=FIN;BASE_X=FIN.baseX;$('reachShade').innerHTML='';
+  document.querySelectorAll('.tclone').forEach(x=>x.remove());drawObstacles();drawTruck();drawLift();drawConveyor();resetScene();
+  finActive=true;document.body.classList.add('finale');$('partyBack').removeAttribute('display');$('partyFront').removeAttribute('display');
+  const last=LEVELS[LEVELS.length-1].n,stars=loadStars()[last]||0;$('finPassed').textContent=`${LEVELS.filter(x=>statusOf(x.n)==='passed').length} / ${LEVELS.length}`;$('finStars').textContent=stars?'★'.repeat(stars)+'☆'.repeat(3-stars):'—';
+  $('levelPill').textContent='🏆 Complete';document.title='Robot Arm Challenge — Completed!';
+  $('taskText').innerHTML='<b>🎉 Robot Arm Challenge completed!</b> You programmed the robot through every level. Click the <b>music system</b> to start the party! 🔊 It plays music, so check your volume first.';
+  document.querySelector('.commands h2').textContent='What you learned';$('cmdGrid').innerHTML=LEARNED;
+  party.on=false;party.p=0;party.phi=0;party.last=0;setPartyUI();message('Click the music system to start the party!');renderProgress();
+  cancelAnimationFrame(finRaf);finRaf=requestAnimationFrame(partyFrame);party.radio.focus({preventScroll:true})}
+function endFinale(){if(!finActive)return;finActive=false;cancelAnimationFrame(finRaf);auStop(true);party.on=false;party.p=0;spinO=null;
+  party.parts.forEach(q=>q.e.remove());party.parts=[];party.notes.forEach(q=>q.e.remove());party.notes=[];
+  $('partyBack').setAttribute('display','none');$('partyFront').setAttribute('display','none');document.body.classList.remove('finale');document.querySelector('.commands h2').textContent='Available commands'}
+$('finParty').onclick=toggleParty;$('finLevels').onclick=openLM;$('finReplay').onclick=()=>{const last=LEVELS[LEVELS.length-1].n;LEVEL=-1;loadLevel(last)};
+draw();highlight(-1)})();
+</script></body></html>
