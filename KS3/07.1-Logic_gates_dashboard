@@ -1,0 +1,3360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Logic Gates</title>
+<script>/* Animations are ON by default (school PCs often have Windows animations off); the header switch turns them off */
+try{if(localStorage.getItem("logicGates.motion")==="off")document.documentElement.classList.add("no-motion")}catch(e){}</script>
+<style>
+:root{
+  --text:#123252;--text-primary:#123252;--text-secondary:#345778;--text-muted:#5a7591;
+  --surface:#fbfdff;--surface2:#eef5fd;--surface-2:#eef5fd;--bg:#e6eef8;--border:#c8daee;
+  --accent:#397fc4;--accent2:#7c4dff;--radius:10px;
+  --on:#13a52f;--bad:#d6453a;--yellow:#ffc51c;
+  --sans:Inter,system-ui,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:#edf3fa;color:var(--text);font-family:var(--sans)}
+button{font-family:var(--sans)!important}
+.app{max-width:1200px;margin:12px auto;padding:12px;background:#fbfdff;border:1px solid #dce7f2;box-shadow:0 4px 18px #17395718;border-radius:12px;display:flex;flex-direction:column}
+header{flex:0 0 auto;height:60px;background:linear-gradient(100deg,#173653,#254d70);border-radius:8px;color:#fff;display:flex;align-items:center;padding:0 20px;gap:14px}
+.logo{width:40px;height:40px;flex:none}
+h1{font-size:clamp(19px,2vw,27px);margin:0;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.brand{text-decoration:none;cursor:pointer;display:inline-block;font:900 13px/1 Inter,system-ui,Arial,sans-serif;letter-spacing:.06em;color:#183956;background:#ffc51c;border:2px solid #111b25;border-radius:7px;padding:4px 7px 4px 8px;transform:rotate(-4deg);box-shadow:2px 2px 0 #111b25}
+:root:not(.no-motion) .brand{transition:transform .15s,box-shadow .15s,background .15s}
+.brand:hover{background:#ffd84d;transform:rotate(-4deg) translateY(-1px);box-shadow:3px 3px 0 #111b25}
+.brand:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.hsub{font-size:13px;color:#b9d2ea;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hright{margin-left:auto;display:flex;align-items:center;gap:10px}
+.homebtn{border:0;border-radius:8px;background:#ffffff26;color:#fff;font-weight:800;padding:8px 13px;cursor:pointer;font-size:14px;white-space:nowrap}
+.homebtn:hover{background:#ffffff3d}
+.motion-toggle{display:flex;align-items:center;gap:.5em;font:inherit;font-size:13px;font-weight:700;color:#173957;background:#fff;border:2px solid #111;border-radius:999px;padding:.25em .4em .25em .8em;cursor:pointer;flex:none}
+.motion-toggle .track{position:relative;width:2.3em;height:1.3em;border-radius:999px;background:#a7b3ba;flex:none}
+.motion-toggle .knob{position:absolute;top:.15em;left:.15em;width:1em;height:1em;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgb(0 0 0/.25)}
+:root:not(.no-motion) .motion-toggle .track{transition:background 150ms}:root:not(.no-motion) .motion-toggle .knob{transition:transform 150ms}
+.motion-toggle[aria-checked="true"] .track{background:#27a845}.motion-toggle[aria-checked="true"] .knob{transform:translateX(1em)}
+.motion-toggle:focus-visible{outline:3px solid #ffd34d;outline-offset:3px}
+@media(max-width:1000px){.hsub{display:none}}
+@media(max-width:700px){.brand{display:none}}
+@media(max-width:560px){header{padding:0 9px;gap:8px}.motion-toggle span:first-child{display:none}.homebtn{padding:6px 9px;font-size:12px}.app{margin:0;border-radius:0}}
+.tool-card{margin-top:12px;flex:1;min-height:0;overflow:auto;border:1px solid #cbdff4;border-radius:10px;background:linear-gradient(145deg,#f4f8fe,#eaf2fc);padding:16px 20px}
+#toolContent{font-family:var(--sans);max-width:1000px;margin:0 auto}
+@media(min-width:701px){
+  html,body{height:100%;overflow:hidden}
+  .app{height:calc(100vh - 24px);height:calc(100dvh - 24px)}
+}
+@media(max-width:700px){.tool-card{padding:12px}}
+
+/* ---------- Landing ---------- */
+.lg-landing{padding:0}
+.lg-intro{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #cbdff4;border-radius:12px;padding:10px 16px;margin-bottom:14px}
+.lg-intro .ico{width:44px;height:44px;flex:none;border-radius:50%;background:#fff1c2;display:grid;place-items:center;font-size:24px}
+.lg-intro h2{margin:0 0 2px;font-size:18px}.lg-intro p{margin:0;font-size:14px;color:#345778;line-height:1.4}
+.lg-cats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.lg-cats{grid-template-columns:1fr}}
+.lg-cat{background:#fff;border:1px solid #cbdff4;border-radius:12px;padding:10px 12px 12px}
+.lg-category-heading{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:#183956;margin:0 0 8px}
+.lg-category-heading .pill{font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:3px 9px;background:#dce9f8;color:#173957}
+.lg-cat.c1 .pill{background:#fff1c2;color:#6b4300}.lg-cat.c2 .pill{background:#dff6e4;color:#17632b}.lg-cat.c3 .pill{background:#e4ecfb;color:#1d4f8c}.lg-cat.c4 .pill{background:#ece4ff;color:#4a22c0}
+.lg-btn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.lg-cats>*{min-width:0}
+@media(max-width:440px){.lg-btn .gi,.lg-btn .gi svg{width:40px;height:28px}.lg-btn{font-size:13px;gap:7px;padding:6px 8px}}
+.lg-btn{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;padding:7px 10px;border-radius:10px;border:2px solid #d3e1f1;background:#f6faff;color:#123252;cursor:pointer;text-align:left;min-height:52px}
+.lg-btn .gi{width:52px;height:34px;flex:none;display:grid;place-items:center;font-size:22px}
+.lg-btn .gi svg{width:52px;height:34px;display:block}
+:root:not(.no-motion) .lg-btn{transition:transform .12s,border-color .12s,box-shadow .12s,background .12s}
+.lg-btn:hover{border-color:#5b9bd4;background:#eaf3fe;transform:translateY(-2px);box-shadow:0 4px 0 #c6d9ee}
+.lg-btn:active{transform:translateY(1px);box-shadow:none}
+.lg-btn:focus-visible{outline:3px solid #3688ed;outline-offset:2px}
+.lg-btn.challenge{border-color:#d3e1f1}
+.lg-btn.challenge:hover{border-color:#5b9bd4;background:#eaf3fe}
+.lg-btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+/* ---------- Common page bits ---------- */
+.lg-tut-wrap{display:flex;flex-direction:column;gap:1rem}
+.lg-topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:.75rem}
+.lg-back-btn{font-size:13px;font-weight:800;padding:7px 12px;border-radius:8px;cursor:pointer;border:0;background:#dce9f8;color:#173957}
+.lg-back-btn:hover{background:#cfe0f5}
+.lg-title{font-size:21px;font-weight:800;color:#183956}
+.lg-badge{font-size:12px;font-weight:800;background:#fff1c2;color:#6b4300;border:0;border-radius:999px;padding:4px 10px}
+
+/* Interactive gate area: a little workbench */
+.lg-gate-area{display:flex;align-items:center;justify-content:center;gap:16px;background:linear-gradient(#e6eef8,#d9e5f3);border:2px solid #cfdef0;border-radius:12px;padding:1.25rem 1.5rem;flex-wrap:wrap;position:relative;margin:.75rem 0}
+.lg-input-col{display:flex;flex-direction:column;gap:22px;align-items:flex-end}
+.lg-input-wrap{display:flex;flex-direction:column;align-items:center}
+.lg-input-label{font-size:13px;font-weight:800;color:#345778;margin-bottom:4px;text-align:center}
+.lg-input-btn{width:58px;height:58px;border-radius:12px;border:2px solid #23415f;border-bottom-width:6px;background:#fff;color:#23415f;font-size:1.6rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center}
+:root:not(.no-motion) .lg-input-btn{transition:background .15s,color .15s,transform .08s,border-bottom-width .08s}
+.lg-input-btn:hover{background:#f1f6fd}
+.lg-input-btn:active{transform:translateY(3px);border-bottom-width:3px}
+.lg-input-btn.on{background:#13a52f;border-color:#0b5f1c;color:#fff}
+.lg-input-btn.on:hover{background:#17b636}
+.lg-input-btn:focus-visible{outline:3px solid #3688ed;outline-offset:2px}
+.lg-gate-svg{flex:0 0 auto}
+.lg-gate-svg line{stroke-width:4.5px}
+.lg-gate-area svg text{font-size:16px;font-weight:800}
+
+/* Bulb */
+.lg-bulb-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lg-bulb{width:auto;height:auto;border:0;background:none;display:flex;align-items:center;justify-content:center}
+.lg-bulb-icon{width:72px;height:126px;overflow:visible}
+.lg-bulb.on .lg-bulb-icon{filter:drop-shadow(0 0 14px #ffd34dcc)}
+:root:not(.no-motion) .lg-bulb.on .rays{animation:rays 1.2s ease-in-out infinite;transform-origin:32px 30px}
+@keyframes rays{50%{opacity:.45;transform:scale(1.08)}}
+:root:not(.no-motion) .lg-bulb.on .lg-bulb-icon{animation:bulbpop .35s cubic-bezier(.3,1.6,.6,1)}
+@keyframes bulbpop{from{transform:scale(.85)}}
+.lg-bulb-label{font-size:13px;color:#345778;font-weight:800}
+
+/* Rule box */
+.lg-rule{background:#fff;border:1px solid #cbdff4;border-left:6px solid #ffc51c;border-radius:10px;padding:.7rem 1rem;font-size:16px;color:var(--text);line-height:1.5}
+.lg-rule strong{color:#183956;background:#fff1c2;border-radius:4px;padding:0 4px}
+
+/* Truth tables */
+.lg-tt-toggle{font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;border:0;background:#dce9f8;color:#173957;margin-bottom:.5rem}
+.lg-tt-wrap{overflow-x:auto}
+.lg-tt,.lg-challenge-tt{border-collapse:separate;border-spacing:0;font-size:16px;background:#fff;border:2px solid #cfdef0;border-radius:10px;overflow:hidden}
+.lg-tt th,.lg-challenge-tt th{font-size:14px;font-weight:800;color:#fff;background:#254d70;padding:7px 16px;text-align:center;letter-spacing:0;text-transform:none;border:0}
+.lg-tt td{padding:7px 16px;border-top:1px solid #e1ebf6;text-align:center;color:var(--text);font-weight:700}
+:root:not(.no-motion) .lg-tt td{transition:background .2s,color .2s}
+.lg-tt tr.active td{background:#fff1c2;color:#6b4300;font-weight:900}
+.lg-challenge-desc{font-size:15px;color:#345778;margin-bottom:1rem;line-height:1.5}
+.lg-challenge-tt td{padding:5px 8px;border-top:1px solid #e1ebf6;text-align:center}
+.lg-challenge-tt .given{color:var(--text);font-weight:800;padding:7px 16px}
+.lg-inp{width:60px;background:#fff;border:2px solid #c8daee;border-radius:7px;padding:5px;font-size:16px;font-weight:800;color:var(--text);outline:none;text-align:center}
+.lg-inp:focus{border-color:#397fc4;box-shadow:0 0 0 3px #397fc433}
+.lg-ctrl-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:.9rem}
+.lg-feedback{font-size:14px;color:var(--text-muted);margin-left:4px}
+.lg-completion{display:none;padding:10px 14px;border-radius:10px;background:#e7f8eb;border:1px solid #b8e6c2;font-size:15px;color:#17632b;margin-top:.75rem}
+.lg-circuit-svg{width:100%;max-width:600px;display:block;margin:0 auto 1rem}
+
+/* Make every page's buttons/inline controls friendlier (inline styles set the colours) */
+#toolContent button{font-weight:700;border-radius:8px!important;border-width:2px!important}
+#toolContent button:not(.lg-input-btn){font-size:max(13px,1em)}
+#toolContent input{font-family:var(--sans)}
+#toolContent svg line{stroke-linecap:round}
+#toolContent svg text{font-weight:800}
+#toolContent p{font-size:15px!important}
+
+/* Live (1) wires: little dashes of current flow along them while animations are on */
+.flow{pointer-events:none}
+:root.no-motion .flow{display:none}
+:root:not(.no-motion) .flow{animation:flow .7s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+:root:not(.no-motion) .gate-on{animation:gatepulse 1.4s ease-in-out infinite}
+@keyframes gatepulse{50%{filter:drop-shadow(0 0 6px #7be08f)}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="lgGate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe680"/><stop offset=".5" stop-color="#ffc51c"/><stop offset="1" stop-color="#eba000"/></linearGradient>
+<linearGradient id="lgGateOn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9f7d2"/><stop offset=".5" stop-color="#6fd884"/><stop offset="1" stop-color="#2fae4a"/></linearGradient>
+<linearGradient id="lgGateBad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9d4"/><stop offset="1" stop-color="#f08b80"/></linearGradient>
+<linearGradient id="lgGateRev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dcebfb"/><stop offset="1" stop-color="#8fbbe6"/></linearGradient>
+<radialGradient id="lgGlass" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fffbe0"/><stop offset=".55" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb800"/></radialGradient>
+<radialGradient id="lgGlassOff" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cdd9e5"/></radialGradient>
+</defs></svg>
+<div class="app">
+<header><svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M4 14H12M4 26H12M31 20H37" stroke="#9fc3e6" stroke-width="3" stroke-linecap="round"/><path d="M11 8H19A12 12 0 0 1 19 32H11Z" fill="#ffc51c" stroke="#111b25" stroke-width="2.5" stroke-linejoin="round"/><circle cx="34" cy="20" r="4" fill="#ffe26a"/></svg><h1>Logic Gates <a class="brand" href="https://www.gcsecs.com/" target="_blank" rel="noopener" title="Visit gcsecs.com (opens in a new tab)" aria-label="GCSE CS website (opens in a new tab)">GCSECS🤣</a></h1>
+<div class="hsub">AND, OR and NOT gates</div>
+<div class="hright"><button class="motion-toggle" id="motionToggle" type="button" role="switch" aria-checked="true"><span>Animations</span><span class="track" aria-hidden="true"><span class="knob"></span></span></button><button class="homebtn" id="homeBtn" type="button">☰ &nbsp;Menu</button></div>
+</header>
+<div class="tool-card"><div id="toolContent"></div></div>
+</div>
+
+<script>
+// Stand-in for the old shared XP system (the Level/XP strip has been removed)
+var J277 = { grantXP:function(){}, init:function(){} };
+</script>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// LOGIC GATES — OCR J277 2.4.1
+// Tutorials: interactive gate + live truth table highlight
+// Challenges: gate challenges, combined circuits, truth tables
+// Zero AI cost — all logic is pure JavaScript Boolean evaluation
+// ════════════════════════════════════════════════════════════
+
+// ── Verified truth tables ────────────────────────────────────
+var TRUTH_TABLES = {
+  AND: [ [0,0,0],[0,1,0],[1,0,0],[1,1,1] ],
+  OR:  [ [0,0,0],[0,1,1],[1,0,1],[1,1,1] ],
+  NOT: [ [0,1],[1,0] ]
+};
+
+// ── Gate SVG drawing functions ───────────────────────────────
+// Each returns an SVG string. cx/cy = centre of gate body.
+// All gates sized to fit naturally in a 300×160 viewBox area.
+
+// Chunky illustrated gate colours: yellow body, green when its output is on (1),
+// red/blue when marked wrong/revealed in the challenges.
+function _gateLook(stroke){
+  if (stroke==="#13a52f") return {fill:"url(#lgGateOn)",stroke:"#0b5f1c",cls:"gate-on"};
+  if (stroke==="#d6453a") return {fill:"url(#lgGateBad)",stroke:"#a12a1f",cls:""};
+  if (stroke==="var(--accent)") return {fill:"url(#lgGateRev)",stroke:"#1d4f8c",cls:""};
+  return {fill:"url(#lgGate)",stroke:"#23415f",cls:""};
+}
+function drawAND(cx, cy, opts) {
+  opts = opts || {};
+  var w = opts.w || 70, h = opts.h || 80;
+  var r = h / 2;
+  var x = cx - w/2, t = cy - r, b = cy + r;
+  var stroke = opts.stroke || "var(--text)";
+  var sw = Math.max(3, (opts.strokeWidth || 3)*1.25);
+  var lk = _gateLook(stroke); stroke = lk.stroke;
+  return '<g class="'+lk.cls+'"><path d="M' + x + ' ' + t + ' L' + (x+w) + ' ' + t +
+         ' A' + r + ' ' + r + ' 0 0 1 ' + (x+w) + ' ' + b +
+         ' L' + x + ' ' + b + ' Z"' +
+         ' fill="'+lk.fill+'" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="round"/></g>';
+}
+
+function drawOR(cx, cy, opts) {
+  opts = opts || {};
+  var w = opts.w || 80, h = opts.h || 80;
+  var x = cx - w/2, t = cy - h/2, b = cy + h/2;
+  var tipX = cx + w/2;
+  var stroke = opts.stroke || "var(--text)";
+  var sw = Math.max(3, (opts.strokeWidth || 3)*1.25);
+  var lk = _gateLook(stroke); stroke = lk.stroke;
+  // Concave left, curved top/bottom to pointed tip
+  return '<g class="'+lk.cls+'"><path d="M' + x + ' ' + t +
+         ' Q' + (x + w*0.7) + ' ' + t + ' ' + tipX + ' ' + cy +
+         ' Q' + (x + w*0.7) + ' ' + b + ' ' + x + ' ' + b +
+         ' Q' + (x + w*0.3) + ' ' + cy + ' ' + x + ' ' + t + ' Z"' +
+         ' fill="'+lk.fill+'" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="round"/></g>';
+}
+
+function drawNOT(cx, cy, opts) {
+  opts = opts || {};
+  var h = opts.h || 80;
+  var x = cx - h*0.4, t = cy - h/2, b = cy + h/2;
+  var tipX = cx + h*0.4;
+  var br = 8; // bubble radius
+  var stroke = opts.stroke || "var(--text)";
+  var sw = Math.max(3, (opts.strokeWidth || 3)*1.25);
+  var lk = _gateLook(stroke); stroke = lk.stroke;
+  return '<g class="'+lk.cls+'"><polygon points="' + x + ',' + t + ' ' + x + ',' + b + ' ' + tipX + ',' + cy + '"' +
+         ' fill="'+lk.fill+'" stroke="' + stroke + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' +
+         '<circle cx="' + (tipX + br) + '" cy="' + cy + '" r="' + br + '"' +
+         ' fill="#fff" stroke="' + stroke + '" stroke-width="' + sw + '"/></g>';
+}
+
+// ── Wire endpoint helpers ─────────────────────────────────────
+// Returns {inputA, inputB, output} connection points for each gate.
+// Pass the same w/h opts used in drawAND/drawOR/drawNOT so wire
+// endpoints always line up exactly with the gate body edges.
+function gatePoints(type, cx, cy, opts) {
+  opts = opts || {};
+  if (type === 'AND') {
+    var w = opts.w || 70, h = opts.h || 80;
+    var r = h / 2;
+    var leftX = cx - w/2;
+    var rightX = cx + w/2 + r;  // rightmost point of semicircle
+    return { inputA:{x:leftX, y:cy - h*0.25}, inputB:{x:leftX, y:cy + h*0.25}, output:{x:rightX, y:cy} };
+  }
+  if (type === 'OR') {
+    var ow = opts.w || 80, oh = opts.h || 80;
+    var leftX = cx - ow/2;
+    var tipX = cx + ow/2;
+    return { inputA:{x:leftX, y:cy - oh*0.25}, inputB:{x:leftX, y:cy + oh*0.25}, output:{x:tipX, y:cy} };
+  }
+  if (type === 'NOT') {
+    var nh = opts.h || 80;
+    var br = opts.br || 8;
+    var leftX = cx - nh*0.4;
+    var rightX = cx + nh*0.4 + br*2;
+    return { inputA:{x:leftX, y:cy}, output:{x:rightX, y:cy} };
+  }
+}
+
+// ── Landing screen ────────────────────────────────────────────
+var CATEGORIES = [
+  {
+    heading: "Tutorials",
+    items: [
+      { label:"AND gate",          action: function(){ showTutorial("AND"); }, cls:"" },
+      { label:"OR gate",           action: function(){ showTutorial("OR");  }, cls:"" },
+      { label:"NOT gate",          action: function(){ showTutorial("NOT"); }, cls:"" },
+      { label:"Logic circuits", action: function(){ showCombinedTutorial(); }, cls:"" }
+    ]
+  },
+  {
+    heading: "Gate challenges",
+    items: [
+      { label:"AND gate",                   action: function(){ showGateChallenge("AND"); }, cls:"challenge" },
+      { label:"OR gate",                    action: function(){ showGateChallenge("OR");  }, cls:"challenge" },
+      { label:"NOT gate",                   action: function(){ showGateChallenge("NOT"); }, cls:"challenge" },
+      { label:"Logic circuits", action: function(){ showCircuitChallenge("c1"); }, cls:"challenge" }
+    ]
+  },
+  {
+    heading: "Truth table challenges",
+    items: [
+      { label:"AND gate",       action: function(){ showTruthTableChallenge("AND"); },  cls:"challenge" },
+      { label:"OR gate",        action: function(){ showTruthTableChallenge("OR");  },  cls:"challenge" },
+      { label:"NOT gate",       action: function(){ showTruthTableChallenge("NOT"); },  cls:"challenge" },
+      { label:"Logic circuits", action: function(){ showTruthTableCircuitChallenge("tc1"); }, cls:"challenge" }
+    ]
+  },
+  {
+    heading: "Further challenges",
+    items: [
+      { label:"Identify the circuit",  action: function(){ showIdentifyChallenge(); },         cls:"challenge" },
+      { label:"Build a circuit",       action: function(){ showBuildQuestion("bc1"); },         cls:"challenge" },
+      { label:"Write the expression", action: function(){ showWriteExprLanding(); }, cls:"challenge" },
+      { label:"Exam questions", action: function(){ showExamLanding(); }, cls:"challenge" }
+    ]
+  }
+];
+
+// ════════════════════════════════════════════════════════════
+// IDENTIFY THE CIRCUIT — 10 MCQ questions
+// Student sees a circuit diagram and picks the correct
+// Boolean expression from 4 shuffled options.
+// Answers are randomised each run; results screen at the end.
+// ════════════════════════════════════════════════════════════
+
+// ── Question data ─────────────────────────────────────────────
+// Each question: circuit SVG builder fn, correct answer, 3 distractors
+var IDENTIFY_QUESTIONS = (function() {
+  var s = "var(--text)", w = "var(--text-muted)", sw = 2.5;
+
+  function wire(x1,y1,x2,y2,col) {
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+(col||w)+'" stroke-width="'+sw+'"/>';
+  }
+  function label(x,y,txt,anchor) {
+    return '<text x="'+x+'" y="'+y+'" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" fill="'+s+'" text-anchor="'+(anchor||"end")+'">'+txt+'</text>';
+  }
+  function outLabel(x,y) {
+    return '<text x="'+x+'" y="'+y+'" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" fill="'+w+'">Q</text>';
+  }
+
+  // Shared SVG wrapper
+  function svg(w_, h_, content) {
+    return '<svg viewBox="0 0 '+w_+' '+h_+'" width="'+w_+'" style="max-width:'+w_+'px;display:block;margin:0 auto;">'+content+'</svg>';
+  }
+
+  return [
+    {
+      // Q1: A AND B
+      buildSVG: function() {
+        var c = "";
+        c += wire(30,50,88,50); c += label(24,55,"A");
+        c += wire(30,80,88,80); c += label(24,85,"B");
+        c += drawAND(120,65,{h:52,w:50,stroke:s,strokeWidth:sw});
+        c += wire(170,65,220,65); c += outLabel(222,70);
+        return svg(250,130,c);
+      },
+      correct: "A AND B",
+      distractors: ["A OR B","(NOT A) AND B","A AND (NOT B)"]
+    },
+    {
+      // Q2: A OR B
+      buildSVG: function() {
+        var c = "";
+        c += wire(30,50,88,50); c += label(24,55,"A");
+        c += wire(30,80,88,80); c += label(24,85,"B");
+        c += drawOR(120,65,{h:52,w:60,stroke:s,strokeWidth:sw});
+        c += wire(150,65,220,65); c += outLabel(222,70);
+        return svg(250,130,c);
+      },
+      correct: "A OR B",
+      distractors: ["A AND B","(NOT A) OR B","A OR (NOT B)"]
+    },
+    {
+      // Q3: (NOT A) OR B
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,40,48,40); c += label(14,45,"A");
+        c += drawNOT(68,40,{h:38,stroke:s,strokeWidth:sw});
+        // NOT output: 68+38*0.4+16 = 68+15.2+16 = 99.2 ≈ 99
+        c += wire(99,40,130,40);
+        c += wire(20,80,130,80); c += label(14,85,"B");
+        c += drawOR(162,60,{h:52,w:60,stroke:s,strokeWidth:sw});
+        c += wire(192,60,240,60); c += outLabel(242,65);
+        return svg(270,120,c);
+      },
+      correct: "(NOT A) OR B",
+      distractors: ["(NOT A) AND B","A OR B","A OR (NOT B)"]
+    },
+    {
+      // Q4: (NOT A) AND B
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,40,48,40); c += label(14,45,"A");
+        c += drawNOT(68,40,{h:38,stroke:s,strokeWidth:sw});
+        c += wire(99,40,130,40);
+        c += wire(20,80,130,80); c += label(14,85,"B");
+        c += drawAND(162,60,{h:52,w:50,stroke:s,strokeWidth:sw});
+        c += wire(212,60,240,60); c += outLabel(242,65);
+        return svg(270,120,c);
+      },
+      correct: "(NOT A) AND B",
+      distractors: ["(NOT A) OR B","A AND B","(NOT A) AND (NOT B)"]
+    },
+    {
+      // Q5: A OR (NOT B)
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,40,130,40); c += label(14,45,"A");
+        c += wire(20,80,48,80); c += label(14,85,"B");
+        c += drawNOT(68,80,{h:38,stroke:s,strokeWidth:sw});
+        c += wire(99,80,130,80);
+        c += drawOR(162,60,{h:52,w:60,stroke:s,strokeWidth:sw});
+        c += wire(192,60,240,60); c += outLabel(242,65);
+        return svg(270,120,c);
+      },
+      correct: "A OR (NOT B)",
+      distractors: ["A AND (NOT B)","(NOT A) OR B","A OR B"]
+    },
+    {
+      // Q6: (A AND B) OR C
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,35,78,35); c += label(14,40,"A");
+        c += wire(20,58,78,58); c += label(14,63,"B");
+        c += drawAND(110,47,{h:45,w:46,stroke:s,strokeWidth:sw});
+        // AND output: 110+23+22.5=155.5
+        c += wire(156,47,185,47);
+        c += wire(20,90,185,90); c += label(14,95,"C");
+        c += drawOR(215,68,{h:52,w:58,stroke:s,strokeWidth:sw});
+        c += wire(244,68,270,68); c += outLabel(272,73);
+        return svg(295,125,c);
+      },
+      correct: "(A AND B) OR C",
+      distractors: ["A AND (B OR C)","(A OR B) AND C","A AND B AND C"]
+    },
+    {
+      // Q7: A AND (B OR C)
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,35,185,35); c += label(14,40,"A");
+        c += wire(20,58,78,58); c += label(14,63,"B");
+        c += wire(20,85,78,85); c += label(14,90,"C");
+        c += drawOR(110,71,{h:45,w:52,stroke:s,strokeWidth:sw});
+        // OR output: 110+26=136
+        c += wire(136,71,185,71);
+        c += drawAND(215,53,{h:50,w:50,stroke:s,strokeWidth:sw});
+        // AND output: 215+25+25=265
+        c += wire(265,53,290,53); c += outLabel(292,58);
+        return svg(315,120,c);
+      },
+      correct: "A AND (B OR C)",
+      distractors: ["(A AND B) OR C","(A OR B) AND C","A OR (B AND C)"]
+    },
+    {
+      // Q8: (NOT A) AND (NOT B)
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,38,48,38); c += label(14,43,"A");
+        c += drawNOT(68,38,{h:36,stroke:s,strokeWidth:sw});
+        // NOT output: 68+36*0.4+16 = 68+14.4+16 = 98.4 ≈ 98
+        c += wire(98,38,140,38);
+        c += wire(20,78,48,78); c += label(14,83,"B");
+        c += drawNOT(68,78,{h:36,stroke:s,strokeWidth:sw});
+        c += wire(98,78,140,78);
+        c += drawAND(172,58,{h:50,w:48,stroke:s,strokeWidth:sw});
+        c += wire(220,58,250,58); c += outLabel(252,63);
+        return svg(278,116,c);
+      },
+      correct: "(NOT A) AND (NOT B)",
+      distractors: ["(NOT A) OR (NOT B)","NOT (A AND B)","(NOT A) OR B"]
+    },
+    {
+      // Q9: (NOT A) OR (B AND C)
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,35,48,35); c += label(14,40,"A");
+        c += drawNOT(68,35,{h:36,stroke:s,strokeWidth:sw});
+        c += wire(98,35,180,35);
+        c += wire(20,65,88,65); c += label(14,70,"B");
+        c += wire(20,90,88,90); c += label(14,95,"C");
+        c += drawAND(120,77,{h:42,w:44,stroke:s,strokeWidth:sw});
+        // AND output: 120+22+21=163
+        c += wire(163,77,180,77);
+        c += drawOR(210,56,{h:52,w:58,stroke:s,strokeWidth:sw});
+        c += wire(238,56,268,56); c += outLabel(270,61);
+        return svg(295,125,c);
+      },
+      correct: "(NOT A) OR (B AND C)",
+      distractors: ["(NOT A) AND (B OR C)","(NOT A) AND B AND C","(NOT A) OR B OR C"]
+    },
+    {
+      // Q10: NOT (A AND B) OR C
+      buildSVG: function() {
+        var c = "";
+        c += wire(20,35,78,35); c += label(14,40,"A");
+        c += wire(20,58,78,58); c += label(14,63,"B");
+        c += drawAND(110,47,{h:45,w:46,stroke:s,strokeWidth:sw});
+        // AND output: 110+23+22.5=155.5
+        c += wire(156,47,174,47);
+        // NOT gate after AND
+        c += drawNOT(190,47,{h:34,stroke:s,strokeWidth:sw});
+        // NOT output: 190+34*0.4+16 = 190+13.6+16 = 219.6 ≈ 220
+        c += wire(220,47,250,47);
+        c += wire(20,88,250,88); c += label(14,93,"C");
+        c += drawOR(280,67,{h:50,w:56,stroke:s,strokeWidth:sw});
+        c += wire(308,67,330,67); c += outLabel(332,72);
+        return svg(358,125,c);
+      },
+      correct: "NOT (A AND B) OR C",
+      distractors: ["(NOT A) AND (NOT B) OR C","(NOT A) OR (NOT B) AND C","NOT (A AND B AND C)"]
+    }
+  ];
+})();
+
+// ── Shuffle helper ────────────────────────────────────────────
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+// ── Main challenge controller ─────────────────────────────────
+function showIdentifyChallenge() {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar("Identify the circuit", "Challenge — 10 questions"));
+
+  // Build shuffled options for each question once, upfront
+  var questionData = IDENTIFY_QUESTIONS.map(function(q) {
+    var opts = shuffle([q.correct].concat(q.distractors));
+    return { q: q, opts: opts, chosen: null };
+  });
+
+  var currentQ = 0;
+
+  // Container for question content — rebuilt each question
+  var qArea = document.createElement("div");
+  el.appendChild(qArea);
+
+  function renderQuestion(idx) {
+    qArea.innerHTML = "";
+    var data = questionData[idx];
+    var q = data.q;
+
+    // Progress indicator
+    var progress = document.createElement("div");
+    progress.style.cssText = "font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-bottom:0.75rem;";
+    progress.textContent = "Question " + (idx+1) + " of " + IDENTIFY_QUESTIONS.length;
+    qArea.appendChild(progress);
+
+    // Circuit diagram
+    var diagramWrap = document.createElement("div");
+    diagramWrap.style.cssText = "background:var(--bg);border:0.5px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;display:flex;justify-content:center;";
+    diagramWrap.innerHTML = q.buildSVG();
+    qArea.appendChild(diagramWrap);
+
+    // Instruction
+    var instr = document.createElement("div");
+    instr.style.cssText = "font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+    instr.textContent = "Which Boolean expression matches this circuit?";
+    qArea.appendChild(instr);
+
+    // Answer options
+    var optGrid = document.createElement("div");
+    optGrid.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;";
+
+    data.opts.forEach(function(opt) {
+      var btn = document.createElement("button");
+      btn.textContent = opt;
+      var isSelected = (data.chosen === opt);
+      btn.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:10px 14px;border-radius:8px;cursor:pointer;text-align:left;border:1.5px solid " +
+        (isSelected ? "var(--accent)" : "var(--border)") + ";background:" +
+        (isSelected ? "rgba(57,127,196,0.15)" : "var(--surface2)") + ";color:" +
+        (isSelected ? "var(--accent)" : "var(--text)") + ";transition:all 0.15s;";
+      btn.addEventListener("mouseover", function() {
+        if (data.chosen !== opt) { btn.style.borderColor="var(--accent)"; btn.style.background="rgba(57,127,196,0.06)"; }
+      });
+      btn.addEventListener("mouseout", function() {
+        if (data.chosen !== opt) { btn.style.borderColor="var(--border)"; btn.style.background="var(--surface2)"; }
+      });
+      btn.addEventListener("click", function() {
+        data.chosen = opt;
+        renderQuestion(idx); // re-render to show selection
+      });
+      optGrid.appendChild(btn);
+    });
+    qArea.appendChild(optGrid);
+
+    // Nav button
+    var navRow = document.createElement("div");
+    navRow.style.cssText = "display:flex;justify-content:flex-end;";
+    var isLast = (idx === IDENTIFY_QUESTIONS.length - 1);
+    var navBtn = document.createElement("button");
+    navBtn.textContent = isLast ? "Submit answers \u2192" : "Next question \u2192";
+    navBtn.disabled = !data.chosen;
+    navBtn.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:8px 18px;border-radius:8px;cursor:pointer;border:0.5px solid var(--accent);background:rgba(57,127,196,0.15);color:var(--accent);opacity:" + (data.chosen ? "1" : "0.4") + ";";
+    navBtn.addEventListener("click", function() {
+      if (isLast) { showResults(); }
+      else { currentQ++; renderQuestion(currentQ); }
+    });
+    navRow.appendChild(navBtn);
+    qArea.appendChild(navRow);
+  }
+
+  function showResults() {
+    qArea.innerHTML = "";
+
+    var correct = questionData.filter(function(d){ return d.chosen === d.q.correct; }).length;
+    var pct = Math.round((correct / IDENTIFY_QUESTIONS.length) * 100);
+
+    // Award XP
+    J277.grantXP(correct * 3, "identify_circuit");
+    if (pct === 100) J277.grantXP(20, "identify_circuit_perfect");
+
+    // Score banner
+    var banner = document.createElement("div");
+    var col = pct >= 80 ? "#13a52f" : pct >= 50 ? "#e6a800" : "#d6453a";
+    banner.style.cssText = "text-align:center;padding:1.25rem;border-radius:10px;border:0.5px solid "+col+";background:rgba(0,0,0,0.2);margin-bottom:1.25rem;";
+    banner.innerHTML = "<div style='font-size:2rem;font-weight:700;color:"+col+";font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;'>"+pct+"%</div>" +
+      "<div style='font-size:0.85rem;color:var(--text-muted);margin-top:4px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;'>"+correct+" / "+IDENTIFY_QUESTIONS.length+" correct</div>";
+    qArea.appendChild(banner);
+
+    // Per-question review
+    questionData.forEach(function(data, i) {
+      var wasCorrect = data.chosen === data.q.correct;
+      var block = document.createElement("div");
+      block.style.cssText = "margin-bottom:1rem;padding:0.75rem 1rem;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);";
+
+      // Question label + circuit
+      var qlbl = document.createElement("div");
+      qlbl.style.cssText = "font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-bottom:0.5rem;";
+      qlbl.textContent = "Question " + (i+1);
+      block.appendChild(qlbl);
+
+      var diag = document.createElement("div");
+      diag.style.cssText = "margin-bottom:0.75rem;";
+      diag.innerHTML = data.q.buildSVG();
+      block.appendChild(diag);
+
+      // Answer display
+      if (wasCorrect) {
+        var ans = document.createElement("div");
+        ans.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:8px 12px;border-radius:6px;border:1.5px solid #13a52f;background:rgba(19,165,47,0.12);color:#13a52f;";
+        ans.innerHTML = "\u2714 " + data.chosen;
+        block.appendChild(ans);
+      } else {
+        var wrong = document.createElement("div");
+        wrong.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:8px 12px;border-radius:6px;border:1.5px solid #d6453a;background:rgba(214,69,58,0.1);color:#d6453a;margin-bottom:6px;";
+        wrong.innerHTML = "\u2718 " + (data.chosen || "No answer selected");
+        block.appendChild(wrong);
+        var right = document.createElement("div");
+        right.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:8px 12px;border-radius:6px;border:1.5px solid #13a52f;background:rgba(19,165,47,0.12);color:#13a52f;";
+        right.innerHTML = "\u2714 " + data.q.correct;
+        block.appendChild(right);
+      }
+
+      qArea.appendChild(block);
+    });
+
+    // Try again / back to menu buttons
+    var btnRow = document.createElement("div");
+    btnRow.style.cssText = "display:flex;gap:8px;margin-top:1rem;";
+    var retryBtn = document.createElement("button");
+    retryBtn.textContent = "\uD83D\uDD04 Try again";
+    retryBtn.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:8px 16px;border-radius:8px;cursor:pointer;border:0.5px solid var(--accent);background:rgba(57,127,196,0.12);color:var(--accent);";
+    retryBtn.addEventListener("click", showIdentifyChallenge);
+    var menuBtn2 = document.createElement("button");
+    menuBtn2.textContent = "\u2302 Back to menu";
+    menuBtn2.style.cssText = "font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:8px 16px;border-radius:8px;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--text-muted);";
+    menuBtn2.addEventListener("click", showLanding);
+    btnRow.appendChild(retryBtn);
+    btnRow.appendChild(menuBtn2);
+    qArea.appendChild(btnRow);
+  }
+
+  renderQuestion(0);
+}
+
+// ════════════════════════════════════════════════════════════
+// BUILD A CIRCUIT — drag gates into correct slot positions
+// Wires are pre-drawn; student drags AND/OR/NOT from palette.
+// Click a placed gate to remove it. Check/Reveal/Finish/Retry.
+// ════════════════════════════════════════════════════════════
+
+function _bw(x1,y1,x2,y2) {
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="var(--text-muted)" stroke-width="2.5"/>';
+}
+function _bil(x,y,txt) {
+  return '<text x="'+x+'" y="'+y+'" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text)">'+txt+'</text>';
+}
+function _bSlotEmpty(sx,sy,sw,sh,idx) {
+  var cx=sx+sw/2, cy=sy+sh/2;
+  return '<rect x="'+sx+'" y="'+sy+'" width="'+sw+'" height="'+sh+
+    '" rx="4" fill="var(--surface2)" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="5,3"'+
+    ' data-slot="'+idx+'" pointer-events="all"/>'+
+    '<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="10"'+
+    ' fill="var(--text-muted)" pointer-events="none">drop here</text>';
+}
+function _bGate(type,cx,cy,h,w,stroke,sx,sy,sw,sh,idx) {
+  var c=stroke||"var(--text)", sw2=2.5, g="";
+  if (type==="AND") g=drawAND(cx,cy,{h:h,w:w||h,stroke:c,strokeWidth:sw2});
+  else if (type==="OR")  g=drawOR(cx,cy,{h:h,w:w||h,stroke:c,strokeWidth:sw2});
+  else if (type==="NOT") g=drawNOT(cx,cy,{h:h,stroke:c,strokeWidth:sw2});
+  // Transparent hit rect on top for click-to-remove and drop detection
+  g+='<rect x="'+sx+'" y="'+sy+'" width="'+sw+'" height="'+sh+
+    '" fill="transparent" data-slot="'+idx+'" pointer-events="all" style="cursor:pointer"/>';
+  return g;
+}
+function _bColour(cols, i) {
+  if (!cols || cols[i] === null) return null;
+  if (cols[i]==="ok")     return "#13a52f";
+  if (cols[i]==="bad")    return "#d6453a";
+  return "var(--accent)"; // "reveal"
+}
+
+var BC_CIRCUITS = [
+  {
+    key:"bc1", label:"(NOT A) AND B", answers:["NOT","AND"],
+    svgW:300, svgH:100,
+    slots:[
+      {cx:90,  cy:42, h:44, w:44, sx:72,  sy:20, sw:52, sh:44},
+      {cx:200, cy:55, h:52, w:52, sx:174, sy:29, sw:78, sh:52}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,42,72,42);    o+=_bil(14,47,"A");
+      o+=_bw(124,42,174,42);
+      o+=_bw(20,68,174,68);   o+=_bil(14,73,"B");
+      o+=_bw(252,55,278,55);
+      o+='<text x="280" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<2;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    key:"bc2", label:"A OR (NOT B)", answers:["OR","NOT"],
+    svgW:300, svgH:110,
+    slots:[
+      {cx:195, cy:55, h:52, w:60, sx:165, sy:29, sw:60, sh:52},
+      {cx:82,  cy:68, h:44, w:44, sx:64,  sy:46, sw:52, sh:44}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,42,165,42);  o+=_bil(14,47,"A");
+      o+=_bw(20,68,64,68);   o+=_bil(14,73,"B");
+      o+=_bw(116,68,165,68);
+      o+=_bw(225,55,278,55);
+      o+='<text x="280" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<2;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    key:"bc3", label:"(A AND B) OR A", answers:["AND","OR"],
+    svgW:305, svgH:115,
+    slots:[
+      {cx:115, cy:57, h:50, w:46, sx:92,  sy:32, sw:71, sh:50},
+      {cx:225, cy:70, h:52, w:60, sx:195, sy:44, sw:60, sh:52}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,45,45,45);   o+=_bil(14,50,"A");
+      o+='<circle cx="45" cy="45" r="5" fill="var(--text-muted)"/>';
+      o+=_bw(45,45,92,45);
+      o+=_bw(45,45,45,83);   o+=_bw(45,83,195,83);
+      o+=_bw(20,70,92,70);   o+=_bil(14,75,"B");
+      o+=_bw(163,57,195,57);
+      o+=_bw(255,70,280,70);
+      o+='<text x="282" y="75" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<2;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q4: (NOT A) OR (NOT B)
+    key:"bc4", label:"(NOT A) OR (NOT B)", answers:["NOT","NOT","OR"],
+    svgW:310, svgH:115,
+    slots:[
+      {cx:88, cy:33, h:40, w:40, sx:72, sy:13, sw:48, sh:40},
+      {cx:88, cy:77, h:40, w:40, sx:72, sy:57, sw:48, sh:40},
+      {cx:228,cy:55, h:88, w:60, sx:198,sy:11, sw:60, sh:88}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,33,72,33);  o+=_bil(14,38,"A");
+      o+=_bw(20,77,72,77);  o+=_bil(14,82,"B");
+      o+=_bw(120,33,198,33);
+      o+=_bw(120,77,198,77);
+      o+=_bw(258,55,278,55);
+      o+='<text x="280" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<3;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q5: A AND (B OR C) — A wire routed above OR via vertical bend
+    key:"bc5", label:"A AND (B OR C)", answers:["OR","AND"],
+    svgW:360, svgH:110,
+    slots:[
+      {cx:155, cy:70, h:44, w:52, sx:129,sy:48, sw:52, sh:44},
+      {cx:265, cy:55, h:60, w:50, sx:240,sy:25, sw:80, sh:60}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      // A runs above OR gate then drops to AND top input
+      o+=_bw(20,30,240,30);  o+=_bil(14,35,"A");
+      o+=_bw(240,30,240,40); // vertical drop to AND tiy=40
+      o+=_bw(20,59,129,59);  o+=_bil(14,64,"B");
+      o+=_bw(20,81,129,81);  o+=_bil(14,86,"C");
+      o+=_bw(181,70,240,70); // OR tipX→AND lx, y=OR cy=AND biy=70
+      o+=_bw(320,55,342,55);
+      o+='<text x="344" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<2;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q6: (A OR B) AND C
+    key:"bc6", label:"(A OR B) AND C", answers:["OR","AND"],
+    svgW:335, svgH:105,
+    slots:[
+      {cx:120, cy:47, h:44, w:52, sx:94, sy:25, sw:52, sh:44},
+      {cx:240, cy:60, h:52, w:50, sx:215,sy:34, sw:76, sh:52}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,36,94,36);   o+=_bil(14,41,"A");
+      o+=_bw(20,58,94,58);   o+=_bil(14,63,"B");
+      o+=_bw(146,47,215,47); // OR tipX→AND lx, y=OR cy=AND tiy=47
+      o+=_bw(20,73,215,73);  o+=_bil(14,78,"C");
+      o+=_bw(291,60,315,60);
+      o+='<text x="317" y="65" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<2;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q7: (NOT A) AND (B OR C)
+    key:"bc7", label:"(NOT A) AND (B OR C)", answers:["NOT","OR","AND"],
+    svgW:385, svgH:128,
+    slots:[
+      {cx:88,  cy:30, h:36, w:36, sx:74,  sy:12, sw:44, sh:36},
+      {cx:170, cy:84, h:44, w:52, sx:144, sy:62, sw:52, sh:44},
+      {cx:275, cy:57, h:108,w:50, sx:250, sy:3,  sw:104,sh:108}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,30,74,30);    o+=_bil(14,35,"A");
+      o+=_bw(118,30,250,30);  // NOT rx→AND lx, y=NOT cy=AND tiy=30
+      o+=_bw(20,73,144,73);   o+=_bil(14,78,"B"); // OR tiy=73
+      o+=_bw(20,95,144,95);   o+=_bil(14,100,"C"); // OR biy=95
+      o+=_bw(196,84,250,84);  // OR tipX→AND lx, y=OR cy=AND biy=84
+      o+=_bw(354,57,376,57);
+      o+='<text x="378" y="62" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<3;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q8: (A AND B) OR (NOT C)
+    key:"bc8", label:"(A AND B) OR (NOT C)", answers:["AND","NOT","OR"],
+    svgW:330, svgH:120,
+    slots:[
+      {cx:120, cy:40, h:44, w:44, sx:98, sy:18, sw:66, sh:44},
+      {cx:120, cy:84, h:38, w:38, sx:105,sy:65, sw:46, sh:38},
+      {cx:255, cy:62, h:88, w:60, sx:225,sy:18, sw:60, sh:88}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,29,98,29);   o+=_bil(14,34,"A");
+      o+=_bw(20,51,98,51);   o+=_bil(14,56,"B");
+      o+=_bw(164,40,225,40); // AND rx→OR lx, y=AND cy=OR tiy=40
+      o+=_bw(20,84,105,84);  o+=_bil(14,89,"C");
+      o+=_bw(151,84,225,84); // NOT rx→OR lx, y=NOT cy=OR biy=84
+      o+=_bw(285,62,308,62);
+      o+='<text x="310" y="67" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<3;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q9: (NOT A) AND (NOT B) AND C — 4 gate slots
+    key:"bc9", label:"(NOT A) AND (NOT B) AND C", answers:["NOT","NOT","AND","AND"],
+    svgW:410, svgH:120,
+    slots:[
+      {cx:85,  cy:22, h:34, w:34, sx:71, sy:5,  sw:44, sh:34},
+      {cx:85,  cy:62, h:34, w:34, sx:71, sy:45, sw:44, sh:34},
+      {cx:195, cy:42, h:80, w:46, sx:172,sy:2,  sw:86, sh:80},
+      {cx:300, cy:64, h:88, w:50, sx:275,sy:20, sw:94, sh:88}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,22,71,22);   o+=_bil(14,27,"A");
+      o+=_bw(115,22,172,22); // NOT_A rx→AND1 lx
+      o+=_bw(20,62,71,62);   o+=_bil(14,67,"B");
+      o+=_bw(115,62,172,62); // NOT_B rx→AND1 lx
+      o+=_bw(258,42,275,42); // AND1 rx→AND2 lx, y=AND1 cy=AND2 tiy=42
+      o+=_bw(20,86,275,86);  o+=_bil(14,91,"C"); // C below all gates, y=AND2 biy=86
+      o+=_bw(369,64,395,64);
+      o+='<text x="397" y="69" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">P</text>';
+      var sl=this.slots;
+      for (var i=0;i<4;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  {
+    // Q10: (A OR B) AND (NOT C)
+    key:"bc10", label:"(A OR B) AND (NOT C)", answers:["OR","NOT","AND"],
+    svgW:360, svgH:120,
+    slots:[
+      {cx:115, cy:40, h:44, w:52, sx:89,  sy:18, sw:52, sh:44},
+      {cx:115, cy:84, h:38, w:38, sx:100, sy:65, sw:46, sh:38},
+      {cx:250, cy:62, h:88, w:50, sx:225, sy:18, sw:94, sh:88}
+    ],
+    buildSVG: function(placed,cols) {
+      var o="";
+      o+=_bw(20,29,89,29);   o+=_bil(14,34,"A");
+      o+=_bw(20,51,89,51);   o+=_bil(14,56,"B");
+      o+=_bw(141,40,225,40); // OR tipX→AND lx, y=OR cy=AND tiy=40
+      o+=_bw(20,84,100,84);  o+=_bil(14,89,"C");
+      o+=_bw(146,84,225,84); // NOT rx→AND lx, y=NOT cy=AND biy=84
+      o+=_bw(319,62,343,62);
+      o+='<text x="345" y="67" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for (var i=0;i<3;i++) {
+        if (!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  }
+];
+
+// Small gate SVGs for the drag palette
+function _bcPalSVG(type) {
+  var s="var(--text)", sw=2;
+  if (type==="AND") {
+    return '<svg viewBox="0 0 80 50" width="72" height="50">'+
+      '<line x1="5" y1="17" x2="26" y2="17" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      '<line x1="5" y1="33" x2="26" y2="33" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      drawAND(40,25,{h:30,w:28,stroke:s,strokeWidth:sw})+
+      '<line x1="69" y1="25" x2="76" y2="25" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      '</svg>';
+  }
+  if (type==="OR") {
+    return '<svg viewBox="0 0 80 50" width="72" height="50">'+
+      '<line x1="5" y1="17" x2="23" y2="17" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      '<line x1="5" y1="33" x2="23" y2="33" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      drawOR(40,25,{h:30,w:34,stroke:s,strokeWidth:sw})+
+      '<line x1="57" y1="25" x2="76" y2="25" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      '</svg>';
+  }
+  if (type==="NOT") {
+    return '<svg viewBox="0 0 80 50" width="72" height="50">'+
+      '<line x1="5" y1="25" x2="25" y2="25" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      drawNOT(40,25,{h:28,stroke:s,strokeWidth:sw})+
+      '<line x1="66" y1="25" x2="76" y2="25" stroke="'+s+'" stroke-width="'+sw+'"/>'+
+      '</svg>';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// WRITE THE EXPRESSION
+// Student sees a complete logic circuit and types the Boolean
+// expression. Answer checking uses truth-table comparison so
+// all equivalent forms (commutativity, De Morgan's etc.) pass.
+// ════════════════════════════════════════════════════════════
+
+// ── Expression evaluator ──────────────────────────────────────
+function _weEval(rawExpr, varVals) {
+  // Proper recursive descent parser — no eval() or new Function()
+  // Grammar: expr → or ; or → and ('OR' and)* ; and → not ('AND' not)*
+  //          not → 'NOT' not | atom ; atom → VAR | '(' expr ')'
+  try {
+    var s = rawExpr.toUpperCase().trim();
+    if (!s) return {error:"empty"};
+
+    // Tokenise
+    var tokens = [];
+    var i = 0;
+    function kwAt(pos, kw) {
+      if (s.substr(pos, kw.length) !== kw) return false;
+      var nxt = s[pos + kw.length];
+      return !nxt || !/[A-Z0-9]/.test(nxt);
+    }
+    while (i < s.length) {
+      if (s[i] === ' ') { i++; continue; }
+      if (s[i] === '(') { tokens.push({t:'LP'}); i++; }
+      else if (s[i] === ')') { tokens.push({t:'RP'}); i++; }
+      else if (kwAt(i,'NOT')) { tokens.push({t:'NOT'}); i+=3; }
+      else if (kwAt(i,'AND')) { tokens.push({t:'AND'}); i+=3; }
+      else if (kwAt(i,'OR'))  { tokens.push({t:'OR'});  i+=2; }
+      else if (/[A-Z]/.test(s[i])) {
+        if (varVals.hasOwnProperty(s[i])) { tokens.push({t:'V',v:s[i]}); i++; }
+        else return {error:"unknown"};
+      }
+      else return {error:"invalid"};
+    }
+
+    // Parse
+    var p = 0;
+    function peek() { return tokens[p]; }
+    function next() { return tokens[p++]; }
+
+    function parseExpr() { return parseOr(); }
+    function parseOr() {
+      var v = parseAnd();
+      while (peek() && peek().t==='OR') {
+        next();
+        var r = parseAnd();   // always called — must advance p
+        v = (v || r) ? 1 : 0;
+      }
+      return v;
+    }
+    function parseAnd() {
+      var v = parseNot();
+      while (peek() && peek().t==='AND') {
+        next();
+        var r = parseNot();   // always called — must advance p
+        v = (v && r) ? 1 : 0;
+      }
+      return v;
+    }
+    function parseNot() {
+      if (peek() && peek().t==='NOT') { next(); return parseNot() ? 0 : 1; }
+      return parseAtom();
+    }
+    function parseAtom() {
+      var tok = peek();
+      if (!tok) throw new Error("Unexpected end");
+      if (tok.t==='V') { next(); return varVals[tok.v] ? 1 : 0; }
+      if (tok.t==='LP') {
+        next();
+        var v = parseExpr();
+        var cl = next();
+        if (!cl || cl.t!=='RP') throw new Error("Missing )");
+        return v;
+      }
+      throw new Error("Unexpected: "+tok.t);
+    }
+
+    var result = parseExpr();
+    if (p < tokens.length) return {error:"syntax"}; // leftover tokens
+    return {value: result ? 1 : 0};
+  } catch(e) {
+    return {error:"syntax"};
+  }
+}
+
+function _weCheck(studentExpr, correctExpr, vars) {
+  var n = vars.length, rows = Math.pow(2, n);
+  for (var i = 0; i < rows; i++) {
+    var vals = {};
+    for (var j = 0; j < n; j++) vals[vars[j]] = (i >> (n-1-j)) & 1;
+    var correct = _weEval(correctExpr, vals);
+    var student = _weEval(studentExpr, vals);
+    if (student.error) return {ok:false, parseError:student.error};
+    if (student.value !== correct.value) {
+      var ce = vars.map(function(v){return v+'='+vals[v];}).join(', ');
+      return {ok:false, parseError:null, counterExample:ce, got:student.value, expected:correct.value};
+    }
+  }
+  return {ok:true};
+}
+
+// ── Q1 simple AND gate SVG (no existing circuit def needed) ───
+function _weQ1SVG() {
+  var s="var(--text)", sw=2.5, c="";
+  c += '<line x1="20" y1="44" x2="108" y2="44" stroke="'+s+'" stroke-width="'+sw+'"/>';
+  c += '<text x="14" y="49" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="'+s+'">A</text>';
+  c += '<line x1="20" y1="66" x2="108" y2="66" stroke="'+s+'" stroke-width="'+sw+'"/>';
+  c += '<text x="14" y="71" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="'+s+'">B</text>';
+  c += drawAND(130,55,{h:44,w:44,stroke:s,strokeWidth:sw});
+  c += '<line x1="174" y1="55" x2="196" y2="55" stroke="'+s+'" stroke-width="'+sw+'"/>';
+  c += '<text x="198" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">P</text>';
+  return '<svg viewBox="0 0 215 100" width="215" style="display:block;margin:0 auto;">'+c+'</svg>';
+}
+
+var WE_QUESTIONS = [
+  {num:1,  expr:"A AND B",              vars:["A","B"],     circKey:null},
+  {num:2,  expr:"(NOT A) AND B",        vars:["A","B"],     circKey:"bc1"},
+  {num:3,  expr:"A OR (NOT B)",         vars:["A","B"],     circKey:"bc2"},
+  {num:4,  expr:"(NOT A) OR (NOT B)",   vars:["A","B"],     circKey:"bc4"},
+  {num:5,  expr:"A AND (B OR C)",       vars:["A","B","C"], circKey:"bc5"},
+  {num:6,  expr:"(A OR B) AND C",       vars:["A","B","C"], circKey:"bc6"},
+  {num:7,  expr:"(NOT A) AND (B OR C)", vars:["A","B","C"], circKey:"bc7"},
+  {num:8,  expr:"(A AND B) OR (NOT C)", vars:["A","B","C"], circKey:"bc8"},
+  {num:9,  expr:"(A OR B) AND (NOT C)", vars:["A","B","C"], circKey:"bc10"},
+  {num:10, expr:"NOT A OR (B AND C)",   vars:["A","B","C"], circKey:"pq9"}
+];
+
+function showWriteExprLanding() {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar("Write the expression","Challenge"));
+  var desc = document.createElement("div");
+  desc.style.cssText = "font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;";
+  desc.textContent = "Each question shows a complete logic circuit. Type the Boolean expression it represents using AND, OR, NOT and brackets.";
+  el.appendChild(desc);
+  var grid = document.createElement("div"); grid.className = "lg-btn-grid";
+  WE_QUESTIONS.forEach(function(q) {
+    var btn = document.createElement("button"); btn.className = "lg-btn challenge";
+    btn.innerHTML = '<span style="font-weight:700;display:block;margin-bottom:2px;">Q'+q.num+'</span><span style="font-size:0.85rem;color:var(--text-muted);">'+q.vars.length+' input'+(q.vars.length>1?'s':'')+'</span>';
+    btn.style.textAlign = "left";
+    btn.addEventListener("click", function(){ showWriteExprQuestion(q.num); });
+    grid.appendChild(btn);
+  });
+  el.appendChild(grid);
+}
+
+function showWriteExprQuestion(n) {
+  var q = WE_QUESTIONS[n-1];
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar("Write the expression","Q"+n+"/"+WE_QUESTIONS.length));
+
+  var prog = document.createElement("div");
+  prog.style.cssText = "font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-bottom:0.5rem;";
+  prog.textContent = "Question "+n+" of "+WE_QUESTIONS.length;
+  el.appendChild(prog);
+
+  var instr = document.createElement("div");
+  instr.style.cssText = "font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:0.75rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  instr.textContent = "Write the Boolean expression for this logic circuit:";
+  el.appendChild(instr);
+
+  // Circuit display
+  var circWrap = document.createElement("div");
+  circWrap.style.cssText = "background:var(--bg);border:0.5px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:0.75rem;display:flex;justify-content:center;overflow-x:auto;";
+  if (q.circKey) {
+    var circ = getCircuitDef(q.circKey);
+    circWrap.innerHTML = '<svg viewBox="0 0 '+circ.svgW+' '+circ.svgH+'" width="'+circ.svgW+'" style="display:block;">'+circ.buildSVG(circ.answers.slice(),null)+'</svg>';
+  } else {
+    circWrap.innerHTML = _weQ1SVG();
+  }
+  el.appendChild(circWrap);
+
+  // Helper insert buttons
+  var helperRow = document.createElement("div");
+  helperRow.style.cssText = "display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px;";
+  var helperLbl = document.createElement("span");
+  helperLbl.style.cssText = "font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  helperLbl.textContent = "Insert:";
+  helperRow.appendChild(helperLbl);
+
+  var inp = document.createElement("input");
+  inp.type = "text";
+  inp.placeholder = "e.g. A AND (B OR C)";
+  inp.autocomplete = "off"; inp.autocorrect = "off"; inp.spellcheck = false;
+  inp.style.cssText = "width:100%;box-sizing:border-box;padding:10px 14px;font-size:0.95rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);margin-bottom:6px;";
+
+  var tokens = ["AND","OR","NOT","(",")",...q.vars];
+  tokens.forEach(function(token) {
+    var btn = document.createElement("button");
+    btn.textContent = token;
+    btn.style.cssText = "font-size:0.78rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:4px 10px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface2);color:var(--text);";
+    btn.addEventListener("click", function(e) {
+      e.preventDefault();
+      var cur = inp.value;
+      var start = inp.selectionStart !== undefined ? inp.selectionStart : cur.length;
+      var end   = inp.selectionEnd   !== undefined ? inp.selectionEnd   : cur.length;
+      var before = cur.slice(0, start);
+      var isOp = ["AND","OR","NOT"].indexOf(token) !== -1;
+      var isVar = q.vars.indexOf(token) !== -1;
+      var prefix = (before.length > 0 && !/[\s(]$/.test(before)) ? " " : "";
+      var suffix = (isOp || token === "(") ? " " : "";
+      if (token === ")") { prefix = ""; suffix = ""; }
+      var insert = prefix + token + suffix;
+      inp.value = before + insert + cur.slice(end);
+      inp.selectionStart = inp.selectionEnd = start + insert.length;
+      inp.focus();
+    });
+    helperRow.appendChild(btn);
+  });
+  el.appendChild(helperRow);
+  el.appendChild(inp);
+
+  var hintEl = document.createElement("div");
+  hintEl.style.cssText = "font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-bottom:0.75rem;";
+  hintEl.textContent = "Tip: spaces don\u2019t matter, and equivalent expressions are accepted.";
+  el.appendChild(hintEl);
+
+  // Feedback
+  var feedbackDiv = document.createElement("div");
+  feedbackDiv.style.cssText = "min-height:20px;margin-bottom:8px;font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;line-height:1.5;";
+  el.appendChild(feedbackDiv);
+
+  // Buttons
+  var ctrlBar = document.createElement("div");
+  ctrlBar.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;";
+  var checkBtn  = mkCtrlBtn("\u2713 Check","primary");
+  var revealBtn = mkCtrlBtn("\uD83D\uDCD6 Reveal","muted");
+  ctrlBar.appendChild(checkBtn); ctrlBar.appendChild(revealBtn);
+  el.appendChild(ctrlBar);
+
+  var banner = document.createElement("div"); banner.className = "lg-completion"; el.appendChild(banner);
+
+  // Navigation
+  var navBar = document.createElement("div");
+  navBar.style.cssText = "display:flex;justify-content:space-between;margin-top:0.75rem;padding-top:0.75rem;border-top:0.5px solid var(--border);";
+  var leftNav = document.createElement("div"), rightNav = document.createElement("div");
+  navBar.appendChild(leftNav); navBar.appendChild(rightNav);
+  el.appendChild(navBar);
+  function mkWENav(txt,fn,primary){var b=document.createElement("button");b.textContent=txt;b.style.cssText="font-size:0.85rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:5px 14px;border-radius:6px;cursor:pointer;border:0.5px solid "+(primary?"var(--accent)":"var(--border)")+";background:"+(primary?"rgba(57,127,196,0.12)":"var(--surface2)")+";color:"+(primary?"var(--accent)":"var(--text-muted)")+";";b.addEventListener("click",fn);return b;}
+  if(n>1) leftNav.appendChild(mkWENav("\u2190 Q"+(n-1),function(){showWriteExprQuestion(n-1);},false));
+  else leftNav.appendChild(mkWENav("\u2630 All questions",showWriteExprLanding,false));
+  if(n<WE_QUESTIONS.length) rightNav.appendChild(mkWENav("Q"+(n+1)+" \u2192",function(){showWriteExprQuestion(n+1);},true));
+  else rightNav.appendChild(mkWENav("\u2302 Back to menu",showLanding,true));
+
+  var finished=false, xpAwarded=false, revealed=false;
+
+  function showFeedback(txt,col){feedbackDiv.textContent=txt;feedbackDiv.style.color=col;}
+
+  var errorMessages = {
+    "empty":   "Please type an expression first.",
+    "unknown": "Check your variable names or operator spelling \u2014 use AND, OR, NOT.",
+    "invalid": "Only use letters, AND, OR, NOT, and brackets.",
+    "syntax":  "Couldn\u2019t parse that \u2014 check brackets and operator placement."
+  };
+
+  checkBtn.addEventListener("click", function() {
+    if (finished) return;
+    var student = inp.value.trim();
+    if (!student) { showFeedback("Please type an expression first.", "var(--text-muted)"); return; }
+    var result = _weCheck(student, q.expr, q.vars);
+    if (result.ok) {
+      inp.style.borderColor = "#13a52f"; inp.style.background = "rgba(19,165,47,0.1)";
+      showFeedback("\u2714 Correct!", "#13a52f");
+      finished = true;
+      banner.style.display = "block";
+      banner.innerHTML = "\uD83C\uDF89 <strong>Correct!</strong>";
+      if (!xpAwarded){ xpAwarded=true; J277.grantXP(5,"write_expr"); }
+      checkBtn.disabled = true; revealBtn.disabled = true;
+    } else if (result.parseError) {
+      inp.style.borderColor = "#e6a800"; inp.style.background = "rgba(255,197,28,0.08)";
+      showFeedback(errorMessages[result.parseError] || "Couldn\u2019t parse that expression.", "#e6a800");
+    } else {
+      inp.style.borderColor = "#d6453a"; inp.style.background = "rgba(214,69,58,0.08)";
+      var fb = "\u2718 Not quite.";
+      if (result.counterExample) fb += " When "+result.counterExample+", your expression gives "+result.got+" but the circuit gives "+result.expected+".";
+      showFeedback(fb, "#d6453a");
+    }
+  });
+
+  revealBtn.addEventListener("click", function() {
+    if (finished) return;
+    if (!revealed) {
+      inp.value = q.expr;
+      inp.style.borderColor = "var(--accent)"; inp.style.background = "rgba(57,127,196,0.1)";
+      showFeedback("Expression revealed. Note: equivalent forms are also accepted.", "var(--text-muted)");
+      checkBtn.disabled = true; revealBtn.textContent = "\uD83D\uDCD5 Hide"; revealed = true;
+    } else {
+      inp.value = ""; inp.style.borderColor = "var(--border)"; inp.style.background = "var(--surface2)";
+      feedbackDiv.textContent = "";
+      checkBtn.disabled = false; revealBtn.textContent = "\uD83D\uDCD6 Reveal"; revealed = false;
+    }
+  });
+
+  inp.addEventListener("keydown", function(e){ if(e.key==="Enter") checkBtn.click(); });
+}
+
+// ════════════════════════════════════════════════════════════
+// EXAM QUESTIONS — OCR J277 2.4 Boolean Logic (Practice)
+// ════════════════════════════════════════════════════════════
+
+// Extra circuits for exam questions
+var EQ_EXTRA_CIRCUITS = [
+  { // pq7: Q = NOT B AND (A OR C) — tall AND gate, OR clearly below NOT
+    key:"pq7", label:"Q = NOT B AND (A OR C)", answers:["NOT","OR","AND"],
+    svgW:385, svgH:125,
+    slots:[
+      {cx:85, cy:30, h:36,w:36, sx:71,sy:12, sw:44,sh:36},
+      {cx:170,cy:84, h:44,w:52, sx:144,sy:62,sw:52,sh:44},
+      {cx:275,cy:57, h:108,w:50,sx:250,sy:3, sw:105,sh:108}
+    ],
+    buildSVG:function(placed,cols){
+      var o="";
+      o+=_bw(20,30,71,30);   o+=_bil(14,35,"B");
+      o+=_bw(115,30,250,30); // NOT rx→AND lx at y=30
+      o+=_bw(20,73,144,73);  o+=_bil(14,78,"A"); // OR tiy=73
+      o+=_bw(20,95,144,95);  o+=_bil(14,100,"C"); // OR biy=95
+      o+=_bw(196,84,250,84); // OR tipX→AND lx at y=84
+      o+=_bw(355,57,375,57);
+      o+='<text x="377" y="62" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for(var i=0;i<3;i++){
+        if(!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  { // pq8: P = NOT A AND B AND C
+    key:"pq8", label:"P = NOT A AND B AND C", answers:["NOT","AND","AND"],
+    svgW:415, svgH:110,
+    slots:[
+      {cx:90, cy:35, h:38,w:38, sx:75,sy:16, sw:46,sh:38},
+      {cx:175,cy:48, h:52,w:44, sx:153,sy:22,sw:70,sh:52},
+      {cx:310,cy:64, h:64,w:50, sx:285,sy:32,sw:82,sh:64}
+    ],
+    buildSVG:function(placed,cols){
+      var o="";
+      o+=_bw(20,35,75,35);   o+=_bil(14,40,"A");
+      o+=_bw(121,35,153,35);
+      o+=_bw(20,61,153,61);  o+=_bil(14,66,"B");
+      o+=_bw(223,48,285,48);
+      o+=_bw(20,80,285,80);  o+=_bil(14,85,"C");
+      o+=_bw(367,64,389,64);
+      o+='<text x="391" y="69" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">P</text>';
+      var sl=this.slots;
+      for(var i=0;i<3;i++){
+        if(!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  },
+  { // pq9: Q = NOT A OR (B AND C) — tall OR, AND dropped below NOT
+    key:"pq9", label:"Q = NOT A OR (B AND C)", answers:["NOT","AND","OR"],
+    svgW:335, svgH:120,
+    slots:[
+      {cx:85, cy:28, h:36,w:36, sx:71,sy:10, sw:44,sh:36},
+      {cx:155,cy:80, h:44,w:52, sx:129,sy:58,sw:74,sh:44},
+      {cx:265,cy:54, h:104,w:50,sx:240,sy:2, sw:50,sh:104}
+    ],
+    buildSVG:function(placed,cols){
+      var o="";
+      o+=_bw(20,28,71,28);   o+=_bil(14,33,"A");
+      o+=_bw(115,28,240,28);
+      o+=_bw(20,69,129,69);  o+=_bil(14,74,"B");
+      o+=_bw(20,91,129,91);  o+=_bil(14,96,"C");
+      o+=_bw(203,80,240,80);
+      o+=_bw(290,54,310,54);
+      o+='<text x="312" y="59" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="var(--text-muted)">Q</text>';
+      var sl=this.slots;
+      for(var i=0;i<3;i++){
+        if(!placed[i]) o+=_bSlotEmpty(sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+        else o+=_bGate(placed[i],sl[i].cx,sl[i].cy,sl[i].h,sl[i].w,_bColour(cols,i),sl[i].sx,sl[i].sy,sl[i].sw,sl[i].sh,i);
+      }
+      return o;
+    }
+  }
+];
+
+function getCircuitDef(key){
+  for(var i=0;i<BC_CIRCUITS.length;i++){if(BC_CIRCUITS[i].key===key)return BC_CIRCUITS[i];}
+  for(var i=0;i<EQ_EXTRA_CIRCUITS.length;i++){if(EQ_EXTRA_CIRCUITS[i].key===key)return EQ_EXTRA_CIRCUITS[i];}
+  return null;
+}
+
+var EXAM_QUESTIONS = [
+  {num:1,year:"2024",marks:4,type:"truth_table",
+   title:"Complete the truth table for P = (A OR B) AND C",
+   headers:["A","B","C","P"],
+   rows:[[0,0,0,"?"],[0,0,1,"?"],[0,1,0,"?"],[0,1,1,"?"],[1,0,0,"?"],[1,0,1,"?"],[1,1,0,"?"],[1,1,1,"?"]],
+   answers:[0,0,0,1,0,1,0,1],
+   guidance:"1 mark per pair of rows: rows 1\u20132, 3\u20134, 5\u20136, 7\u20138"},
+  {num:2,year:"SAM",marks:2,type:"truth_table",
+   title:"Complete the truth table for P = A OR NOT(B)",
+   headers:["A","B","P"],
+   rows:[[0,0,1],[0,1,"?"],[1,0,"?"],[1,1,1]],
+   answers:[0,1],
+   guidance:"1 mark each. True/False or T/F also accepted."},
+  {num:3,year:"2020",marks:4,type:"truth_table",
+   title:"Complete the truth table for P = NOT(A AND B)",
+   headers:["A","B","P"],
+   rows:[[0,0,1],[0,1,"?"],[1,0,"?"],["?","?","?"]],
+   answers:[1,1,1,1,0],
+   guidance:"1 mark each: A=1, B=1 for last row; P=1 for rows 2\u20133; P=0 for row 4"},
+  {num:4,year:"",marks:1,type:"evaluate",
+   title:"Evaluate the output",
+   circKey:"bc1",
+   inputs:{A:1,B:1},
+   answer:0,
+   outputVar:"Q"},
+  {num:5,year:"",marks:2,type:"find_error",
+   title:"Find the error",
+   expression:"P = (NOT A) AND B",
+   circKey:"bc1",
+   errorSlot:0,
+   wrongGate:"OR",
+   gateLabels:["gate on input A","final AND gate"],
+   explanation:"The gate on input A should be a NOT gate (triangle with bubble). NOT A inverts the signal — an OR gate here is incorrect as it expects two inputs.",
+   svgPatch:["124,42","112,42"]},
+  {num:6,year:"2023",marks:2,type:"gate_identify",
+   title:"Identify the logic gate for each truth table",
+   tables:[
+     {headers:["A","Output"],rows:[[0,1],[1,0]],answer:"NOT"},
+     {headers:["A","B","Output"],rows:[[0,0,0],[0,1,1],[1,0,1],[1,1,1]],answer:"OR"}
+   ],
+   options:["AND","OR","NOT"],
+   guidance:"1 mark each. Symbols (\u00AC for NOT; \u2228 or + for OR) also accepted."},
+  {num:7,year:"2022",marks:2,type:"mcq",
+   title:"Describe the purpose of a truth table",
+   question:"Which of the following best describes the purpose of a truth table?",
+   options:[
+     "To show every possible combination of inputs and the corresponding output for each",
+     "To show the order in which logic operations are carried out by the CPU",
+     "To store the results of logic operations in registers",
+     "To list all the logic gates used in a circuit in order of operation"
+   ],
+   correct:0,
+   guidance:"Must reference: all possible inputs AND the associated output for each combination"},
+  {num:8,year:"2022",marks:1,type:"number_input",
+   title:"State the number of rows in a truth table for P = A OR (NOT B AND C)",
+   question:"How many rows (excluding headings) are needed in a truth table for:\nP = A OR (NOT B AND C)?",
+   answer:8,
+   hint:"Count the inputs, then calculate 2\u207F",
+   guidance:"8 // eight // 2\xB3. Three inputs (A, B, C) \u2192 2\xB3 = 8 rows"},
+  {num:9,year:"2024",marks:3,type:"build",
+   title:"Draw a logic circuit for Q = NOT B AND (A OR C)",
+   context:"Draw a logic circuit for the expression Q = NOT B AND (A OR C).",
+   circKey:"pq7"},
+  {num:10,year:"",marks:2,type:"find_error",
+   title:"Find the error",
+   expression:"P = (NOT A) AND (B OR C)",
+   circKey:"bc7",
+   errorSlot:1,
+   wrongGate:"AND",
+   gateLabels:["NOT gate (input A)","gate taking B and C","final AND gate"],
+   explanation:"The gate taking inputs B and C should be an OR gate. The expression (B OR C) requires OR — the AND gate shown here would give a different result.",
+   svgPatch:["196,84","218,84"]},
+  {num:11,year:"",marks:1,type:"evaluate",
+   title:"Evaluate the output",
+   circKey:"bc2",
+   inputs:{A:0,B:0},
+   answer:1,
+   outputVar:"Q"},
+  {num:12,year:"2023",marks:3,type:"build",
+   title:"Draw a logic diagram",
+   context:"A night-time security light (P) turns on when it is not daylight (NOT A), motion is detected (B), and the timer is enabled (C). Draw a logic diagram for P = NOT A AND B AND C.",
+   circKey:"pq8"},
+  {num:13,year:"2020",marks:3,type:"build",
+   title:"Draw a logic diagram",
+   context:"Draw the logic diagram for Q = NOT A OR (B AND C).",
+   circKey:"pq9"},
+  {num:14,year:"Practice",marks:2,type:"build",
+   title:"Draw a logic diagram for P = NOT A AND B",
+   context:"A door lock (P) opens when the keypad is inactive (NOT A) AND a valid card is presented (B). Draw a logic diagram for P = NOT A AND B.",
+   circKey:"bc1"},
+  {num:15,year:"",marks:2,type:"find_error",
+   title:"Find the error",
+   expression:"P = A AND (B OR C)",
+   circKey:"bc5",
+   errorSlot:0,
+   wrongGate:"AND",
+   gateLabels:["gate taking B and C","final AND gate"],
+   explanation:"The gate taking B and C should be an OR gate. The brackets (B OR C) require OR — changing it to AND gives a completely different circuit.",
+   svgPatch:["181,70","203,70"]},
+  {num:16,year:"2022",marks:3,type:"build",
+   title:"Complete the logic diagram for Q = (A AND B) OR NOT C",
+   context:"A sprinkler system (Q) activates when both sensors detect dryness (A AND B), or when the manual override is off (NOT C). Draw a logic diagram for Q = (A AND B) OR NOT C.",
+   circKey:"bc8"},
+  {num:17,year:"",marks:1,type:"evaluate",
+   title:"Evaluate the output",
+   circKey:"bc6",
+   inputs:{A:1,B:0,C:0},
+   answer:0,
+   outputVar:"Q"},
+  {num:18,year:"",marks:2,type:"find_error",
+   title:"Find the error",
+   expression:"P = (A OR B) AND (NOT C)",
+   circKey:"bc10",
+   errorSlot:0,
+   wrongGate:"AND",
+   gateLabels:["gate taking A and B","NOT gate (input C)","final AND gate"],
+   explanation:"The gate taking inputs A and B should be OR, not AND. The expression (A OR B) requires an OR gate — the AND shown here gives a different result.",
+   svgPatch:["141,40","163,40"]},
+  {num:19,year:"SAM",marks:1,type:"circuit_mcq",
+   title:"Identify the correct logic diagram for P = NOT(A OR B)",
+   question:"Select the correct logic diagram for P = NOT(A OR B):",
+   correct:1,
+   guidance:"Option B: OR gate (A,B) \u2192 NOT gate \u2192 P. Note: Option C shows De Morgan\u2019s equivalent NOT A AND NOT B \u2014 award 0 (expression doesn\u2019t match)"},
+  {num:20,year:"",marks:2,type:"find_error",
+   title:"Find the error",
+   expression:"Q = NOT B AND (A OR C)",
+   circKey:"pq7",
+   errorSlot:1,
+   wrongGate:"AND",
+   gateLabels:["NOT gate (input B)","gate taking A and C","final AND gate"],
+   explanation:"The gate taking inputs A and C should be OR, not AND. The expression (A OR C) requires an OR gate — AND here gives a completely different result.",
+   svgPatch:["196,84","218,84"]},
+];
+
+// ── Shared exam nav button ─────────────────────────────────
+function _eqNavBtn(txt, fn, primary) {
+  var b=document.createElement("button");
+  b.textContent=txt;
+  b.style.cssText="font-size:0.85rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:5px 14px;border-radius:6px;cursor:pointer;border:0.5px solid "+(primary?"var(--accent)":"var(--border)")+";background:"+(primary?"rgba(57,127,196,0.12)":"var(--surface2)")+";color:"+(primary?"var(--accent)":"var(--text-muted)")+";";
+  b.addEventListener("click",fn); return b;
+}
+
+// ── Exam landing ───────────────────────────────────────────
+function showExamLanding() {
+  var el=document.getElementById("toolContent");
+  el.innerHTML="";
+  el.appendChild(makeTopBar("Exam questions","OCR J277 \u00B7 2.4 Boolean Logic"));
+  var intro=document.createElement("div");
+  intro.style.cssText="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;";
+  intro.textContent="12 OCR-style practice questions. Complete each task and check your answer.";
+  el.appendChild(intro);
+  var grid=document.createElement("div"); grid.className="lg-btn-grid";
+  EXAM_QUESTIONS.forEach(function(q){
+    var btn=document.createElement("button"); btn.className="lg-btn challenge";
+    btn.innerHTML='<span style="font-weight:700;display:block;margin-bottom:2px;">Q'+q.num+'</span><span style="font-size:0.85rem;color:var(--text-muted);">'+q.marks+' mark'+(q.marks>1?'s':'')+' \u00B7 '+q.year+'</span>';
+    btn.style.textAlign="left";
+    btn.addEventListener("click",function(){showExamQuestion(q.num);});
+    grid.appendChild(btn);
+  });
+  el.appendChild(grid);
+}
+
+// ── Individual exam question ───────────────────────────────
+function showExamQuestion(n) {
+  var q=EXAM_QUESTIONS[n-1]; if(!q){showExamLanding();return;}
+  var el=document.getElementById("toolContent"); el.innerHTML="";
+  el.appendChild(makeTopBar("Exam questions","Q"+n+"/"+EXAM_QUESTIONS.length+" \u00B7 "+q.marks+" mark"+(q.marks>1?"s":"")+" \u00B7 "+q.year));
+  var titleDiv=document.createElement("div");
+  titleDiv.style.cssText="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:"+(q.context?"0.4rem":"0.75rem")+";font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:8px 14px;";
+  titleDiv.textContent=q.title; el.appendChild(titleDiv);
+  if(q.context){var ctx=document.createElement("div");ctx.style.cssText="font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;line-height:1.6;";ctx.textContent=q.context;el.appendChild(ctx);}
+  var contentArea=document.createElement("div"); el.appendChild(contentArea);
+  var ctrlBar=document.createElement("div"); ctrlBar.style.cssText="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:0.75rem;margin-bottom:8px;";
+  var checkBtn=mkCtrlBtn("\u2713 Check","primary");
+  var revealBtn=mkCtrlBtn("\uD83D\uDCD6 Reveal","muted");
+  var finishBtn=mkCtrlBtn("\u2714 Finished","primary");
+  var feedbackEl=document.createElement("span"); feedbackEl.style.cssText="font-size:13px;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-left:4px;";
+  ctrlBar.appendChild(checkBtn); ctrlBar.appendChild(revealBtn); ctrlBar.appendChild(finishBtn); ctrlBar.appendChild(feedbackEl);
+  el.appendChild(ctrlBar);
+  var banner=document.createElement("div"); banner.className="lg-completion"; el.appendChild(banner);
+  var navBar=document.createElement("div"); navBar.style.cssText="display:flex;justify-content:space-between;margin-top:0.75rem;padding-top:0.75rem;border-top:0.5px solid var(--border);";
+  var leftNav=document.createElement("div"),rightNav=document.createElement("div");
+  navBar.appendChild(leftNav); navBar.appendChild(rightNav); el.appendChild(navBar);
+  if(n>1) leftNav.appendChild(_eqNavBtn("\u2190 Q"+(n-1),function(){showExamQuestion(n-1);},false));
+  else leftNav.appendChild(_eqNavBtn("\u2630 All questions",showExamLanding,false));
+  if(n<EXAM_QUESTIONS.length) rightNav.appendChild(_eqNavBtn("Q"+(n+1)+" \u2192",function(){showExamQuestion(n+1);},true));
+  else rightNav.appendChild(_eqNavBtn("\u2302 Back to menu",showLanding,true));
+  switch(q.type){
+    case"find_error":    _eqFindError(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"evaluate":      _eqEvaluate(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"truth_table":   _eqTruthTable(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"gate_identify": _eqGateIdentify(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"mcq":           _eqMCQ(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"number_input":  _eqNumberInput(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"build":         _eqBuild(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+    case"circuit_mcq":   _eqCircuitMCQ(q,contentArea,checkBtn,revealBtn,finishBtn,feedbackEl,banner); break;
+  }
+}
+
+// ── Truth table renderer ───────────────────────────────────
+function _eqTruthTable(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false,revealed=false,xpAwarded={},revealSaved=null,cells=[];
+  var wrap=document.createElement("div"); wrap.style.cssText="overflow-x:auto;margin-bottom:0.5rem;";
+  var tbl=document.createElement("table"); tbl.className="lg-tt";
+  var thead=document.createElement("thead"),hRow=document.createElement("tr");
+  q.headers.forEach(function(h){var th=document.createElement("th");th.textContent=h;hRow.appendChild(th);});
+  thead.appendChild(hRow); tbl.appendChild(thead);
+  var tbody=document.createElement("tbody");
+  q.rows.forEach(function(row){
+    var tr=document.createElement("tr");
+    row.forEach(function(cell){
+      var td=document.createElement("td");
+      if(cell==="?"){
+        var inp=document.createElement("input"); inp.type="text"; inp.maxLength=1;
+        inp.style.cssText="width:38px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;font-size:0.9rem;padding:3px;";
+        td.appendChild(inp); cells.push({input:inp,answer:q.answers[cells.length]});
+      } else { td.textContent=cell; td.style.color="var(--text-muted)"; }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody); wrap.appendChild(tbl); container.appendChild(wrap);
+  var gd=document.createElement("div"); gd.style.cssText="font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-top:4px;";
+  gd.textContent="\uD83D\uDCCB "+q.guidance; container.appendChild(gd);
+  function doCheck(isFinal){var c=0,newXP=0;cells.forEach(function(ec,i){var v=ec.input.value.trim();if(v===String(ec.answer)){ec.input.style.background="rgba(19,165,47,0.2)";ec.input.style.borderColor="#13a52f";c++;if(!xpAwarded[i]){xpAwarded[i]=true;newXP+=2;}}else if(isFinal||v!==""){ec.input.style.background="rgba(214,69,58,0.2)";ec.input.style.borderColor="#d6453a";}});if(newXP>0)J277.grantXP(newXP,"exam_tt");return c;}
+  function showComplete(){finished=true;J277.grantXP(5,"exam_tt_b");banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>All correct!</strong>";checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";}
+  function doReset(){finished=false;revealed=false;xpAwarded={};cells.forEach(function(ec){ec.input.value="";ec.input.style.background="var(--surface2)";ec.input.style.borderColor="var(--border)";ec.input.disabled=false;});banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";}
+  checkBtn.addEventListener("click",function(){if(finished)return;var c=doCheck(false);feedbackEl.style.color=c<cells.length?"#d6453a":"#13a52f";feedbackEl.textContent=c+"/"+cells.length+" correct";if(c===cells.length)showComplete();});
+  finishBtn.addEventListener("click",function(){if(finished){doReset();return;}var c=doCheck(true);if(c===cells.length)showComplete();else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";feedbackEl.style.color="#d6453a";feedbackEl.textContent=c+"/"+cells.length+" \u2014 incorrect cells shown in red.";}});
+  revealBtn.addEventListener("click",function(){if(finished)return;if(!revealed){revealSaved=cells.map(function(ec){return ec.input.value;});cells.forEach(function(ec){ec.input.value=ec.answer;ec.input.style.background="rgba(57,127,196,0.15)";ec.input.style.borderColor="var(--accent)";ec.input.disabled=true;});revealed=true;revealBtn.textContent="\uD83D\uDCD5 Hide";feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Answers revealed in blue.";checkBtn.disabled=true;finishBtn.disabled=true;}else{cells.forEach(function(ec,i){ec.input.value=revealSaved[i];ec.input.style.background="var(--surface2)";ec.input.style.borderColor="var(--border)";ec.input.disabled=false;});revealed=false;revealBtn.textContent="\uD83D\uDCD6 Reveal";feedbackEl.textContent="";checkBtn.disabled=false;finishBtn.disabled=false;}});
+}
+
+// ── Gate identify renderer ─────────────────────────────────
+function _eqFindError(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false,selected=null,xpAwarded=false,selBtns=[];
+  var circ=getCircuitDef(q.circKey);
+  var placedWrong=circ.answers.slice(); placedWrong[q.errorSlot]=q.wrongGate;
+
+  var exprDiv=document.createElement("div");
+  exprDiv.style.cssText="font-size:0.88rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:var(--text);background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:8px 14px;display:inline-block;margin-bottom:0.75rem;";
+  exprDiv.textContent=q.expression; container.appendChild(exprDiv);
+
+  var instr=document.createElement("div");
+  instr.style.cssText="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.75rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  instr.textContent="One gate is wrong. Which gate should be replaced?"; container.appendChild(instr);
+
+  var circWrap=document.createElement("div");
+  circWrap.style.cssText="background:var(--bg);border:0.5px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:0.75rem;display:flex;justify-content:center;overflow-x:auto;";
+  container.appendChild(circWrap);
+
+  function drawCircuit(cols){
+    var svg=circ.buildSVG(placedWrong,cols);
+    // Fix inter-gate wire start position for the wrong gate type
+    if(q.svgPatch){
+      var ox=q.svgPatch[0].split(',')[0], oy=q.svgPatch[0].split(',')[1];
+      var nx=q.svgPatch[1].split(',')[0];
+      svg=svg.replace('x1="'+ox+'" y1="'+oy+'"','x1="'+nx+'" y1="'+oy+'"');
+    }
+    circWrap.innerHTML='<svg viewBox="0 0 '+circ.svgW+' '+circ.svgH+'" width="'+circ.svgW+'" style="display:block;">'+svg+'</svg>';
+  }
+  drawCircuit(null);
+
+  var btnLbl=document.createElement("div");
+  btnLbl.style.cssText="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-bottom:8px;";
+  btnLbl.textContent="Select the incorrect gate:"; container.appendChild(btnLbl);
+
+  var btnGrid=document.createElement("div");
+  btnGrid.style.cssText="display:grid;gap:8px;margin-bottom:4px;grid-template-columns:"+q.gateLabels.map(function(){return"1fr";}).join(" ")+";";
+  q.gateLabels.forEach(function(label,i){
+    var b=document.createElement("button");
+    b.textContent=label;
+    b.style.cssText="padding:10px 8px;font-size:0.78rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;border-radius:var(--radius);border:0.5px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;text-align:center;";
+    b.addEventListener("click",function(){
+      if(finished)return;
+      selected=i;
+      selBtns.forEach(function(btn,j){var s=(j===i);btn.style.border=s?"2px solid var(--accent)":"0.5px solid var(--border)";btn.style.background=s?"rgba(57,127,196,0.15)":"var(--surface2)";btn.style.color=s?"var(--accent)":"var(--text)";});
+    });
+    selBtns.push(b); btnGrid.appendChild(b);
+  });
+  container.appendChild(btnGrid);
+
+  function showExplain(){
+    var existing=container.querySelector(".fe-explain"); if(existing)existing.parentNode.removeChild(existing);
+    var d=document.createElement("div"); d.className="fe-explain";
+    d.style.cssText="margin-top:10px;padding:10px 14px;border-radius:8px;font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;line-height:1.5;border:0.5px solid var(--border);background:var(--surface2);color:var(--text);";
+    d.innerHTML="<strong>Correction:</strong> "+q.explanation; container.appendChild(d);
+  }
+  function markBtns(correctIdx,studentIdx){
+    selBtns.forEach(function(b,i){
+      if(i===correctIdx){b.style.border="2px solid #13a52f";b.style.background="rgba(19,165,47,0.12)";b.style.color="#13a52f";b.textContent=q.gateLabels[i]+" \u2714";}
+      else if(studentIdx!==null&&i===studentIdx&&i!==correctIdx){b.style.border="2px solid #d6453a";b.style.background="rgba(214,69,58,0.1)";b.style.color="#d6453a";b.textContent=q.gateLabels[i]+" \u2718";}
+    });
+    var cols=circ.answers.map(function(a,i){return i===q.errorSlot?"bad":null;});
+    drawCircuit(cols);
+  }
+  function doReset(){
+    finished=false;selected=null;xpAwarded=false;
+    selBtns.forEach(function(b,i){b.style.border="0.5px solid var(--border)";b.style.background="var(--surface2)";b.style.color="var(--text)";b.textContent=q.gateLabels[i];});
+    drawCircuit(null);
+    var ex=container.querySelector(".fe-explain");if(ex)ex.parentNode.removeChild(ex);
+    banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;
+    finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";
+  }
+  function showComplete(){
+    finished=true;banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>Correct!</strong>";
+    checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";
+    if(!xpAwarded){xpAwarded=true;J277.grantXP(5,"exam_fe");}
+  }
+
+  checkBtn.addEventListener("click",function(){
+    if(finished)return;
+    if(selected===null){feedbackEl.textContent="Select a gate first.";feedbackEl.style.color="var(--text-muted)";return;}
+    if(selected===q.errorSlot){markBtns(q.errorSlot,selected);showExplain();showComplete();}
+    else{selBtns[selected].style.border="2px solid #d6453a";selBtns[selected].style.background="rgba(214,69,58,0.1)";selBtns[selected].style.color="#d6453a";feedbackEl.style.color="#d6453a";feedbackEl.textContent="Not that gate \u2014 try again.";}
+  });
+  finishBtn.addEventListener("click",function(){
+    if(finished){doReset();return;}
+    markBtns(q.errorSlot,selected);showExplain();
+    if(selected===q.errorSlot)showComplete();
+    else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";checkBtn.disabled=true;revealBtn.disabled=true;feedbackEl.style.color="#d6453a";feedbackEl.textContent=selected!==null?"Incorrect \u2014 correct gate shown in green.":"No gate selected \u2014 correct gate shown in green.";}
+  });
+  revealBtn.addEventListener("click",function(){
+    if(finished)return;
+    markBtns(q.errorSlot,null);showExplain();
+    revealBtn.textContent="\uD83D\uDCD5 Hide";feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Wrong gate highlighted in red.";
+    checkBtn.disabled=true;finishBtn.disabled=true;finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";
+  });
+}
+
+function _eqEvaluate(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false, selected=null, xpAwarded=false, revealed=false;
+  var btns=[];
+
+  // Full circuit display (gates shown)
+  var circWrap=document.createElement("div");
+  circWrap.style.cssText="background:var(--bg);border:0.5px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:0.75rem;display:flex;justify-content:center;overflow-x:auto;";
+  var circ=getCircuitDef(q.circKey);
+  if(circ) circWrap.innerHTML='<svg viewBox="0 0 '+circ.svgW+' '+circ.svgH+'" width="'+circ.svgW+'" style="display:block;">'+circ.buildSVG(circ.answers.slice(),null)+'</svg>';
+  container.appendChild(circWrap);
+
+  // Input value badges
+  var inputRow=document.createElement("div");
+  inputRow.style.cssText="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;";
+  var givenLbl=document.createElement("span"); givenLbl.style.cssText="font-size:13px;color:var(--text-secondary);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;"; givenLbl.textContent="Given:";
+  inputRow.appendChild(givenLbl);
+  Object.keys(q.inputs).forEach(function(v){
+    var badge=document.createElement("span");
+    badge.style.cssText="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:5px 14px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;font-size:14px;font-weight:500;color:var(--text-primary);";
+    badge.textContent=v+" = "+q.inputs[v]; inputRow.appendChild(badge);
+  });
+  var qLbl=document.createElement("span"); qLbl.style.cssText="font-size:13px;color:var(--text-secondary);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-left:4px;"; qLbl.textContent="What is "+q.outputVar+"?";
+  inputRow.appendChild(qLbl);
+  container.appendChild(inputRow);
+
+  // 0 / 1 answer buttons
+  var btnRow=document.createElement("div"); btnRow.style.cssText="display:flex;gap:10px;margin-bottom:4px;";
+  [0,1].forEach(function(val){
+    var b=document.createElement("button");
+    b.style.cssText="flex:1;padding:14px;font-size:22px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;font-weight:500;border-radius:8px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface2);color:var(--text);transition:all 0.12s;";
+    b.textContent=String(val);
+    b.addEventListener("click",function(){
+      if(finished||revealed)return;
+      selected=val;
+      btns.forEach(function(btn,i){
+        var s=(i===val);
+        btn.style.border=s?"2px solid var(--accent)":"0.5px solid var(--border)";
+        btn.style.background=s?"rgba(57,127,196,0.15)":"var(--surface2)";
+        btn.style.color=s?"var(--accent)":"var(--text)";
+      });
+    });
+    btns.push(b); btnRow.appendChild(b);
+  });
+  container.appendChild(btnRow);
+
+  function markButtons(correctVal, studentVal){
+    btns.forEach(function(b,i){
+      if(i===correctVal){
+        b.style.border="2px solid #13a52f"; b.style.background="rgba(19,165,47,0.12)"; b.style.color="#13a52f";
+        b.textContent=String(i)+" \u2714";
+      } else if(studentVal!==null && i===studentVal && i!==correctVal){
+        b.style.border="2px solid #d6453a"; b.style.background="rgba(214,69,58,0.1)"; b.style.color="#d6453a";
+        b.textContent=String(i)+" \u2718";
+      }
+    });
+  }
+  function revealButtons(){
+    btns.forEach(function(b,i){
+      var c=(i===q.answer);
+      b.style.border=c?"2px solid var(--accent)":"0.5px solid var(--border)";
+      b.style.background=c?"rgba(57,127,196,0.12)":"var(--surface2)";
+      b.style.color=c?"var(--accent)":"var(--text-muted)";
+      b.textContent=String(i);
+    });
+  }
+  function showComplete(){
+    finished=true; banner.style.display="block"; banner.innerHTML="\uD83C\uDF89 <strong>Correct!</strong>";
+    checkBtn.disabled=true; revealBtn.disabled=true; finishBtn.textContent="\uD83D\uDD04 Try again";
+    if(!xpAwarded){xpAwarded=true;J277.grantXP(5,"exam_eval");}
+  }
+  function doReset(){
+    finished=false; selected=null; xpAwarded=false; revealed=false;
+    btns.forEach(function(b,i){b.style.border="0.5px solid var(--border)";b.style.background="var(--surface2)";b.style.color="var(--text)";b.textContent=String(i);});
+    banner.style.display="none"; feedbackEl.textContent=""; checkBtn.disabled=false; revealBtn.disabled=false;
+    finishBtn.textContent="\u2714 Finished"; revealBtn.textContent="\uD83D\uDCD6 Reveal";
+  }
+
+  checkBtn.addEventListener("click",function(){
+    if(finished)return;
+    if(selected===null){feedbackEl.textContent="Select 0 or 1 first.";feedbackEl.style.color="var(--text-muted)";return;}
+    if(selected===q.answer){markButtons(q.answer,selected);showComplete();}
+    else{markButtons(q.answer,selected);feedbackEl.style.color="#d6453a";feedbackEl.textContent="\u2718 Not quite \u2014 try again.";}
+  });
+  finishBtn.addEventListener("click",function(){
+    if(finished){doReset();return;}
+    markButtons(q.answer,selected);
+    if(selected===q.answer)showComplete();
+    else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";feedbackEl.style.color="#d6453a";feedbackEl.textContent="Incorrect \u2014 correct answer shown in green.";}
+  });
+  revealBtn.addEventListener("click",function(){
+    if(finished)return;
+    if(!revealed){revealButtons();revealed=true;revealBtn.textContent="\uD83D\uDCD5 Hide";feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Correct answer: "+q.outputVar+" = "+q.answer+".";checkBtn.disabled=true;finishBtn.disabled=true;}
+    else{doReset();}
+  });
+}
+
+function _eqGateIdentify(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false,revealed=false,xpAwarded={};
+  var selections=q.tables.map(function(){return null;});
+  var allBtns=[],fbLabels=[];
+  var row=document.createElement("div"); row.style.cssText="display:flex;gap:12px;flex-wrap:wrap;";
+  q.tables.forEach(function(tbl,ti){
+    var card=document.createElement("div"); card.style.cssText="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:0.75rem;min-width:140px;";
+    var lbl=document.createElement("div"); lbl.style.cssText="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;"; lbl.textContent="Truth table "+(ti+1); card.appendChild(lbl);
+    var t=document.createElement("table"); t.className="lg-tt";
+    var th2=document.createElement("thead"),htr2=document.createElement("tr");
+    tbl.headers.forEach(function(h){var th=document.createElement("th");th.textContent=h;htr2.appendChild(th);});
+    th2.appendChild(htr2); t.appendChild(th2);
+    var tb2=document.createElement("tbody");
+    tbl.rows.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(v){var td=document.createElement("td");td.textContent=v;tr.appendChild(td);});tb2.appendChild(tr);});
+    t.appendChild(tb2); card.appendChild(t);
+    var selRow=document.createElement("div"); selRow.style.cssText="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;";
+    var cardBtns=[];
+    q.options.forEach(function(opt){
+      var gb=document.createElement("button"); gb.textContent=opt;
+      gb.style.cssText="font-size:0.78rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:4px 10px;border-radius:6px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);";
+      gb.addEventListener("click",function(){if(finished||revealed)return;selections[ti]=opt;cardBtns.forEach(function(b,bi){var s=(q.options[bi]===opt);b.style.borderColor=s?"var(--accent)":"var(--border)";b.style.background=s?"rgba(57,127,196,0.15)":"var(--surface2)";b.style.color=s?"var(--accent)":"var(--text)";});});
+      cardBtns.push(gb); selRow.appendChild(gb);
+    });
+    allBtns.push(cardBtns); card.appendChild(selRow);
+    var fb=document.createElement("div"); fb.style.cssText="font-size:0.85rem;margin-top:4px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;min-height:14px;"; fbLabels.push(fb); card.appendChild(fb); row.appendChild(card);
+  });
+  container.appendChild(row);
+  function doCheck(isFinal){var c=0,newXP=0;q.tables.forEach(function(tbl,ti){var sel=selections[ti];if(sel===tbl.answer){c++;fbLabels[ti].style.color="#13a52f";fbLabels[ti].textContent="\u2714 Correct";if(!xpAwarded[ti]){xpAwarded[ti]=true;newXP+=3;}}else if(sel||isFinal){fbLabels[ti].style.color="#d6453a";fbLabels[ti].textContent=sel?"\u2718 Try again":"\u2718 No answer";}});if(newXP>0)J277.grantXP(newXP,"exam_gi");return c;}
+  function showComplete(){finished=true;J277.grantXP(5,"exam_gi_b");banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>Both correct!</strong>";checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";}
+  function doReset(){finished=false;revealed=false;selections=q.tables.map(function(){return null;});xpAwarded={};allBtns.forEach(function(cb){cb.forEach(function(b){b.style.borderColor="var(--border)";b.style.background="var(--surface2)";b.style.color="var(--text)";});});fbLabels.forEach(function(f){f.textContent="";});banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";}
+  checkBtn.addEventListener("click",function(){if(finished)return;var c=doCheck(false);feedbackEl.style.color=c<q.tables.length?"#d6453a":"#13a52f";feedbackEl.textContent=c+"/"+q.tables.length+" correct";if(c===q.tables.length)showComplete();});
+  finishBtn.addEventListener("click",function(){if(finished){doReset();return;}var c=doCheck(true);if(c===q.tables.length)showComplete();else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";feedbackEl.style.color="#d6453a";feedbackEl.textContent=c+"/"+q.tables.length+" correct.";}});
+  revealBtn.addEventListener("click",function(){if(finished)return;if(!revealed){q.tables.forEach(function(tbl,ti){allBtns[ti].forEach(function(b,bi){var c=(q.options[bi]===tbl.answer);b.style.borderColor=c?"#13a52f":"var(--border)";b.style.background=c?"rgba(19,165,47,0.12)":"var(--surface2)";b.style.color=c?"#13a52f":"var(--text)";});fbLabels[ti].style.color="var(--accent)";fbLabels[ti].textContent="Answer: "+tbl.answer;});revealed=true;revealBtn.textContent="\uD83D\uDCD5 Hide";feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Correct answers shown in green.";checkBtn.disabled=true;finishBtn.disabled=true;}else{q.tables.forEach(function(tbl,ti){allBtns[ti].forEach(function(b,bi){var s=(selections[ti]===q.options[bi]);b.style.borderColor=s?"var(--accent)":"var(--border)";b.style.background=s?"rgba(57,127,196,0.15)":"var(--surface2)";b.style.color=s?"var(--accent)":"var(--text)";});fbLabels[ti].textContent="";});revealed=false;revealBtn.textContent="\uD83D\uDCD6 Reveal";feedbackEl.textContent="";checkBtn.disabled=false;finishBtn.disabled=false;}});
+}
+
+// ── MCQ renderer ───────────────────────────────────────────
+function _eqMCQ(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false,selected=null,xpAwarded=false,optBtns=[];
+  var qt=document.createElement("div"); qt.style.cssText="font-size:0.85rem;color:var(--text);margin-bottom:0.75rem;"; qt.textContent=q.question; container.appendChild(qt);
+  var grid=document.createElement("div"); grid.style.cssText="display:grid;grid-template-columns:1fr;gap:8px;";
+  q.options.forEach(function(opt,i){
+    var btn=document.createElement("button"); btn.textContent=opt;
+    btn.style.cssText="font-size:0.82rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:10px 14px;border-radius:8px;cursor:pointer;text-align:left;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);transition:all 0.15s;";
+    btn.addEventListener("mouseover",function(){if(selected!==i)btn.style.borderColor="var(--accent)";});
+    btn.addEventListener("mouseout",function(){if(selected!==i)btn.style.borderColor="var(--border)";});
+    btn.addEventListener("click",function(){if(finished)return;selected=i;optBtns.forEach(function(b,j){var s=(j===i);b.style.borderColor=s?"var(--accent)":"var(--border)";b.style.background=s?"rgba(57,127,196,0.15)":"var(--surface2)";b.style.color=s?"var(--accent)":"var(--text)";});});
+    optBtns.push(btn); grid.appendChild(btn);
+  });
+  container.appendChild(grid);
+  function markResult(){var c=(selected===q.correct);if(selected!==null){optBtns[selected].style.borderColor=c?"#13a52f":"#d6453a";optBtns[selected].style.background=c?"rgba(19,165,47,0.15)":"rgba(214,69,58,0.1)";optBtns[selected].style.color=c?"#13a52f":"#d6453a";}if(!c){optBtns[q.correct].style.borderColor="#13a52f";optBtns[q.correct].style.background="rgba(19,165,47,0.15)";optBtns[q.correct].style.color="#13a52f";}if(c&&!xpAwarded){xpAwarded=true;J277.grantXP(5,"exam_mcq");}return c;}
+  function showComplete(){finished=true;banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>Correct!</strong>";checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";}
+  function doReset(){finished=false;selected=null;xpAwarded=false;optBtns.forEach(function(b){b.style.borderColor="var(--border)";b.style.background="var(--surface2)";b.style.color="var(--text)";});banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";}
+  checkBtn.addEventListener("click",function(){if(finished||selected===null)return;var c=markResult();feedbackEl.style.color=c?"#13a52f":"#d6453a";feedbackEl.textContent=c?"Correct \u2714":"Incorrect \u2014 correct answer shown in green.";if(c)showComplete();});
+  finishBtn.addEventListener("click",function(){if(finished){doReset();return;}markResult();if(selected===q.correct)showComplete();else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";feedbackEl.style.color="#d6453a";feedbackEl.textContent=(selected!==null?"Incorrect":"No answer selected")+" \u2014 correct shown in green.";}});
+  revealBtn.addEventListener("click",function(){if(finished)return;optBtns.forEach(function(b,i){var c=(i===q.correct);b.style.borderColor=c?"var(--accent)":"var(--border)";b.style.background=c?"rgba(57,127,196,0.12)":"var(--surface2)";b.style.color=c?"var(--accent)":"var(--text)";});feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Correct answer shown in blue.";checkBtn.disabled=true;finishBtn.disabled=true;revealBtn.textContent="\uD83D\uDCD5 Hide";});
+}
+
+// ── Number input renderer ──────────────────────────────────
+function _eqNumberInput(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false,xpAwarded=false;
+  var qt=document.createElement("div"); qt.style.cssText="font-size:0.88rem;color:var(--text);margin-bottom:0.75rem;white-space:pre-line;"; qt.textContent=q.question; container.appendChild(qt);
+  var wrap=document.createElement("div"); wrap.style.cssText="display:flex;align-items:center;gap:12px;";
+  var inp=document.createElement("input"); inp.type="number"; inp.min="1"; inp.max="256";
+  inp.style.cssText="width:80px;padding:8px;font-size:1.1rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);";
+  wrap.appendChild(inp);
+  if(q.hint){var h=document.createElement("div");h.style.cssText="font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";h.textContent=q.hint;wrap.appendChild(h);}
+  container.appendChild(wrap);
+  function check(){var v=parseInt(inp.value),c=(v===q.answer);inp.style.borderColor=c?"#13a52f":"#d6453a";inp.style.background=c?"rgba(19,165,47,0.12)":"rgba(214,69,58,0.1)";if(c&&!xpAwarded){xpAwarded=true;J277.grantXP(5,"exam_num");}return c;}
+  function showComplete(){finished=true;banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>Correct!</strong>";checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";}
+  checkBtn.addEventListener("click",function(){if(finished||!inp.value)return;if(check())showComplete();else{feedbackEl.style.color="#d6453a";feedbackEl.textContent="Not quite \u2014 try again.";}});
+  finishBtn.addEventListener("click",function(){if(finished){inp.value="";inp.style.borderColor="var(--border)";inp.style.background="var(--surface2)";finished=false;xpAwarded=false;banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";return;}if(check())showComplete();else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";feedbackEl.style.color="#d6453a";feedbackEl.textContent="Incorrect. "+q.guidance;}});
+  revealBtn.addEventListener("click",function(){if(finished)return;inp.value=q.answer;inp.style.borderColor="var(--accent)";inp.style.background="rgba(57,127,196,0.12)";feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Answer: "+q.answer+". "+q.guidance;checkBtn.disabled=true;finishBtn.disabled=true;revealBtn.textContent="\uD83D\uDCD5 Hide";});
+}
+
+// ── Build circuit renderer ─────────────────────────────────
+function _eqBuild(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var circ=getCircuitDef(q.circKey); if(!circ){container.innerHTML="<p style='color:var(--text-muted)'>Circuit not found.</p>";return;}
+  var placed=circ.answers.map(function(){return null;}),checkCols=null,finished=false,revealed=false,revealSaved=null,xpAwarded={};
+  
+  var circWrap=document.createElement("div"); circWrap.style.cssText="background:var(--bg);border:0.5px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:0.75rem;display:flex;justify-content:center;overflow-x:auto;"; container.appendChild(circWrap);
+  function redraw(){circWrap.innerHTML='<svg viewBox="0 0 '+circ.svgW+' '+circ.svgH+'" width="'+circ.svgW+'" style="display:block;">'+circ.buildSVG(placed,checkCols)+'</svg>';var sv=circWrap.querySelector("svg");sv.addEventListener("click",function(e){if(finished||revealed)return;var cur=e.target;while(cur&&cur!==sv){var v=cur.getAttribute?cur.getAttribute("data-slot"):null;if(v!==null){var idx=parseInt(v);if(placed[idx]!==null){placed[idx]=null;checkCols=null;redraw();}return;}cur=cur.parentElement;}});}
+  var palWrap=document.createElement("div"); palWrap.style.cssText="margin-bottom:0.75rem;";
+  var palLbl=document.createElement("div"); palLbl.style.cssText="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;"; palLbl.textContent="Gate palette \u2014 drag into a slot (click placed gate to remove)"; palWrap.appendChild(palLbl);
+  var palRow=document.createElement("div"); palRow.style.cssText="display:flex;gap:10px;flex-wrap:wrap;";
+  ["AND","OR","NOT"].forEach(function(type){var tile=document.createElement("div");tile.style.cssText="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:6px 12px;cursor:grab;user-select:none;display:flex;flex-direction:column;align-items:center;gap:3px;transition:border-color 0.15s;";tile.innerHTML=_bcPalSVG(type)+'<div style="font-size:12px;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;">'+type+'</div>';tile.addEventListener("mouseover",function(){tile.style.borderColor="var(--accent)";});tile.addEventListener("mouseout",function(){tile.style.borderColor="var(--border)";});tile.addEventListener("pointerdown",function(e){if(finished||revealed)return;_bcStartDrag(type,e,placed,checkCols,circ,circWrap,redraw,xpAwarded);});palRow.appendChild(tile);});
+  palWrap.appendChild(palRow); container.appendChild(palWrap);
+  function doCheck(isFinal){var correct=0,wrong=0,newXP=0;checkCols=placed.map(function(p,i){if(!p){if(isFinal)wrong++;return isFinal?"bad":null;}if(p===circ.answers[i]){correct++;var ck=q.circKey+":"+i;if(!xpAwarded[ck]){xpAwarded[ck]=true;newXP+=5;}return"ok";}wrong++;return"bad";});if(newXP>0)J277.grantXP(newXP,"exam_build");redraw();return{correct:correct,wrong:wrong,total:circ.answers.length};}
+  function showComplete(){finished=true;J277.grantXP(15,"exam_build_b");banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>Circuit built correctly!</strong>";checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";}
+  function doReset(){placed=circ.answers.map(function(){return null;});checkCols=null;finished=false;revealed=false;revealSaved=null;xpAwarded={};banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";redraw();}
+  checkBtn.addEventListener("click",function(){if(finished)return;if(placed.every(function(p){return!p;})){feedbackEl.textContent="Drag some gates first.";return;}var r=doCheck(false);feedbackEl.style.color=r.wrong>0?"#d6453a":"#13a52f";feedbackEl.textContent=r.correct+"/"+r.total+" correct"+(r.wrong===0&&r.correct===r.total?" \u2714":"");if(r.correct===r.total)showComplete();});
+  finishBtn.addEventListener("click",function(){if(finished){doReset();return;}var r=doCheck(true);if(r.correct===r.total)showComplete();else{feedbackEl.style.color="#d6453a";feedbackEl.textContent=r.correct+"/"+r.total+" \u2014 red slots need fixing.";finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";}});
+  revealBtn.addEventListener("click",function(){if(finished)return;if(!revealed){revealSaved=placed.slice();placed=circ.answers.slice();checkCols=circ.answers.map(function(a,i){return revealSaved[i]===a?"ok":"reveal";});revealed=true;revealBtn.textContent="\uD83D\uDCD5 Hide";feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Green=you had it right. Blue=revealed.";checkBtn.disabled=true;finishBtn.disabled=true;redraw();}else{placed=revealSaved;checkCols=null;revealed=false;revealBtn.textContent="\uD83D\uDCD6 Reveal";feedbackEl.textContent="";checkBtn.disabled=false;finishBtn.disabled=false;redraw();}});
+  redraw();
+}
+
+// ── Q12 circuit MCQ ────────────────────────────────────────
+function _eqQ12SVGs(){
+  var s="var(--text)",sw=2;
+  function optA(){ // AND → NOT (wrong)
+    var c="";
+    c+='<line x1="18" y1="36" x2="62" y2="36" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="15" y="40" text-anchor="end" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="'+s+'">A</text>';
+    c+='<line x1="18" y1="54" x2="62" y2="54" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="15" y="58" text-anchor="end" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="'+s+'">B</text>';
+    c+=drawAND(82,45,{h:36,w:40,stroke:s,strokeWidth:sw});
+    c+='<line x1="120" y1="45" x2="139" y2="45" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+=drawNOT(155,45,{h:28,stroke:s,strokeWidth:sw});
+    c+='<line x1="182" y1="45" x2="197" y2="45" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="199" y="49" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="var(--text-muted)">P</text>';
+    return '<svg viewBox="0 0 215 90" width="198">'+c+'</svg>';
+  }
+  function optB(){ // OR → NOT (correct)
+    var c="";
+    c+='<line x1="18" y1="36" x2="58" y2="36" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="15" y="40" text-anchor="end" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="'+s+'">A</text>';
+    c+='<line x1="18" y1="54" x2="58" y2="54" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="15" y="58" text-anchor="end" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="'+s+'">B</text>';
+    c+=drawOR(80,45,{h:36,w:44,stroke:s,strokeWidth:sw});
+    c+='<line x1="102" y1="45" x2="132" y2="45" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+=drawNOT(148,45,{h:28,stroke:s,strokeWidth:sw});
+    c+='<line x1="175" y1="45" x2="190" y2="45" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="192" y="49" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="var(--text-muted)">P</text>';
+    return '<svg viewBox="0 0 208 90" width="192">'+c+'</svg>';
+  }
+  function optC(){ // NOT A, NOT B → AND (De Morgan trap)
+    var c="";
+    c+='<line x1="18" y1="30" x2="38" y2="30" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="15" y="34" text-anchor="end" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="'+s+'">A</text>';
+    c+=drawNOT(52,30,{h:26,stroke:s,strokeWidth:sw});
+    c+='<line x1="78" y1="30" x2="92" y2="30" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<line x1="18" y1="60" x2="38" y2="60" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="15" y="64" text-anchor="end" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="'+s+'">B</text>';
+    c+=drawNOT(52,60,{h:26,stroke:s,strokeWidth:sw});
+    c+='<line x1="78" y1="60" x2="92" y2="60" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+=drawAND(115,45,{h:60,w:46,stroke:s,strokeWidth:sw});
+    // AND rightX = 115+23+30 = 168
+    c+='<line x1="168" y1="45" x2="183" y2="45" stroke="'+s+'" stroke-width="'+sw+'"/>';
+    c+='<text x="185" y="49" font-size="11" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" fill="var(--text-muted)">P</text>';
+    return '<svg viewBox="0 0 200 90" width="185">'+c+'</svg>';
+  }
+  return [optA(),optB(),optC()];
+}
+
+function _eqCircuitMCQ(q,container,checkBtn,revealBtn,finishBtn,feedbackEl,banner){
+  var finished=false,selected=null,xpAwarded=false,optCards=[];
+  var qt=document.createElement("div"); qt.style.cssText="font-size:0.85rem;color:var(--text);margin-bottom:0.75rem;"; qt.textContent=q.question; container.appendChild(qt);
+  var svgs=_eqQ12SVGs();
+  var grid=document.createElement("div"); grid.style.cssText="display:flex;gap:10px;flex-wrap:wrap;";
+  svgs.forEach(function(svg,i){
+    var card=document.createElement("div");
+    card.style.cssText="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;transition:border-color 0.15s;display:flex;flex-direction:column;align-items:center;gap:6px;";
+    card.innerHTML=svg;
+    var lbl=document.createElement("div"); lbl.style.cssText="font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;"; lbl.textContent="Option "+String.fromCharCode(65+i); card.appendChild(lbl);
+    card.addEventListener("mouseover",function(){if(selected!==i)card.style.borderColor="var(--accent)";});
+    card.addEventListener("mouseout",function(){if(selected!==i)card.style.borderColor="var(--border)";});
+    card.addEventListener("click",function(){if(finished)return;selected=i;optCards.forEach(function(c,j){var s=(j===i);c.style.borderColor=s?"var(--accent)":"var(--border)";c.style.background=s?"rgba(57,127,196,0.08)":"var(--surface2)";});});
+    optCards.push(card); grid.appendChild(card);
+  });
+  container.appendChild(grid);
+  var note=document.createElement("div"); note.style.cssText="font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-top:8px;"; note.textContent="\uD83D\uDCA1 Hint: Option C shows a De Morgan\u2019s equivalent \u2014 is that the same as the expression written?"; container.appendChild(note);
+  function doCheck(){var c=(selected===q.correct);optCards.forEach(function(card,i){if(i===q.correct){card.style.borderColor="#13a52f";card.style.background="rgba(19,165,47,0.1)";}else if(i===selected&&!c){card.style.borderColor="#d6453a";card.style.background="rgba(214,69,58,0.08)";}});if(c&&!xpAwarded){xpAwarded=true;J277.grantXP(5,"exam_cmcq");}return c;}
+  function showComplete(){finished=true;banner.style.display="block";banner.innerHTML="\uD83C\uDF89 <strong>Correct!</strong>";checkBtn.disabled=true;revealBtn.disabled=true;finishBtn.textContent="\uD83D\uDD04 Try again";}
+  function doReset(){finished=false;selected=null;xpAwarded=false;optCards.forEach(function(c){c.style.borderColor="var(--border)";c.style.background="var(--surface2)";});banner.style.display="none";feedbackEl.textContent="";checkBtn.disabled=false;revealBtn.disabled=false;finishBtn.textContent="\u2714 Finished";revealBtn.textContent="\uD83D\uDCD6 Reveal";}
+  checkBtn.addEventListener("click",function(){if(finished||selected===null)return;var c=doCheck();feedbackEl.style.color=c?"#13a52f":"#d6453a";feedbackEl.textContent=c?"Correct \u2714":"Incorrect \u2014 correct answer shown in green.";if(c)showComplete();});
+  finishBtn.addEventListener("click",function(){if(finished){doReset();return;}doCheck();if(selected===q.correct)showComplete();else{finished=true;finishBtn.textContent="\uD83D\uDD04 Try again";feedbackEl.style.color="#d6453a";feedbackEl.textContent=(selected!==null?"Incorrect":"No answer selected")+" \u2014 correct shown in green.";}});
+  revealBtn.addEventListener("click",function(){if(finished)return;optCards.forEach(function(c,i){var corr=(i===q.correct);c.style.borderColor=corr?"var(--accent)":"var(--border)";c.style.background=corr?"rgba(57,127,196,0.08)":"var(--surface2)";});feedbackEl.style.color="var(--text-muted)";feedbackEl.textContent="Correct answer highlighted in blue.";checkBtn.disabled=true;finishBtn.disabled=true;revealBtn.textContent="\uD83D\uDCD5 Hide";});
+}
+
+
+
+function showBuildChallenge() {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar("Build a circuit", "Challenge"));
+  var desc = document.createElement("div");
+  desc.style.cssText = "font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5;";
+  desc.textContent = "Drag AND, OR, and NOT gates from the palette into the correct positions to build each circuit. Click a placed gate to remove it.";
+  el.appendChild(desc);
+  var grid = document.createElement("div");
+  grid.className = "lg-btn-grid";
+  BC_CIRCUITS.forEach(function(c) {
+    var btn = document.createElement("button");
+    btn.className = "lg-btn challenge";
+    btn.textContent = c.label;
+    btn.addEventListener("click", function(){ showBuildQuestion(c.key); });
+    grid.appendChild(btn);
+  });
+  el.appendChild(grid);
+}
+
+function showBuildQuestion(key) {
+  var circ = null;
+  for (var _i=0;_i<BC_CIRCUITS.length;_i++) { if (BC_CIRCUITS[_i].key===key) { circ=BC_CIRCUITS[_i]; break; } }
+  var circIdx = _i;
+
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar("Build a circuit", "Challenge"));
+
+  // Question counter
+  var counter = document.createElement("div");
+  counter.style.cssText = "font-size:0.85rem;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-bottom:0.5rem;";
+  counter.textContent = "Question " + (circIdx + 1) + " of " + BC_CIRCUITS.length;
+  el.appendChild(counter);
+
+  // Target
+  var tgt = document.createElement("div");
+  tgt.style.cssText = "font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:0.75rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:8px 14px;display:inline-block;";
+  tgt.textContent = "Build: " + circ.label;
+  el.appendChild(tgt);
+
+  // State
+  var placed = circ.answers.map(function(){ return null; });
+  var checkCols = null;
+  var revealed = false;
+  var finished = false;
+  var revealSaved = null;
+  var xpAwarded = {};
+
+  // Circuit container
+  var circWrap = document.createElement("div");
+  circWrap.style.cssText = "background:var(--bg);border:0.5px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:0.75rem;display:flex;justify-content:center;overflow-x:auto;";
+  el.appendChild(circWrap);
+
+  function redraw() {
+    circWrap.innerHTML = '<svg viewBox="0 0 '+circ.svgW+' '+circ.svgH+'" width="'+circ.svgW+'" style="display:block;">'+circ.buildSVG(placed,checkCols)+'</svg>';
+    var svgEl = circWrap.querySelector("svg");
+    svgEl.addEventListener("click", function(e) {
+      if (finished || revealed) return;
+      var cur = e.target;
+      while (cur && cur !== svgEl) {
+        var v = cur.getAttribute ? cur.getAttribute("data-slot") : null;
+        if (v !== null) {
+          var idx = parseInt(v);
+          if (placed[idx] !== null) { placed[idx]=null; checkCols=null; redraw(); }
+          return;
+        }
+        cur = cur.parentElement;
+      }
+    });
+  }
+
+  // Palette
+  var palWrap = document.createElement("div");
+  palWrap.style.cssText = "margin-bottom:0.75rem;";
+  var palLbl = document.createElement("div");
+  palLbl.style.cssText = "font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  palLbl.textContent = "Gate palette — drag a gate into a slot (click placed gate to remove)";
+  palWrap.appendChild(palLbl);
+  var palRow = document.createElement("div");
+  palRow.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;";
+  ["AND","OR","NOT"].forEach(function(type) {
+    var tile = document.createElement("div");
+    tile.style.cssText = "background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:6px 12px;cursor:grab;user-select:none;display:flex;flex-direction:column;align-items:center;gap:3px;transition:border-color 0.15s;";
+    tile.innerHTML = _bcPalSVG(type)+'<div style="font-size:12px;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;">'+type+'</div>';
+    tile.addEventListener("mouseover",function(){tile.style.borderColor="var(--accent)";});
+    tile.addEventListener("mouseout", function(){tile.style.borderColor="var(--border)";});
+    tile.addEventListener("pointerdown",function(e){
+      if (finished||revealed) return;
+      _bcStartDrag(type,e,placed,checkCols,circ,circWrap,redraw,xpAwarded);
+    });
+    palRow.appendChild(tile);
+  });
+  palWrap.appendChild(palRow);
+  el.appendChild(palWrap);
+
+  // Controls
+  var ctrlBar = document.createElement("div");
+  ctrlBar.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;";
+  var checkBtn  = mkCtrlBtn("\u2713 Check now","primary");
+  var revealBtn = mkCtrlBtn("\uD83D\uDCD6 Reveal answers","muted");
+  var finishBtn = mkCtrlBtn("\u2714 Finished","primary");
+  var feedbackEl = document.createElement("span");
+  feedbackEl.style.cssText = "font-size:13px;color:var(--text-muted);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin-left:4px;";
+  ctrlBar.appendChild(checkBtn); ctrlBar.appendChild(revealBtn); ctrlBar.appendChild(finishBtn); ctrlBar.appendChild(feedbackEl);
+  el.appendChild(ctrlBar);
+
+  var completionBanner = document.createElement("div");
+  completionBanner.className = "lg-completion";
+  el.appendChild(completionBanner);
+
+  // Navigation
+  var navBar = document.createElement("div");
+  navBar.style.cssText = "display:flex;justify-content:space-between;margin-top:0.75rem;padding-top:0.75rem;border-top:0.5px solid var(--border);";
+  var leftNav=document.createElement("div"), rightNav=document.createElement("div");
+  navBar.appendChild(leftNav); navBar.appendChild(rightNav);
+  function mkNavBtn2(txt,fn,isPrimary) {
+    var b=document.createElement("button");
+    b.textContent=txt;
+    b.style.cssText="font-size:0.85rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:5px 14px;border-radius:6px;cursor:pointer;border:0.5px solid "+(isPrimary?"var(--accent)":"var(--border)")+";background:"+(isPrimary?"rgba(57,127,196,0.12)":"var(--surface2)")+";color:"+(isPrimary?"var(--accent)":"var(--text-muted)")+";";
+    b.addEventListener("click",fn); return b;
+  }
+  if (circIdx>0) leftNav.appendChild(mkNavBtn2("\u2190 "+BC_CIRCUITS[circIdx-1].label, function(){ showBuildQuestion(BC_CIRCUITS[circIdx-1].key); }, false));
+  if (circIdx<BC_CIRCUITS.length-1) rightNav.appendChild(mkNavBtn2(BC_CIRCUITS[circIdx+1].label+" \u2192", function(){ showBuildQuestion(BC_CIRCUITS[circIdx+1].key); }, true));
+  else rightNav.appendChild(mkNavBtn2("\u2302 Back to menu", showLanding, true));
+  el.appendChild(navBar);
+
+  // ── Button handlers ───────────────────────────────────────
+  function doCheck(isFinal) {
+    var correct=0, wrong=0, newXP=0;
+    checkCols = placed.map(function(p,i) {
+      if (!p) { if(isFinal) wrong++; return isFinal?"bad":null; }
+      if (p===circ.answers[i]) {
+        correct++;
+        var ck=key+":"+i;
+        if (!xpAwarded[ck]){ xpAwarded[ck]=true; newXP+=5; }
+        return "ok";
+      }
+      wrong++; return "bad";
+    });
+    if (newXP>0) J277.grantXP(newXP,"build_circuit");
+    redraw();
+    return {correct:correct, wrong:wrong, total:circ.answers.length};
+  }
+
+  function showComplete() {
+    finished=true;
+    J277.grantXP(15,"build_circuit_complete");
+    completionBanner.style.display="block";
+    completionBanner.innerHTML="\uD83C\uDF89 <strong>Circuit built correctly!</strong>";
+    feedbackEl.textContent="";
+    checkBtn.disabled=true; revealBtn.disabled=true;
+    finishBtn.textContent="\uD83D\uDD04 Try again";
+  }
+
+  function doReset() {
+    placed=circ.answers.map(function(){return null;});
+    checkCols=null; revealed=false; finished=false; revealSaved=null; xpAwarded={};
+    completionBanner.style.display="none";
+    feedbackEl.textContent="";
+    checkBtn.disabled=false; revealBtn.disabled=false;
+    finishBtn.textContent="\u2714 Finished"; revealBtn.textContent="\uD83D\uDCD6 Reveal answers";
+    redraw();
+  }
+
+  checkBtn.addEventListener("click",function(){
+    if (finished) return;
+    if (placed.every(function(p){return !p;})){feedbackEl.textContent="Drag some gates first."; return;}
+    var r=doCheck(false);
+    feedbackEl.style.color=r.wrong>0?"#d6453a":"#13a52f";
+    feedbackEl.textContent=r.correct+"/"+r.total+" correct"+(r.wrong===0&&r.correct===r.total?" \u2714":"");
+    if (r.correct===r.total) showComplete();
+  });
+
+  finishBtn.addEventListener("click",function(){
+    if (finished){doReset();return;}
+    var r=doCheck(true);
+    if (r.correct===r.total){showComplete();}
+    else{
+      feedbackEl.style.color="#d6453a";
+      feedbackEl.textContent=r.correct+"/"+r.total+" — red slots need fixing.";
+      finished=true; finishBtn.textContent="\uD83D\uDD04 Try again";
+    }
+  });
+
+  revealBtn.addEventListener("click",function(){
+    if (finished) return;
+    if (!revealed) {
+      revealSaved=placed.slice();
+      placed=circ.answers.slice();
+      checkCols=circ.answers.map(function(ans,i){ return revealSaved[i]===ans?"ok":"reveal"; });
+      revealed=true; revealBtn.textContent="\uD83D\uDCD5 Hide answers";
+      feedbackEl.style.color="var(--text-muted)";
+      feedbackEl.textContent="Green = you had it right. Blue = revealed.";
+      checkBtn.disabled=true; finishBtn.disabled=true; redraw();
+    } else {
+      placed=revealSaved; checkCols=null; revealed=false;
+      revealBtn.textContent="\uD83D\uDCD6 Reveal answers"; feedbackEl.textContent="";
+      checkBtn.disabled=false; finishBtn.disabled=false; redraw();
+    }
+  });
+
+  redraw();
+}
+
+// Drag state (shared, one drag at a time)
+var _bcDrag = null;
+
+function _bcStartDrag(gateType, e, placed, checkCols, circ, circWrap, redraw, xpAwarded) {
+  var ghost = document.createElement("div");
+  ghost.innerHTML = _bcPalSVG(gateType);
+  ghost.style.cssText = "position:fixed;pointer-events:none;z-index:9999;opacity:0.88;background:var(--surface2);border:1.5px solid var(--accent);border-radius:8px;padding:4px 8px;";
+  ghost.style.left=(e.clientX-40)+"px"; ghost.style.top=(e.clientY-30)+"px";
+  document.body.appendChild(ghost);
+  _bcDrag={type:gateType, ghost:ghost, placed:placed, checkCols:checkCols, circ:circ, circWrap:circWrap, redraw:redraw, xpAwarded:xpAwarded};
+  document.addEventListener("pointermove",_bcMove);
+  document.addEventListener("pointerup",_bcEnd);
+  e.preventDefault();
+}
+
+function _bcMove(e) {
+  if (!_bcDrag) return;
+  _bcDrag.ghost.style.left=(e.clientX-40)+"px";
+  _bcDrag.ghost.style.top=(e.clientY-30)+"px";
+}
+
+function _bcEnd(e) {
+  if (!_bcDrag) return;
+  var d=_bcDrag; _bcDrag=null;
+  document.removeEventListener("pointermove",_bcMove);
+  document.removeEventListener("pointerup",_bcEnd);
+  // Hide ghost for hit testing
+  d.ghost.style.display="none";
+  var hitEl=document.elementFromPoint(e.clientX, e.clientY);
+  document.body.removeChild(d.ghost);
+  // Find data-slot attribute by traversing up
+  var slotIdx=null, cur=hitEl;
+  while (cur) {
+    var v=cur.getAttribute?cur.getAttribute("data-slot"):null;
+    if (v!==null){slotIdx=parseInt(v);break;}
+    cur=cur.parentElement;
+  }
+  if (slotIdx!==null) {
+    d.placed[slotIdx]=d.type;
+    d.checkCols=null;
+    d.redraw();
+  }
+}
+
+
+function _landingIcon(label){
+  function mini(type){
+    var w="#5a7591", g="";
+    if (type==="AND") g='<path d="M2 11H14M2 23H14M42 17H50" stroke="'+w+'" stroke-width="3" stroke-linecap="round"/>'+drawAND(22,17,{h:26,w:18,strokeWidth:2});
+    if (type==="OR")  g='<path d="M2 11H17M2 23H17M38 17H50" stroke="'+w+'" stroke-width="3" stroke-linecap="round"/>'+drawOR(26,17,{h:26,w:24,strokeWidth:2});
+    if (type==="NOT") g='<path d="M2 17H13M47 17H51" stroke="'+w+'" stroke-width="3" stroke-linecap="round"/>'+drawNOT(22,17,{h:22,strokeWidth:2});
+    return '<svg viewBox="0 0 52 34">'+g+'</svg>';
+  }
+  if (/^AND/.test(label)) return mini("AND");
+  if (/^OR/.test(label)) return mini("OR");
+  if (/^NOT/.test(label)) return mini("NOT");
+  var em={"Logic circuits":"🔌","Identify the circuit":"🔎","Build a circuit":"🧩","Write the expression":"✏️","Exam questions":"📝"};
+  return em[label]||"⭐";
+}
+function showLanding() {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  var div = document.createElement("div");
+  div.className = "lg-landing";
+  var intro = document.createElement("div");
+  intro.className = "lg-intro";
+  intro.innerHTML = '<div class="ico">💡</div><div><h2>Logic gates</h2><p>Start with the tutorials to switch the inputs on and off and watch the bulb. Then try the challenges. All gates use the British Standard (OCR) symbols.</p></div>';
+  div.appendChild(intro);
+  var cats = document.createElement("div");
+  cats.className = "lg-cats";
+  var pills = ["Learn","Practise","Practise","Test yourself"];
+  CATEGORIES.forEach(function(cat, ci) {
+    var box = document.createElement("div");
+    box.className = "lg-cat c" + (ci+1);
+    var h = document.createElement("div");
+    h.className = "lg-category-heading";
+    h.innerHTML = '<span></span><span class="pill"></span>';
+    h.firstChild.textContent = cat.heading.replace("Challenges \u2014 ","");
+    h.lastChild.textContent = pills[ci] || "";
+    box.appendChild(h);
+    var grid = document.createElement("div");
+    grid.className = "lg-btn-grid";
+    cat.items.forEach(function(item) {
+      var btn = document.createElement("button");
+      btn.className = "lg-btn " + (item.cls || "");
+      btn.innerHTML = '<span class="gi">' + _landingIcon(item.label) + '</span><span></span>';
+      btn.lastChild.textContent = item.label;
+      if (item.action) {
+        btn.addEventListener("click", item.action);
+      } else {
+        btn.disabled = true;
+      }
+      grid.appendChild(btn);
+    });
+    box.appendChild(grid);
+    cats.appendChild(box);
+  });
+  div.appendChild(cats);
+  el.appendChild(div);
+}
+
+// ── Top bar helper ─────────────────────────────────────────────
+function makeTopBar(title, badge) {
+  var bar = document.createElement("div");
+  bar.className = "lg-topbar";
+  var back = document.createElement("button");
+  back.className = "lg-back-btn";
+  back.textContent = "\u2190 Menu";
+  back.addEventListener("click", showLanding);
+  var t = document.createElement("span");
+  t.className = "lg-title";
+  t.textContent = title;
+  bar.appendChild(back);
+  bar.appendChild(t);
+  if (badge) {
+    var b = document.createElement("span");
+    b.className = "lg-badge";
+    b.textContent = badge;
+    bar.appendChild(b);
+  }
+  return bar;
+}
+
+// ── Bulb SVG (on = yellow, off = grey) ───────────────────────
+function bulbSVG(on) {
+  // Illustrated light bulb: glows yellow with rays when the output is 1
+  var rays = on ? '<g class="rays" stroke="#ffb800" stroke-width="4" stroke-linecap="round"><path d="M32 -6V2M6 4L12 10M58 4L52 10M-2 30H6M58 30H66"/></g>' : '';
+  return '<svg class="lg-bulb-icon" viewBox="0 0 64 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bulb '+(on?'on (1)':'off (0)')+'">' + rays +
+    '<path d="M32 8C18 8 9 18 9 30C9 40 15 45 19 51C21 54 22 57 22 60H42C42 57 43 54 45 51C49 45 55 40 55 30C55 18 46 8 32 8Z" fill="url(#' + (on?'lgGlass':'lgGlassOff') + ')" stroke="' + (on?'#b07400':'#6f8399') + '" stroke-width="3" stroke-linejoin="round"/>' +
+    '<path d="M18 26C19 20 23 16 28 15" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>' +
+    '<path d="M26 58V44L29 38L32 44L35 38L38 44V58" fill="none" stroke="' + (on?'#c75a00':'#8a9bad') + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<rect x="21" y="60" width="22" height="16" rx="3" fill="#7d8e9f" stroke="#2c3b4a" stroke-width="2.5"/>' +
+    '<path d="M21 65H43M21 70H43" stroke="#2c3b4a" stroke-width="2"/>' +
+    '<path d="M27 76H37L35 81H29Z" fill="#2c3b4a"/>' +
+    '<rect x="10" y="88" width="44" height="22" rx="11" fill="' + (on?'#13a52f':'#8196ad') + '"/>' +
+    '<text x="32" y="104" text-anchor="middle" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="14" font-weight="900" fill="#fff">Q = ' + (on ? '1' : '0') + '</text>' +
+    '</svg>';
+}
+
+// ── Tutorial navigation bar ───────────────────────────────────
+// Shows quick-jump buttons to the other three tutorials
+var TUTORIAL_ITEMS = [
+  { label: "AND gate",          fn: function(){ showTutorial("AND"); } },
+  { label: "OR gate",           fn: function(){ showTutorial("OR");  } },
+  { label: "NOT gate",          fn: function(){ showTutorial("NOT"); } },
+  { label: "Combined circuits", fn: function(){ showCombinedTutorial(); } }
+];
+
+function makeTutorialNavBar(currentLabel) {
+  var wrap = document.createElement("div");
+  wrap.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;margin-top:1rem;padding-top:0.75rem;border-top:0.5px solid var(--border);";
+  var lbl = document.createElement("span");
+  lbl.style.cssText = "font-size:0.85rem;color:var(--text-muted);align-self:center;white-space:nowrap;margin-right:4px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  lbl.textContent = "Jump to:";
+  wrap.appendChild(lbl);
+  TUTORIAL_ITEMS.forEach(function(item) {
+    if (item.label === currentLabel) return; // skip current page
+    var btn = document.createElement("button");
+    btn.textContent = item.label;
+    btn.style.cssText = "font-size:0.85rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:4px 12px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface2);color:var(--text-muted);transition:border-color 0.15s,color 0.15s;";
+    btn.addEventListener("mouseover", function(){ btn.style.borderColor="var(--accent)"; btn.style.color="var(--text)"; });
+    btn.addEventListener("mouseout",  function(){ btn.style.borderColor="var(--border)"; btn.style.color="var(--text-muted)"; });
+    btn.addEventListener("click", item.fn);
+    wrap.appendChild(btn);
+  });
+  return wrap;
+}
+
+// ── TUTORIAL ──────────────────────────────────────────────────
+function showTutorial(type) {
+  if (type === "COMBINED") { showCombinedTutorial(); return; }
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+
+  var isTwoInput = (type !== "NOT");
+  var inputs = { A: 0, B: 0 };
+
+  function evaluate() {
+    if (type === "AND") return inputs.A & inputs.B;
+    if (type === "OR")  return inputs.A | inputs.B;
+    if (type === "NOT") return inputs.A ? 0 : 1;
+  }
+
+  function getActiveRow() {
+    var tt = TRUTH_TABLES[type];
+    for (var i = 0; i < tt.length; i++) {
+      if (tt[i][0] === inputs.A && (type === "NOT" || tt[i][1] === inputs.B)) return i;
+    }
+    return -1;
+  }
+
+  // Top bar
+  el.appendChild(makeTopBar(type + " gate", "Tutorial"));
+
+  // Rule
+  var rule = document.createElement("div");
+  rule.className = "lg-rule";
+  var rules = {
+    AND: "Output is <strong>1</strong> only when <strong>both</strong> inputs are 1.",
+    OR:  "Output is <strong>1</strong> when <strong>at least one</strong> input is 1.",
+    NOT: "Output is the <strong>opposite</strong> of the input."
+  };
+  rule.innerHTML = rules[type];
+  el.appendChild(rule);
+
+  // Gate area
+  var gateArea = document.createElement("div");
+  gateArea.className = "lg-gate-area";
+
+  // Input column
+  var inputCol = document.createElement("div");
+  inputCol.className = "lg-input-col";
+
+  // Store button refs so truth table row clicks can update them
+  var inputBtns = {};
+
+  function makeInputWrap(label, key) {
+    var wrap = document.createElement("div");
+    wrap.className = "lg-input-wrap";
+    var lbl = document.createElement("div");
+    lbl.className = "lg-input-label";
+    lbl.textContent = label;
+    var btn = document.createElement("button");
+    btn.className = "lg-input-btn";
+    btn.textContent = inputs[key];
+    btn.addEventListener("click", function() {
+      inputs[key] = inputs[key] ? 0 : 1;
+      btn.textContent = inputs[key];
+      btn.classList.toggle("on", inputs[key] === 1);
+      render();
+    });
+    inputBtns[key] = btn;
+    wrap.appendChild(lbl);
+    wrap.appendChild(btn);
+    return wrap;
+  }
+
+  function syncInputButtons() {
+    Object.keys(inputBtns).forEach(function(key) {
+      inputBtns[key].textContent = inputs[key];
+      inputBtns[key].classList.toggle("on", inputs[key] === 1);
+    });
+  }
+
+  inputCol.appendChild(makeInputWrap("A", "A"));
+  if (isTwoInput) inputCol.appendChild(makeInputWrap("B", "B"));
+  gateArea.appendChild(inputCol);
+
+  // Gate SVG
+  var svgWrap = document.createElement("div");
+  var viewW = 240, viewH = 160, cx = 110, cy = 80;
+  var pts = gatePoints(type, cx, cy, {});
+  var wireColOn  = "#13a52f";
+  var wireColOff = "var(--text-muted)";
+
+  function gateWireCol(val) { return val ? wireColOn : wireColOff; }
+
+  function buildSVG() {
+    var q = evaluate();
+    var colA = gateWireCol(inputs.A);
+    var colB = gateWireCol(inputs.B);
+    var colQ = gateWireCol(q);
+    var gateStroke = q ? wireColOn : "var(--text)";
+    var sw = 3;
+
+    var svg = '<svg class="lg-gate-svg" viewBox="0 0 ' + viewW + ' ' + viewH + '" width="' + viewW + '">';
+
+    // Input wire A
+    svg += '<line x1="20" y1="' + pts.inputA.y + '" x2="' + pts.inputA.x + '" y2="' + pts.inputA.y +
+           '" stroke="' + colA + '" stroke-width="' + sw + '"/>';
+    svg += '<text x="14" y="' + (pts.inputA.y + 5) + '" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" fill="' + colA + '">A</text>';
+
+    // Input wire B
+    if (isTwoInput) {
+      svg += '<line x1="20" y1="' + pts.inputB.y + '" x2="' + pts.inputB.x + '" y2="' + pts.inputB.y +
+             '" stroke="' + colB + '" stroke-width="' + sw + '"/>';
+      svg += '<text x="14" y="' + (pts.inputB.y + 5) + '" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" fill="' + colB + '">B</text>';
+    }
+
+    // Gate body
+    if (type === "AND") svg += drawAND(cx, cy, {stroke: gateStroke, strokeWidth: sw});
+    if (type === "OR")  svg += drawOR(cx, cy,  {stroke: gateStroke, strokeWidth: sw});
+    if (type === "NOT") svg += drawNOT(cx, cy, {stroke: gateStroke, strokeWidth: sw});
+
+    // Output wire
+    svg += '<line x1="' + pts.output.x + '" y1="' + pts.output.y + '" x2="' + (viewW-30) + '" y2="' + pts.output.y +
+           '" stroke="' + colQ + '" stroke-width="' + sw + '"/>';
+    svg += '<text x="' + (viewW-22) + '" y="' + (pts.output.y + 5) + '" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" fill="' + colQ + '">Q</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  svgWrap.innerHTML = buildSVG();
+  gateArea.appendChild(svgWrap);
+
+  // Bulb
+  var bulbWrap = document.createElement("div");
+  bulbWrap.className = "lg-bulb-wrap";
+  var bulbEl = document.createElement("div");
+  bulbEl.className = "lg-bulb";
+  bulbEl.innerHTML = bulbSVG(evaluate());
+  bulbWrap.appendChild(bulbEl);
+  gateArea.appendChild(bulbWrap);
+
+  // Truth table — always visible, sits to the right of the gate
+  var ttPanel = document.createElement("div");
+  ttPanel.style.cssText = "border-left:0.5px solid var(--border);padding-left:1.25rem;margin-left:0.5rem;display:flex;flex-direction:column;justify-content:center;";
+  var ttLbl = document.createElement("div");
+  ttLbl.style.cssText = "font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  ttLbl.textContent = "Truth table";
+  var ttContainer = document.createElement("div");
+  ttContainer.className = "lg-tt-wrap";
+  ttPanel.appendChild(ttLbl);
+  ttPanel.appendChild(ttContainer);
+  gateArea.appendChild(ttPanel);
+
+  el.appendChild(gateArea);
+
+  function buildTT() {
+    ttContainer.innerHTML = "";
+    var activeRow = getActiveRow();
+    var cols = isTwoInput ? ["A","B","Q"] : ["A","Q"];
+    var rows = TRUTH_TABLES[type];
+    var tbl = document.createElement("table");
+    tbl.className = "lg-tt";
+    var thead = document.createElement("thead");
+    var hr = document.createElement("tr");
+    cols.forEach(function(c) {
+      var th = document.createElement("th"); th.textContent = c; hr.appendChild(th);
+    });
+    thead.appendChild(hr); tbl.appendChild(thead);
+    var tbody = document.createElement("tbody");
+    rows.forEach(function(row, i) {
+      var tr = document.createElement("tr");
+      if (i === activeRow) tr.className = "active";
+      tr.style.cursor = "pointer";
+      tr.title = "Click to set inputs to this row";
+      tr.addEventListener("mouseover", function() { if (i !== getActiveRow()) tr.style.background = "rgba(57,127,196,0.06)"; });
+      tr.addEventListener("mouseout",  function() { if (i !== getActiveRow()) tr.style.background = ""; });
+      tr.addEventListener("click", function() {
+        inputs.A = row[0];
+        if (isTwoInput) inputs.B = row[1];
+        syncInputButtons();
+        render();
+      });
+      row.forEach(function(v) {
+        var td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    ttContainer.appendChild(tbl);
+
+    // Click hint — shown below the table, subtle
+    var hint = document.createElement("div");
+    hint.style.cssText = "font-size:12px;color:var(--text-muted);margin-top:5px;text-align:center;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+    hint.textContent = "\uD83D\uDC46 Click a row to explore";
+    ttContainer.appendChild(hint);
+  }
+
+  buildTT();
+
+  function render() {
+    var q = evaluate();
+    bulbEl.className = "lg-bulb" + (q ? " on" : "");
+    bulbEl.innerHTML = bulbSVG(q);
+    svgWrap.innerHTML = buildSVG();
+    buildTT();
+  }
+
+  el.appendChild(makeTutorialNavBar(type + " gate"));
+}
+function showCombinedTutorial() {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar("Combined circuits", "Tutorial"));
+
+  var desc = document.createElement("p");
+  desc.style.cssText = "font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;line-height:1.5;";
+  desc.textContent = "Gates can be connected together. The output of one gate feeds into another. Here is (NOT A) AND B — toggle the inputs to see how the circuit behaves.";
+  el.appendChild(desc);
+
+  var inputs = {A:0, B:0};
+  function notA() { return inputs.A ? 0 : 1; }
+  function evalQ() { return notA() & inputs.B; }
+
+  var combRows = [ [0,0,1,0],[0,1,1,1],[1,0,0,0],[1,1,0,0] ];
+
+  // ── Gate area (same structure as single-gate tutorials) ──────
+  var gateArea = document.createElement("div");
+  gateArea.className = "lg-gate-area";
+
+  // Input column — toggle buttons
+  var inputCol = document.createElement("div");
+  inputCol.className = "lg-input-col";
+  var inputBtns = {};
+
+  function makeInputWrap(label, key) {
+    var wrap = document.createElement("div");
+    wrap.className = "lg-input-wrap";
+    var lbl = document.createElement("div");
+    lbl.className = "lg-input-label";
+    lbl.textContent = label;
+    var btn = document.createElement("button");
+    btn.className = "lg-input-btn";
+    btn.textContent = inputs[key];
+    btn.addEventListener("click", function() {
+      inputs[key] = inputs[key] ? 0 : 1;
+      btn.textContent = inputs[key];
+      btn.classList.toggle("on", inputs[key] === 1);
+      render();
+    });
+    inputBtns[key] = btn;
+    wrap.appendChild(lbl); wrap.appendChild(btn);
+    return wrap;
+  }
+
+  function syncInputButtons() {
+    Object.keys(inputBtns).forEach(function(k) {
+      inputBtns[k].textContent = inputs[k];
+      inputBtns[k].classList.toggle("on", inputs[k] === 1);
+    });
+  }
+
+  inputCol.appendChild(makeInputWrap("A","A"));
+  inputCol.appendChild(makeInputWrap("B","B"));
+  gateArea.appendChild(inputCol);
+
+  // Circuit SVG — compact, wires connect from left edge to right edge
+  var svgWrap = document.createElement("div");
+  svgWrap.style.cssText = "margin-right:16px;";
+  var wOn = "#13a52f", wOff = "var(--text-muted)", sw = 2.5;
+  function wc(v) { return v ? wOn : wOff; }
+  // Aligned layout: NOT top input y == AND top input y (no bent wires needed)
+  // NOT: cx=58, cy=50, h=40  → input y=50, output x=58+16+16=90, y=50
+  // AND: cx=142, cy=63, h=42, w=44 → top y=63-10.5=52.5≈53, left x=142-22=120
+  // Close enough — route NOT output wire slight diagonal or just shift AND top input y to 50
+  // Simplest: set AND cy so top input y = NOT cy = 50
+  // AND top input y = AND cy - h*0.25, so AND cy = 50 + 42*0.25 = 50+10.5 = 60.5 ≈ 61
+  var vW = 235, vH = 105;
+
+  function buildSVG() {
+    var na = notA(), out = evalQ();
+    var notStroke = na  ? wOn : "var(--text)";
+    var andStroke = out ? wOn : "var(--text)";
+    var svg = '<svg viewBox="0 0 ' + vW + ' ' + vH + '" width="' + vW + '">';
+
+    // A wire stub → NOT gate (input at x=42, y=50)
+    svg += '<line x1="0" y1="50" x2="42" y2="50" stroke="'+wc(inputs.A)+'" stroke-width="'+sw+'"/>';
+    // NOT gate: cx=58, cy=50, h=40 — output at x=90, y=50
+    svg += drawNOT(58, 50, {h:40, stroke:notStroke, strokeWidth:sw});
+    // Wire from NOT output to AND top input
+    svg += '<line x1="90" y1="50" x2="120" y2="50" stroke="'+wc(na)+'" stroke-width="'+sw+'"/>';
+
+    // B wire stub → AND bottom input
+    svg += '<line x1="0" y1="72" x2="120" y2="72" stroke="'+wc(inputs.B)+'" stroke-width="'+sw+'"/>';
+
+    // AND gate: cx=142, cy=61, h=42, w=44 — output at x=185, y=61
+    svg += drawAND(142, 61, {h:42, w:44, stroke:andStroke, strokeWidth:sw});
+    // Wire extends 25px past gate output before Q= label — matches AND tutorial proportions
+    svg += '<line x1="185" y1="61" x2="210" y2="61" stroke="'+wc(out)+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="213" y="65" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="11" font-weight="700" fill="'+wc(out)+'">Q</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  svgWrap.innerHTML = buildSVG();
+  gateArea.appendChild(svgWrap);
+
+  // Output bulb
+  var bulbWrap = document.createElement("div");
+  bulbWrap.className = "lg-bulb-wrap";
+  bulbWrap.style.marginTop = "8px";
+  var bulbEl = document.createElement("div");
+  bulbEl.className = "lg-bulb";
+  bulbEl.innerHTML = bulbSVG(evalQ());
+  bulbWrap.appendChild(bulbEl);
+  gateArea.appendChild(bulbWrap);
+
+  // Truth table panel — right side with divider
+  var ttPanel = document.createElement("div");
+  ttPanel.style.cssText = "border-left:0.5px solid var(--border);padding-left:1.25rem;margin-left:0.5rem;display:flex;flex-direction:column;justify-content:center;";
+  var ttLbl = document.createElement("div");
+  ttLbl.style.cssText = "font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  ttLbl.textContent = "Truth table";
+  var ttContainer = document.createElement("div");
+  ttContainer.className = "lg-tt-wrap";
+  ttPanel.appendChild(ttLbl);
+  ttPanel.appendChild(ttContainer);
+  gateArea.appendChild(ttPanel);
+  el.appendChild(gateArea);
+
+  function buildTT() {
+    ttContainer.innerHTML = "";
+    var tbl = document.createElement("table");
+    tbl.className = "lg-tt";
+    var thead = document.createElement("thead");
+    var hr = document.createElement("tr");
+    ["A","B","NOT A","Q"].forEach(function(c) {
+      var th = document.createElement("th"); th.textContent = c; hr.appendChild(th);
+    });
+    thead.appendChild(hr); tbl.appendChild(thead);
+    var tbody = document.createElement("tbody");
+    combRows.forEach(function(row) {
+      var tr = document.createElement("tr");
+      if (row[0] === inputs.A && row[1] === inputs.B) tr.className = "active";
+      tr.style.cursor = "pointer";
+      tr.title = "Click to set inputs to this row";
+      tr.addEventListener("mouseover", function() { if (tr.className !== "active") tr.style.background = "rgba(57,127,196,0.06)"; });
+      tr.addEventListener("mouseout",  function() { if (tr.className !== "active") tr.style.background = ""; });
+      tr.addEventListener("click", function() {
+        inputs.A = row[0]; inputs.B = row[1];
+        syncInputButtons(); render();
+      });
+      row.forEach(function(v) {
+        var td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    ttContainer.appendChild(tbl);
+    var hint = document.createElement("div");
+    hint.style.cssText = "font-size:12px;color:var(--text-muted);margin-top:5px;text-align:center;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+    hint.textContent = "\uD83D\uDC46 Click a row to explore";
+    ttContainer.appendChild(hint);
+  }
+
+  buildTT();
+
+  function render() {
+    var q = evalQ();
+    bulbEl.className = "lg-bulb" + (q ? " on" : "");
+    bulbEl.innerHTML = bulbSVG(q);
+    svgWrap.innerHTML = buildSVG();
+    buildTT();
+  }
+
+  el.appendChild(makeTutorialNavBar("Combined circuits"));
+}
+
+// ── Challenge navigation ──────────────────────────────────────
+// Sequential order all challenges follow, enabling prev/next buttons
+var CHALLENGE_SEQUENCE = [
+  { label:"AND gate",          fn: function(){ showGateChallenge("AND"); } },
+  { label:"OR gate",           fn: function(){ showGateChallenge("OR");  } },
+  { label:"NOT gate",          fn: function(){ showGateChallenge("NOT"); } },
+  { label:"(NOT A) AND B",     fn: function(){ showCircuitChallenge("c1"); } },
+  { label:"A OR (NOT B)",      fn: function(){ showCircuitChallenge("c2"); } },
+  { label:"(A AND B) OR A",    fn: function(){ showCircuitChallenge("c3"); } },
+  { label:"AND truth table",   fn: function(){ showTruthTableChallenge("AND"); } },
+  { label:"OR truth table",    fn: function(){ showTruthTableChallenge("OR");  } },
+  { label:"NOT truth table",   fn: function(){ showTruthTableChallenge("NOT"); } },
+  { label:"A AND B",           fn: function(){ showTruthTableCircuitChallenge("tc1"); } },
+  { label:"A OR (NOT A)",      fn: function(){ showTruthTableCircuitChallenge("tc2"); } },
+  { label:"(NOT A) AND (NOT B)", fn: function(){ showTruthTableCircuitChallenge("tc3"); } }
+];
+
+function makeChallengeNavBar(currentLabel) {
+  var idx = -1;
+  for (var _i = 0; _i < CHALLENGE_SEQUENCE.length; _i++) {
+    if (CHALLENGE_SEQUENCE[_i].label === currentLabel) { idx = _i; break; }
+  }
+  if (idx === -1) return document.createDocumentFragment();
+
+  var wrap = document.createElement("div");
+  wrap.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:1rem;padding-top:0.75rem;border-top:0.5px solid var(--border);justify-content:space-between;";
+
+  function mkNavBtn(label, fn, isPrimary) {
+    var btn = document.createElement("button");
+    btn.textContent = label;
+    var base = isPrimary
+      ? "border:0.5px solid var(--accent);background:rgba(57,127,196,0.12);color:var(--accent);"
+      : "border:0.5px solid var(--border);background:var(--surface2);color:var(--text-muted);";
+    btn.style.cssText = "font-size:0.85rem;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:5px 14px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;" + base;
+    btn.addEventListener("click", fn);
+    return btn;
+  }
+
+  var leftGroup = document.createElement("div");
+  leftGroup.style.cssText = "display:flex;gap:8px;";
+  var rightGroup = document.createElement("div");
+  rightGroup.style.cssText = "display:flex;gap:8px;";
+
+  // Don't show a Previous button that crosses section boundaries —
+  // truth table challenges are a separate track from circuit challenges
+  var sectionStarts = ["AND truth table", "A AND B"];
+  if (idx > 0 && sectionStarts.indexOf(currentLabel) === -1) {
+    var prev = CHALLENGE_SEQUENCE[idx - 1];
+    leftGroup.appendChild(mkNavBtn("\u2190 " + prev.label, prev.fn, false));
+  }
+
+  // "(A AND B) OR A" and "(NOT A) AND (NOT B)" both end their respective
+  // sections — show "Back to Menu" rather than continuing to the next section
+  var menuEndpoints = ["(A AND B) OR A", "(NOT A) AND (NOT B)"];
+  if (menuEndpoints.indexOf(currentLabel) !== -1) {
+    rightGroup.appendChild(mkNavBtn("\u2302 Back to menu", showLanding, true));
+  } else if (idx < CHALLENGE_SEQUENCE.length - 1) {
+    var next = CHALLENGE_SEQUENCE[idx + 1];
+    rightGroup.appendChild(mkNavBtn(next.label + " \u2192", next.fn, true));
+  }
+
+  wrap.appendChild(leftGroup);
+  wrap.appendChild(rightGroup);
+  return wrap;
+}
+
+// ── GATE CHALLENGE ─────────────────────────────────────────────
+// Student fills in Q column only — gate symbol on left, challenge truth table on right
+function showGateChallenge(type) {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar(type + " gate challenge", "Challenge"));
+
+  var isTwoInput = (type !== "NOT");
+
+  // Outer row — gate on left, challenge table on right
+  var gateArea = document.createElement("div");
+  gateArea.className = "lg-gate-area";
+  gateArea.style.marginBottom = "1rem";
+
+  // Gate SVG panel
+  var svgPanel = document.createElement("div");
+  svgPanel.style.cssText = "display:flex;flex-direction:column;align-items:center;";
+  var viewW = 240, viewH = 120, cx = 110, cy = 60;
+  var sw = 2.5;
+  // Use the same dimensions for both gatePoints AND the draw function
+  // so wire endpoints always touch the gate body exactly
+  var gOpts = type === "AND" ? {h:60, w:55, stroke:"var(--text)", strokeWidth:sw}
+            : type === "OR"  ? {h:60, w:70, stroke:"var(--text)", strokeWidth:sw}
+            :                  {h:60,       stroke:"var(--text)", strokeWidth:sw};
+  var pts = gatePoints(type, cx, cy, gOpts);
+  var svg = '<svg viewBox="0 0 ' + viewW + ' ' + viewH + '" width="' + viewW + '" style="max-width:' + viewW + 'px;">';
+  svg += '<line x1="20" y1="' + pts.inputA.y + '" x2="' + pts.inputA.x + '" y2="' + pts.inputA.y + '" stroke="var(--text)" stroke-width="' + sw + '"/>';
+  svg += '<text x="14" y="' + (pts.inputA.y+5) + '" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="var(--text)">A</text>';
+  if (isTwoInput) {
+    svg += '<line x1="20" y1="' + pts.inputB.y + '" x2="' + pts.inputB.x + '" y2="' + pts.inputB.y + '" stroke="var(--text)" stroke-width="' + sw + '"/>';
+    svg += '<text x="14" y="' + (pts.inputB.y+5) + '" text-anchor="end" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="var(--text)">B</text>';
+  }
+  svg += (type==="AND" ? drawAND(cx, cy, gOpts) : type==="OR" ? drawOR(cx, cy, gOpts) : drawNOT(cx, cy, gOpts));
+  svg += '<line x1="' + pts.output.x + '" y1="' + pts.output.y + '" x2="' + (viewW-30) + '" y2="' + pts.output.y + '" stroke="var(--text)" stroke-width="' + sw + '"/>';
+  svg += '<text x="' + (viewW-22) + '" y="' + (pts.output.y+5) + '" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="var(--text)">Q</text>';
+  svg += '</svg>';
+  svgPanel.innerHTML = svg;
+  gateArea.appendChild(svgPanel);
+
+  // Challenge truth table panel — sits to the right with divider
+  var ttPanel = document.createElement("div");
+  ttPanel.style.cssText = "border-left:0.5px solid var(--border);padding-left:1.25rem;margin-left:0.5rem;display:flex;flex-direction:column;justify-content:center;";
+  var ttLbl = document.createElement("div");
+  ttLbl.style.cssText = "font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  ttLbl.textContent = "Complete the Q column";
+  var ttInner = document.createElement("div");
+  ttPanel.appendChild(ttLbl);
+  ttPanel.appendChild(ttInner);
+  gateArea.appendChild(ttPanel);
+  el.appendChild(gateArea);
+
+  var rows = TRUTH_TABLES[type];
+  var cols = isTwoInput ? ["A","B","Q"] : ["A","Q"];
+  buildChallengeTT(ttInner, cols, rows, [cols.length-1]);
+  el.appendChild(makeChallengeNavBar(type + " gate"));
+}
+
+// ── CIRCUIT CHALLENGE ──────────────────────────────────────────
+var CIRCUITS = {
+  c1: {
+    label: "(NOT A) AND B",
+    cols: ["A","B","NOT A","Q"],
+    rows: [ [0,0,1,0],[0,1,1,1],[1,0,0,0],[1,1,0,0] ],
+    inputCols: [2,3]
+  },
+  c2: {
+    label: "A OR (NOT B)",
+    cols: ["A","B","NOT B","Q"],
+    rows: [ [0,0,1,1],[0,1,0,0],[1,0,1,1],[1,1,0,1] ],
+    inputCols: [2,3]
+  },
+  c3: {
+    label: "(A AND B) OR A",
+    cols: ["A","B","A AND B","Q"],
+    rows: [ [0,0,0,0],[0,1,0,0],[1,0,0,1],[1,1,1,1] ],
+    inputCols: [2,3]
+  }
+};
+
+function showCircuitChallenge(key) {
+  var circ = CIRCUITS[key];
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar(circ.label, "Challenge"));
+
+  // Side-by-side layout: circuit SVG left, challenge truth table right
+  var gateArea = document.createElement("div");
+  gateArea.className = "lg-gate-area";
+  gateArea.style.marginBottom = "1rem";
+
+  // Circuit SVG panel
+  var svgPanel = document.createElement("div");
+  svgPanel.style.cssText = "display:flex;flex-direction:column;align-items:center;";
+  svgPanel.innerHTML = buildStaticCircuitSVG(key);
+  gateArea.appendChild(svgPanel);
+
+  // Challenge truth table panel
+  var ttPanel = document.createElement("div");
+  ttPanel.style.cssText = "border-left:0.5px solid var(--border);padding-left:1.25rem;margin-left:0.5rem;display:flex;flex-direction:column;justify-content:center;";
+  var ttLbl = document.createElement("div");
+  ttLbl.style.cssText = "font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  ttLbl.textContent = "Complete the missing columns";
+  var ttInner = document.createElement("div");
+  ttPanel.appendChild(ttLbl);
+  ttPanel.appendChild(ttInner);
+  gateArea.appendChild(ttPanel);
+  el.appendChild(gateArea);
+
+  buildChallengeTT(ttInner, circ.cols, circ.rows, circ.inputCols);
+  el.appendChild(makeChallengeNavBar(circ.label));
+}
+
+// Static (non-interactive) circuit SVGs for the three circuit challenges
+function buildStaticCircuitSVG(key) {
+  var sw = 2.5;
+  var s = 'var(--text)';        // gate stroke
+  var w = 'var(--text-muted)';  // wire colour
+
+  if (key === "c1") {
+    // (NOT A) AND B
+    // Layout: A→NOT(cx=100)→wire→AND(cx=240)←B
+    var svg = '<svg viewBox="0 0 340 120" width="300" style="max-width:300px;">';
+    // A label + wire into NOT
+    svg += '<text x="18" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">A</text>';
+    svg += '<line x1="20" y1="55" x2="80" y2="55" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // NOT gate at cx=100, cy=55, h=50
+    svg += drawNOT(100, 55, {h:50, stroke:s, strokeWidth:sw});
+    // Wire from NOT output to AND input A
+    // NOT output x = 100 + 50*0.4 + 8*2 = 100+20+16 = 136
+    svg += '<line x1="136" y1="55" x2="188" y2="55" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // B label + wire into AND input B
+    svg += '<text x="18" y="90" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">B</text>';
+    svg += '<line x1="20" y1="85" x2="188" y2="85" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // AND gate at cx=220, cy=70, h=60, w=55
+    svg += drawAND(220, 70, {h:60, w:55, stroke:s, strokeWidth:sw});
+    // AND output wire: rightX = 220 + 27.5 + 30 = 277.5
+    svg += '<line x1="278" y1="70" x2="322" y2="70" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="330" y="75" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'">Q</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  if (key === "c2") {
+    // A OR (NOT B)
+    // Layout: A→OR(cx=200)←NOT(cx=120)←B
+    var svg = '<svg viewBox="0 0 340 120" width="300" style="max-width:300px;">';
+    // A into OR top input
+    svg += '<text x="18" y="55" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">A</text>';
+    svg += '<line x1="20" y1="50" x2="168" y2="50" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // B label + wire into NOT
+    svg += '<text x="18" y="90" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">B</text>';
+    svg += '<line x1="20" y1="85" x2="80" y2="85" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // NOT gate at cx=100, cy=85, h=50
+    svg += drawNOT(100, 85, {h:50, stroke:s, strokeWidth:sw});
+    // Wire from NOT output to OR input B
+    svg += '<line x1="136" y1="85" x2="168" y2="85" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // OR gate at cx=205, cy=67, h=60, w=70
+    svg += drawOR(205, 67, {h:60, w:70, stroke:s, strokeWidth:sw});
+    // OR output: tipX = 205 + 35 = 240
+    svg += '<line x1="240" y1="67" x2="310" y2="67" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="318" y="72" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'">Q</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  if (key === "c3") {
+    // (A AND B) OR A
+    // Layout: A+B→AND(cx=130)→OR(cx=255)←A (A wire splits)
+    var svg = '<svg viewBox="0 0 340 140" width="300" style="max-width:300px;">';
+    // A wire — splits: one branch goes to AND top, one goes to OR bottom
+    svg += '<text x="18" y="50" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">A</text>';
+    // Main A wire
+    svg += '<line x1="20" y1="45" x2="95" y2="45" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // Split dot — larger so the junction is clearly visible
+    svg += '<circle cx="95" cy="45" r="6" fill="'+w+'"/>';
+    // A to AND top input (AND leftX = 130-27.5 = 102.5)
+    svg += '<line x1="95" y1="45" x2="103" y2="45" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // A down to OR bottom input level, then across (OR leftX = 255-35 = 220, cy=85, h=60 → bottom = 85+15=100)
+    svg += '<line x1="95" y1="45" x2="95" y2="100" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<line x1="95" y1="100" x2="218" y2="100" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // B into AND bottom input
+    svg += '<text x="18" y="80" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">B</text>';
+    svg += '<line x1="20" y1="75" x2="103" y2="75" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // AND gate at cx=135, cy=60, h=60, w=55
+    svg += drawAND(135, 60, {h:60, w:55, stroke:s, strokeWidth:sw});
+    // AND output: rightX = 135+27.5+30=192.5
+    svg += '<line x1="193" y1="60" x2="218" y2="60" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // OR gate at cx=255, cy=80, h=60, w=70
+    svg += drawOR(255, 80, {h:60, w:70, stroke:s, strokeWidth:sw});
+    // OR output: tipX = 255+35=290
+    svg += '<line x1="290" y1="80" x2="322" y2="80" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="330" y="85" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'">Q</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  return '';
+}
+
+// ── TRUTH TABLE CHALLENGE (single gate, no diagram) ────────────
+function showTruthTableChallenge(type) {
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar(type + " gate — truth table", "Challenge"));
+
+  var isTwoInput = (type !== "NOT");
+  var desc = document.createElement("div");
+  desc.className = "lg-challenge-desc";
+  desc.textContent = "The A and B inputs are given. Complete the Q column from memory — no diagram shown.";
+  el.appendChild(desc);
+
+  var rows = TRUTH_TABLES[type];
+  var cols = isTwoInput ? ["A","B","Q"] : ["A","Q"];
+  // Only Q is an input — A and B are pre-filled as given values
+  buildChallengeTT(el, cols, rows, [cols.length - 1]);
+  el.appendChild(makeChallengeNavBar(type + " truth table"));
+}
+
+// ── TRUTH TABLE CIRCUIT CHALLENGE (expression only) ─────────────
+var TC = {
+  tc1: {
+    label: "A AND B",
+    cols: ["A","B","Q"],
+    rows: [ [0,0,0],[0,1,0],[1,0,0],[1,1,1] ],
+    inputCols: [2]
+  },
+  tc2: {
+    label: "A OR (NOT A)",
+    cols: ["A","NOT A","Q"],
+    rows: [ [0,1,1],[1,0,1] ],
+    inputCols: [1,2]
+  },
+  tc3: {
+    label: "(NOT A) AND (NOT B)",
+    cols: ["A","B","NOT A","NOT B","Q"],
+    rows: [ [0,0,1,1,1],[0,1,1,0,0],[1,0,0,1,0],[1,1,0,0,0] ],
+    inputCols: [2,3,4]
+  }
+};
+
+function showTruthTableCircuitChallenge(key) {
+  var tc = TC[key];
+  var el = document.getElementById("toolContent");
+  el.innerHTML = "";
+  el.appendChild(makeTopBar(tc.label, "Challenge"));
+
+  // Side-by-side layout: circuit SVG left, challenge truth table right
+  var gateArea = document.createElement("div");
+  gateArea.className = "lg-gate-area";
+  gateArea.style.marginBottom = "1rem";
+
+  // Circuit SVG panel
+  var svgPanel = document.createElement("div");
+  svgPanel.style.cssText = "display:flex;flex-direction:column;align-items:center;";
+  svgPanel.innerHTML = buildStaticTCSVG(key);
+  gateArea.appendChild(svgPanel);
+
+  // Challenge truth table panel
+  var ttPanel = document.createElement("div");
+  ttPanel.style.cssText = "border-left:0.5px solid var(--border);padding-left:1.25rem;margin-left:0.5rem;display:flex;flex-direction:column;justify-content:center;";
+  var ttLbl = document.createElement("div");
+  ttLbl.style.cssText = "font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;";
+  ttLbl.textContent = "Complete the missing columns";
+  var ttInner = document.createElement("div");
+  ttPanel.appendChild(ttLbl);
+  ttPanel.appendChild(ttInner);
+  gateArea.appendChild(ttPanel);
+  el.appendChild(gateArea);
+
+  buildChallengeTT(ttInner, tc.cols, tc.rows, tc.inputCols);
+  el.appendChild(makeChallengeNavBar(tc.label));
+}
+
+// Static circuit SVGs for the three truth table circuit challenges
+function buildStaticTCSVG(key) {
+  var sw = 2.5;
+  var s = 'var(--text)';
+  var w = 'var(--text-muted)';
+
+  if (key === "tc1") {
+    // A AND B — simple AND gate
+    var svg = '<svg viewBox="0 0 280 100" width="240" style="max-width:240px;">';
+    svg += '<text x="18" y="42" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">A</text>';
+    svg += '<line x1="20" y1="37" x2="88" y2="37" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="18" y="67" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">B</text>';
+    svg += '<line x1="20" y1="62" x2="88" y2="62" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += drawAND(120, 50, {h:55, w:55, stroke:s, strokeWidth:sw});
+    // output: rightX = 120+27.5+27.5=175
+    svg += '<line x1="175" y1="50" x2="250" y2="50" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="258" y="55" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'">Q</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  if (key === "tc2") {
+    // A OR (NOT A) — A splits: one branch to NOT, NOT output to OR, A also to OR
+    var svg = '<svg viewBox="0 0 320 120" width="280" style="max-width:280px;">';
+    // A wire splits
+    svg += '<text x="18" y="60" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">A</text>';
+    svg += '<line x1="20" y1="55" x2="65" y2="55" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // Junction dot
+    svg += '<circle cx="65" cy="55" r="6" fill="'+w+'"/>';
+    // A up to OR top input
+    svg += '<line x1="65" y1="55" x2="65" y2="28" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<line x1="65" y1="28" x2="178" y2="28" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // A down to NOT gate
+    svg += '<line x1="65" y1="55" x2="65" y2="80" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<line x1="65" y1="80" x2="95" y2="80" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // NOT gate at cx=115, cy=80, h=50
+    svg += drawNOT(115, 80, {h:50, stroke:s, strokeWidth:sw});
+    // NOT output: 115+20+16=151
+    svg += '<line x1="151" y1="80" x2="178" y2="80" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // OR gate at cx=215, cy=54, h=55, w=65
+    svg += drawOR(215, 54, {h:55, w:65, stroke:s, strokeWidth:sw});
+    // OR output: tipX = 215+32.5=247.5
+    svg += '<line x1="248" y1="54" x2="290" y2="54" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="298" y="59" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'">Q</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  if (key === "tc3") {
+    // (NOT A) AND (NOT B) — A→NOT, B→NOT, both NOT outputs into AND
+    var svg = '<svg viewBox="0 0 340 140" width="300" style="max-width:300px;">';
+    // A → NOT gate
+    svg += '<text x="18" y="48" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">A</text>';
+    svg += '<line x1="20" y1="43" x2="80" y2="43" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += drawNOT(100, 43, {h:50, stroke:s, strokeWidth:sw});
+    // NOT A output: 100+20+16=136
+    svg += '<line x1="136" y1="43" x2="188" y2="43" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // B → NOT gate
+    svg += '<text x="18" y="100" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'" text-anchor="end">B</text>';
+    svg += '<line x1="20" y1="95" x2="80" y2="95" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += drawNOT(100, 95, {h:50, stroke:s, strokeWidth:sw});
+    // NOT B output
+    svg += '<line x1="136" y1="95" x2="188" y2="95" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    // AND gate at cx=223, cy=69, h=62, w=55
+    svg += drawAND(223, 69, {h:62, w:55, stroke:s, strokeWidth:sw});
+    // AND output: 223+27.5+31=281.5
+    svg += '<line x1="282" y1="69" x2="316" y2="69" stroke="'+w+'" stroke-width="'+sw+'"/>';
+    svg += '<text x="324" y="74" font-family="Inter,system-ui,Segoe UI,Arial,sans-serif" font-size="12" fill="'+s+'">Q</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  return '';
+}
+
+// ── SHARED CHALLENGE TABLE BUILDER ────────────────────────────
+function buildChallengeTT(container, cols, rows, inputColIdxs) {
+  var inputCells = [];
+  var xpAwarded = {};
+  var finished = false;
+  var revealed = false;
+  var savedState = null;
+
+  var tbl = document.createElement("table");
+  tbl.className = "lg-challenge-tt";
+  var thead = document.createElement("thead");
+  var hr = document.createElement("tr");
+  cols.forEach(function(c) {
+    var th = document.createElement("th"); th.textContent = c; hr.appendChild(th);
+  });
+  thead.appendChild(hr); tbl.appendChild(thead);
+
+  var tbody = document.createElement("tbody");
+  rows.forEach(function(row, ri) {
+    var tr = document.createElement("tr");
+    cols.forEach(function(col, ci) {
+      var td = document.createElement("td");
+      if (inputColIdxs.indexOf(ci) !== -1) {
+        var inp = document.createElement("input");
+        inp.type = "text"; inp.className = "lg-inp";
+        inp.autocomplete = "off"; inp.spellcheck = false;
+        inp.placeholder = "0 or 1";
+        inp.addEventListener("focus", function() { inp.style.borderColor = "var(--accent)"; });
+        inp.addEventListener("blur",  function() { if (!inp.style.background || inp.style.background === "var(--surface2)") inp.style.borderColor = "var(--border)"; });
+        td.appendChild(inp);
+        inputCells.push({ input:inp, answer:String(row[ci]), rowIdx:ri, col:col });
+      } else {
+        td.className = "given";
+        td.textContent = row[ci];
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+  container.appendChild(tbl);
+
+  // Controls
+  var ctrlBar = document.createElement("div");
+  ctrlBar.className = "lg-ctrl-bar";
+  var checkBtn  = mkCtrlBtn("\u2713 Check now", "primary");
+  var revealBtn = mkCtrlBtn("\uD83D\uDCD6 Reveal answers", "muted");
+  var finishBtn = mkCtrlBtn("\u2714 Finished", "primary");
+  var feedbackEl = document.createElement("span");
+  feedbackEl.className = "lg-feedback";
+  ctrlBar.appendChild(checkBtn); ctrlBar.appendChild(revealBtn);
+  ctrlBar.appendChild(finishBtn); ctrlBar.appendChild(feedbackEl);
+  container.appendChild(ctrlBar);
+
+  var completionBanner = document.createElement("div");
+  completionBanner.className = "lg-completion";
+  container.appendChild(completionBanner);
+
+  function check(isFinal) {
+    var correct=0, wrong=0, blank=0, newXP=0;
+    inputCells.forEach(function(cell) {
+      var raw = cell.input.value.trim();
+      if (!raw) { if (isFinal) { cell.input.style.borderColor="#d6453a"; cell.input.style.background="rgba(214,69,58,0.1)"; } blank++; return; }
+      var ok = raw === cell.answer;
+      if (ok) {
+        correct++;
+        cell.input.style.borderColor="#13a52f"; cell.input.style.background="rgba(19,165,47,0.12)"; cell.input.style.color="#13a52f";
+        var ck = cell.rowIdx+":"+cell.col;
+        if (!xpAwarded[ck]) { xpAwarded[ck]=true; newXP+=2; }
+      } else {
+        wrong++;
+        cell.input.style.borderColor="#d6453a"; cell.input.style.background="rgba(214,69,58,0.1)"; cell.input.style.color="var(--text)";
+        if (raw.toLowerCase() === cell.answer.toLowerCase()) {
+          cell.input.title = "Almost! The value should be " + cell.answer + ".";
+        }
+      }
+    });
+    if (newXP > 0) J277.grantXP(newXP, "logic_gate_challenge");
+    return {correct:correct, wrong:wrong, blank:blank, total:inputCells.length};
+  }
+
+  function resetChallenge() {
+    finished = false; revealed = false; savedState = null;
+    xpAwarded = {};
+    inputCells.forEach(function(cell) {
+      cell.input.value = "";
+      cell.input.disabled = false;
+      cell.input.style.borderColor = "var(--border)";
+      cell.input.style.background = "var(--surface2)";
+      cell.input.style.color = "var(--text)";
+      cell.input.title = "";
+    });
+    completionBanner.style.display = "none";
+    feedbackEl.textContent = "";
+    checkBtn.disabled = false;
+    revealBtn.disabled = false;
+    revealBtn.textContent = "\uD83D\uDCD6 Reveal answers";
+    finishBtn.textContent = "\u2714 Finished";
+    finishBtn.disabled = false;
+  }
+
+  function showCompletion(total) {
+    finished = true;
+    inputCells.forEach(function(c){ c.input.disabled = true; });
+    J277.grantXP(15, "logic_gate_complete");
+    completionBanner.style.display = "block";
+    completionBanner.innerHTML = "\uD83C\uDF89 <strong>All " + total + " values correct!</strong>";
+    feedbackEl.textContent = "";
+    checkBtn.disabled = true; revealBtn.disabled = true;
+    finishBtn.textContent = "\uD83D\uDD04 Try again";
+    finishBtn.style.borderColor = "var(--accent)";
+    finishBtn.style.background = "rgba(57,127,196,0.12)";
+    finishBtn.style.color = "var(--accent)";
+  }
+
+  checkBtn.addEventListener("click", function() {
+    if (finished) return;
+    var r = check(false);
+    if (r.correct+r.wrong === 0) { feedbackEl.textContent = "Enter some values first."; feedbackEl.style.color="var(--text-muted)"; return; }
+    feedbackEl.style.color = r.wrong > 0 ? "#d6453a" : "#13a52f";
+    feedbackEl.textContent = r.correct + " correct" + (r.wrong ? ", " + r.wrong + " incorrect" : " \u2714") + (r.blank ? " (" + r.blank + " blank)" : "");
+    if (r.correct === r.total) showCompletion(r.total);
+  });
+
+  finishBtn.addEventListener("click", function() {
+    if (finished) { resetChallenge(); return; }
+    var r = check(true);
+    if (r.correct === r.total) {
+      showCompletion(r.total);
+    } else {
+      feedbackEl.style.color = "#d6453a";
+      feedbackEl.textContent = r.correct + " / " + r.total + " — red cells need fixing.";
+      finishBtn.textContent = "\uD83D\uDD04 Try again";
+      finishBtn.style.borderColor = "var(--accent)";
+      finishBtn.style.background = "rgba(57,127,196,0.12)";
+      finishBtn.style.color = "var(--accent)";
+      finished = true;
+    }
+  });
+
+  revealBtn.addEventListener("click", function() {
+    if (finished) return;
+    if (!revealed) {
+      savedState = inputCells.map(function(c){ return {value:c.input.value, bc:c.input.style.borderColor, bg:c.input.style.background, col:c.input.style.color, dis:c.input.disabled}; });
+      inputCells.forEach(function(cell) {
+        var raw = cell.input.value.trim();
+        var wasOk = raw === cell.answer;
+        cell.input.value = cell.answer; cell.input.disabled = true;
+        if (wasOk) { cell.input.style.borderColor="#13a52f"; cell.input.style.background="rgba(19,165,47,0.12)"; cell.input.style.color="#13a52f"; }
+        else { cell.input.style.borderColor="var(--accent)"; cell.input.style.background="rgba(57,127,196,0.08)"; cell.input.style.color="var(--accent)"; }
+      });
+      revealed = true;
+      revealBtn.textContent = "\uD83D\uDCD5 Hide answers";
+      feedbackEl.style.color="var(--text-muted)"; feedbackEl.textContent = "Answers revealed. Green = you had it right. Blue = revealed.";
+      checkBtn.disabled=true; finishBtn.disabled=true;
+    } else {
+      inputCells.forEach(function(cell,i){ var s=savedState[i]; cell.input.value=s.value; cell.input.style.borderColor=s.bc; cell.input.style.background=s.bg; cell.input.style.color=s.col; cell.input.disabled=s.dis; });
+      revealed = false;
+      revealBtn.textContent = "\uD83D\uDCD6 Reveal answers";
+      feedbackEl.textContent = "";
+      checkBtn.disabled=false; finishBtn.disabled=false;
+    }
+  });
+}
+
+function mkCtrlBtn(label, style) {
+  var b = document.createElement("button");
+  b.textContent = label;
+  var styles = { primary:"border:0.5px solid #13a52f;background:rgba(19,165,47,0.15);color:#13a52f;", muted:"border:0.5px solid var(--border);background:transparent;color:var(--text-muted);" };
+  b.style.cssText = "font-size:13px;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;padding:5px 12px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;" + (styles[style]||styles.muted);
+  return b;
+}
+
+// ── Init ──────────────────────────────────────────────────────
+J277.init();
+showLanding();
+
+// Header: Menu button and Animations switch
+document.getElementById("homeBtn").addEventListener("click", function(){ showLanding(); document.querySelector(".tool-card").scrollTop = 0; });
+(function(){
+  var t = document.getElementById("motionToggle"), root = document.documentElement;
+  function sync(){ t.setAttribute("aria-checked", root.classList.contains("no-motion") ? "false" : "true"); }
+  t.addEventListener("click", function(){
+    root.classList.toggle("no-motion");
+    try { localStorage.setItem("logicGates.motion", root.classList.contains("no-motion") ? "off" : "on"); } catch(e) {}
+    sync();
+  });
+  sync();
+})();
+
+// Live wires: any wire carrying a 1 (green) gets a moving dash overlay, so you can see the current flow
+(function(){
+  var NS = "http://www.w3.org/2000/svg", busy = false;
+  function addFlow(){
+    busy = true;
+    document.querySelectorAll('#toolContent svg line[stroke="#13a52f"]:not([data-flowed])').forEach(function(ln){
+      ln.setAttribute("data-flowed","1");
+      var f = ln.cloneNode(false);
+      f.removeAttribute("data-flowed");
+      f.setAttribute("class","flow");
+      f.setAttribute("stroke","#d9ffe1");
+      f.setAttribute("stroke-dasharray","4 12");
+      f.style.strokeWidth = "2.5px";
+      ln.parentNode.insertBefore(f, ln.nextSibling);
+    });
+    busy = false;
+  }
+  // Diagrams were drawn quite small: scale them up (keeping them inside the card)
+  function grow(){
+    document.querySelectorAll('#toolContent svg[width]:not([data-grown])').forEach(function(sv){
+      sv.setAttribute("data-grown","1");
+      var w = parseFloat(sv.getAttribute("width"));
+      if (!(w >= 150) || sv.closest(".lg-btn")) return;
+      sv.setAttribute("width", Math.round(w*1.45));
+      sv.removeAttribute("height");
+      sv.style.maxWidth = "100%"; sv.style.height = "auto";
+    });
+  }
+  new MutationObserver(function(){ if (!busy) { busy = true; grow(); busy = false; addFlow(); } }).observe(document.getElementById("toolContent"), {childList:true, subtree:true});
+  grow(); addFlow();
+})();
+</script>
+</body>
+</html>
